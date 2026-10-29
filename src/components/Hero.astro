@@ -220,6 +220,13 @@ const labels = { simulating: t.viz.simulating, converged: t.viz.converged, pathL
 
   .dots {
     cursor: crosshair;
+    touch-action: pan-y;
+  }
+
+  /* the layers above the dots must let the pointer through, or hover never reaches them */
+  .highlight,
+  .tip {
+    pointer-events: none;
   }
 
   .tip {

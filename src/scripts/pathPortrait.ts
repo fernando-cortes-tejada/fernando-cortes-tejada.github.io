@@ -303,7 +303,7 @@ export function mountPathPortrait(root: HTMLElement, labels: Labels) {
     return best;
   }
 
-  dots.addEventListener('pointermove', (e) => {
+  function inspect(e: PointerEvent) {
     if (!done || root.dataset.mode === 'photo') return;
     const rect = dots.getBoundingClientRect();
     const mx = e.clientX - rect.left;
@@ -329,7 +329,10 @@ export function mountPathPortrait(root: HTMLElement, labels: Labels) {
     tip.textContent = `${labels.pathLabel} #${String(i).padStart(4, '0')} · y(1) = ${(1 - sample.y[i]).toFixed(3)}`;
     tip.style.left = `${Math.min(mx + 12, size.w - 190)}px`;
     tip.style.top = `${my + 14}px`;
-  });
+  }
+
+  dots.addEventListener('pointermove', inspect);
+  dots.addEventListener('pointerdown', inspect); // tap on touch screens
 
   dots.addEventListener('pointerleave', () => {
     hl.getContext('2d')!.clearRect(0, 0, size.w, size.h);
