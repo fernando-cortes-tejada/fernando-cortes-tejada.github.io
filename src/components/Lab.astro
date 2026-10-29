@@ -1,0 +1,289 @@
+---
+import { content, type Lang } from '../i18n/content';
+
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+const t = content[lang].lab;
+const a = t.arb;
+---
+
+<section id="lab" class="section">
+  <div class="wrap">
+    <p class="kicker">{t.kicker}</p>
+    <h2 class="section-title">{t.title}</h2>
+    <p class="lede">{t.intro}</p>
+
+    <div class="demo" data-arb data-yes={a.verdictYes} data-no={a.verdictNo} data-lang={lang}>
+      <div class="explain">
+        <h3>{a.title}</h3>
+        <p>{a.blurb}</p>
+        <p class="formula mono">
+          S = 1/o<sub>A</sub> + 1/o<sub>B</sub> &lt; 1 ⇒ return = 1/S − 1
+        </p>
+        <p class="note">{a.note}</p>
+      </div>
+
+      <div class="calc">
+        <div class="inputs">
+          <label>
+            <span>{a.bookA}</span>
+            <input class="mono" name="oa" type="number" inputmode="decimal" min="1.01" step="0.01" value="2.08" />
+          </label>
+          <label>
+            <span>{a.bookB}</span>
+            <input class="mono" name="ob" type="number" inputmode="decimal" min="1.01" step="0.01" value="2.00" />
+          </label>
+          <label>
+            <span>{a.bankroll}</span>
+            <input class="mono" name="bank" type="number" inputmode="decimal" min="1" step="1" value="100" />
+          </label>
+        </div>
+
+        <div class="bar" aria-hidden="true">
+          <div class="seg seg-a" data-seg-a></div>
+          <div class="seg seg-b" data-seg-b></div>
+          <div class="one"><span class="mono">1.0</span></div>
+        </div>
+
+        <dl class="out">
+          <div>
+            <dt>{a.implied}</dt>
+            <dd class="mono" data-out="sum"></dd>
+          </div>
+          <div class="verdict">
+            <dt class="sr-only">Verdict</dt>
+            <dd data-out="verdict"></dd>
+          </div>
+          <div>
+            <dt>{a.stakeA}</dt>
+            <dd class="mono" data-out="sa"></dd>
+          </div>
+          <div>
+            <dt>{a.stakeB}</dt>
+            <dd class="mono" data-out="sb"></dd>
+          </div>
+          <div>
+            <dt>{a.locked}</dt>
+            <dd class="mono" data-out="profit"></dd>
+          </div>
+          <div>
+            <dt>{a.roi}</dt>
+            <dd class="mono" data-out="roi"></dd>
+          </div>
+        </dl>
+      </div>
+    </div>
+
+    <p class="soon">{t.soon}</p>
+  </div>
+</section>
+
+<script>
+  document.querySelectorAll<HTMLElement>('[data-arb]').forEach((root) => {
+    const num = (name: string) => parseFloat(root.querySelector<HTMLInputElement>(`[name=${name}]`)!.value);
+    const out = (key: string) => root.querySelector<HTMLElement>(`[data-out=${key}]`)!;
+    const money = new Intl.NumberFormat(root.dataset.lang, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    const pct = new Intl.NumberFormat(root.dataset.lang, { style: 'percent', minimumFractionDigits: 2, signDisplay: 'always' });
+
+    function update() {
+      const oa = num('oa');
+      const ob = num('ob');
+      const bank = num('bank');
+      const valid = oa > 1 && ob > 1 && bank > 0;
+      root.classList.toggle('invalid', !valid);
+      if (!valid) return;
+
+      // same math as surebets/arbitrage.py
+      const s = 1 / oa + 1 / ob;
+      const sa = (bank * (1 / oa)) / s;
+      const sb = (bank * (1 / ob)) / s;
+      const profit = bank / s - bank;
+      const arb = s < 1;
+
+      out('sum').textContent = s.toFixed(4);
+      out('verdict').textContent = arb ? root.dataset.yes! : root.dataset.no!;
+      out('sa').textContent = money.format(sa);
+      out('sb').textContent = money.format(sb);
+      out('profit').textContent = (profit >= 0 ? '+' : '') + money.format(profit);
+      out('roi').textContent = pct.format(1 / s - 1);
+      root.classList.toggle('is-arb', arb);
+
+      // bar: segments scaled so 1.0 sits at 80% of the width
+      const scale = 80;
+      root.querySelector<HTMLElement>('[data-seg-a]')!.style.width = `${(1 / oa) * scale}%`;
+      root.querySelector<HTMLElement>('[data-seg-b]')!.style.width = `${(1 / ob) * scale}%`;
+    }
+
+    root.addEventListener('input', update);
+    update();
+  });
+</script>
+
+<style>
+  .demo {
+    display: grid;
+    grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+    gap: clamp(1.5rem, 4vw, 3rem);
+    padding: clamp(1.4rem, 3.5vw, 2.5rem);
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 14px;
+  }
+
+  h3 {
+    font-size: 1.3rem;
+    margin: 0 0 0.75rem;
+  }
+
+  .explain p {
+    color: var(--muted);
+    font-size: 0.96rem;
+    margin: 0 0 1rem;
+  }
+
+  .formula {
+    color: var(--text) !important;
+    background: var(--surface-2);
+    border-left: 2px solid var(--accent);
+    padding: 0.7rem 0.9rem;
+    font-size: 0.86rem !important;
+    overflow-x: auto;
+    white-space: nowrap;
+  }
+
+  .note {
+    font-size: 0.82rem !important;
+    color: var(--faint) !important;
+  }
+
+  .inputs {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0.9rem;
+  }
+
+  label span {
+    display: block;
+    font-size: 0.78rem;
+    color: var(--muted);
+    margin-bottom: 0.35rem;
+  }
+
+  input {
+    width: 100%;
+    font-size: 1.1rem;
+    color: var(--text);
+    background: var(--bg);
+    border: 1px solid var(--line-strong);
+    border-radius: 8px;
+    padding: 0.55rem 0.7rem;
+  }
+
+  input:focus {
+    border-color: var(--accent);
+    outline: none;
+  }
+
+  .bar {
+    position: relative;
+    display: flex;
+    height: 2.1rem;
+    margin: 1.6rem 0 1.4rem;
+    background: var(--bg);
+    border-radius: 6px;
+  }
+
+  .seg {
+    height: 100%;
+    transition: width 0.25s ease;
+  }
+
+  .seg-a {
+    background: var(--path);
+    border-radius: 6px 0 0 6px;
+  }
+
+  .seg-b {
+    background: #4f7f99;
+  }
+
+  .one {
+    position: absolute;
+    left: 80%;
+    top: -0.45rem;
+    bottom: -0.45rem;
+    border-left: 2px solid var(--text);
+  }
+
+  .one span {
+    position: absolute;
+    top: -1.3rem;
+    left: -0.9rem;
+    font-size: 0.72rem;
+    color: var(--muted);
+  }
+
+  .out {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.9rem 1.5rem;
+    margin: 0;
+  }
+
+  .out div {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 0.5rem;
+    border-bottom: 1px solid var(--line);
+    padding-bottom: 0.45rem;
+  }
+
+  .out dt {
+    font-size: 0.84rem;
+    color: var(--muted);
+  }
+
+  .out dd {
+    margin: 0;
+    font-size: 1rem;
+  }
+
+  .verdict dd {
+    font-weight: 600;
+    color: var(--bad);
+  }
+
+  .is-arb .verdict dd,
+  .is-arb [data-out='profit'],
+  .is-arb [data-out='roi'] {
+    color: var(--good);
+  }
+
+  .invalid .out,
+  .invalid .bar {
+    opacity: 0.35;
+  }
+
+  .soon {
+    color: var(--faint);
+    font-size: 0.9rem;
+    margin: 1.5rem 0 0;
+    max-width: 70ch;
+  }
+
+  @media (max-width: 860px) {
+    .demo {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
+
+  @media (max-width: 520px) {
+    .inputs,
+    .out {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
+</style>

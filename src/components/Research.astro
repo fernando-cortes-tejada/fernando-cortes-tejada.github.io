@@ -1,0 +1,140 @@
+---
+import { content, type Lang } from '../i18n/content';
+
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+const t = content[lang].research;
+const isExternal = (href: string) => href.startsWith('http');
+---
+
+<section id="research" class="section">
+  <div class="wrap">
+    <p class="kicker">{t.kicker}</p>
+    <h2 class="section-title">{t.title}</h2>
+
+    <ol class="pubs">
+      {
+        t.items.map((p, i) => (
+          <li class:list={['pub', { featured: i === 0 }]}>
+            <p class="kind mono">
+              {p.kind}
+              {p.badge && <span class="badge">{p.badge}</span>}
+            </p>
+            <h3>{p.title}</h3>
+            <p class="authors">
+              {p.authors} · <em>{p.venue}</em>
+            </p>
+            <p class="summary">{p.summary}</p>
+            <p class="links">
+              {p.links.map((l) => (
+                <a href={l.href} {...(isExternal(l.href) ? { target: '_blank', rel: 'noopener' } : {})}>
+                  {l.label} ↗
+                </a>
+              ))}
+            </p>
+          </li>
+        ))
+      }
+    </ol>
+  </div>
+</section>
+
+<style>
+  .pubs {
+    list-style: none;
+    margin: 2.5rem 0 0;
+    padding: 0;
+    display: grid;
+    gap: 0;
+  }
+
+  .pub {
+    padding: 2rem 0;
+    border-top: 1px solid var(--line);
+    display: grid;
+    grid-template-columns: 14rem minmax(0, 1fr);
+    column-gap: 2rem;
+  }
+
+  .pub > :not(.kind) {
+    grid-column: 2;
+  }
+
+  .kind {
+    grid-row: 1 / span 5;
+    font-size: 0.78rem;
+    color: var(--faint);
+    margin: 0.35rem 0 0;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.6rem;
+  }
+
+  .badge {
+    color: var(--accent-ink);
+    background: var(--accent);
+    border-radius: 999px;
+    padding: 0.15rem 0.6rem;
+    font-weight: 600;
+  }
+
+  h3 {
+    font-family: var(--font-display);
+    font-weight: 400;
+    font-size: clamp(1.45rem, 2.6vw, 1.9rem);
+    line-height: 1.15;
+    margin: 0 0 0.6rem;
+  }
+
+  .featured h3 {
+    font-size: clamp(1.7rem, 3.2vw, 2.35rem);
+  }
+
+  .authors {
+    font-size: 0.88rem;
+    color: var(--faint);
+    margin: 0 0 0.8rem;
+  }
+
+  .authors em {
+    color: var(--muted);
+  }
+
+  .summary {
+    color: var(--muted);
+    margin: 0 0 1rem;
+    max-width: 68ch;
+  }
+
+  .links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.25rem;
+    margin: 0;
+  }
+
+  .links a {
+    font-family: var(--font-mono);
+    font-size: 0.84rem;
+    color: var(--accent);
+    text-decoration: none;
+  }
+
+  @media (max-width: 760px) {
+    .pub {
+      grid-template-columns: minmax(0, 1fr);
+    }
+    .pub > :not(.kind) {
+      grid-column: 1;
+    }
+    .kind {
+      grid-row: auto;
+      flex-direction: row;
+      align-items: center;
+      margin-bottom: 0.8rem;
+    }
+  }
+</style>

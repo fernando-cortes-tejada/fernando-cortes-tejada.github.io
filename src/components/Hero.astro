@@ -1,0 +1,309 @@
+---
+import { content, links, type Lang } from '../i18n/content';
+
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+const t = content[lang].hero;
+const labels = { simulating: t.viz.simulating, converged: t.viz.converged, pathLabel: t.viz.pathLabel };
+---
+
+<section class="hero">
+  <div class="hero-grid wrap">
+    <div class="copy">
+      <p class="location mono">{t.location}</p>
+      <h1>
+        <span>Fernando</span>
+        <span>Cortés Tejada</span>
+      </h1>
+      <p class="role">{t.role}</p>
+      <p class="pitch">{t.pitch}</p>
+      <div class="actions">
+        <a class="btn btn-primary" href={links.cv} download>
+          <svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M11 3h2v10.17l3.59-3.58L18 11l-6 6-6-6 1.41-1.41L11 13.17zM5 19h14v2H5z"/></svg>
+          {t.cv} <span class="mono pdf">PDF</span>
+        </a>
+        <a class="btn" href={links.linkedin} rel="me noopener" target="_blank">LinkedIn</a>
+        <a class="btn" href={links.scholar} rel="noopener" target="_blank">Scholar</a>
+        <a class="btn" href={links.github} rel="me noopener" target="_blank">GitHub</a>
+      </div>
+      <dl class="stats">
+        {
+          t.stats.map((s) => (
+            <div>
+              <dt class="metric-value">{s.value}</dt>
+              <dd class="metric-label">{s.label}</dd>
+            </div>
+          ))
+        }
+      </dl>
+    </div>
+
+    <figure class="portrait" data-mode="paths" data-labels={JSON.stringify(labels)}>
+      <div class="stage">
+        <img class="photo" src="/portrait/cutout.webp" alt={t.viz.alt} width="600" height="900" fetchpriority="high" />
+        <canvas class="trails" aria-hidden="true"></canvas>
+        <canvas class="dots" aria-hidden="true"></canvas>
+        <canvas class="highlight" aria-hidden="true"></canvas>
+        <p class="tip mono" data-tip hidden></p>
+      </div>
+      <div class="controls">
+        <div class="toggle" role="group">
+          <button type="button" data-mode="paths" aria-pressed="true">{t.viz.paths}</button>
+          <button type="button" data-mode="photo" aria-pressed="false">{t.viz.photo}</button>
+        </div>
+        <button type="button" class="link-btn" data-resimulate>{t.viz.resimulate} ↻</button>
+        <span class="status mono" data-status aria-live="polite"></span>
+      </div>
+      <figcaption>{t.viz.caption}</figcaption>
+    </figure>
+  </div>
+</section>
+
+<script>
+  import { mountPathPortrait } from '../scripts/pathPortrait';
+  const root = document.querySelector<HTMLElement>('.portrait');
+  if (root) mountPathPortrait(root, JSON.parse(root.dataset.labels!));
+</script>
+
+<style>
+  .hero {
+    position: relative;
+    overflow: hidden;
+    background:
+      radial-gradient(60rem 40rem at 85% 30%, rgba(124, 184, 214, 0.07), transparent 60%),
+      linear-gradient(var(--bg), var(--bg));
+  }
+
+  /* faint graph-paper grid, like a plot's background */
+  .hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(var(--line) 1px, transparent 1px),
+      linear-gradient(90deg, var(--line) 1px, transparent 1px);
+    background-size: 56px 56px;
+    mask-image: radial-gradient(ellipse at 70% 40%, black 10%, transparent 70%);
+    opacity: 0.45;
+    pointer-events: none;
+  }
+
+  .hero-grid {
+    position: relative;
+    display: grid;
+    grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
+    gap: clamp(2rem, 5vw, 4rem);
+    align-items: center;
+    padding-block: clamp(2rem, 5vw, 3.5rem) clamp(4rem, 8vw, 6rem);
+  }
+
+  .location {
+    color: var(--muted);
+    font-size: 0.82rem;
+    letter-spacing: 0.06em;
+    margin: 0 0 1.2rem;
+  }
+
+  h1 {
+    font-family: var(--font-display);
+    font-weight: 400;
+    font-size: clamp(3.6rem, 9vw, 7.4rem);
+    line-height: 0.9;
+    letter-spacing: -0.02em;
+    margin: 0;
+  }
+
+  h1 span {
+    display: block;
+  }
+
+  h1 span + span {
+    font-style: italic;
+    color: var(--accent);
+  }
+
+  .role {
+    font-size: clamp(1.15rem, 2vw, 1.4rem);
+    font-weight: 500;
+    margin: 1.6rem 0 0.8rem;
+  }
+
+  .pitch {
+    color: var(--muted);
+    max-width: 52ch;
+    margin: 0 0 2rem;
+  }
+
+  .actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+  }
+
+  .pdf {
+    font-size: 0.72rem;
+    opacity: 0.65;
+  }
+
+  .stats {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 1.25rem;
+    margin: 3rem 0 0;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--line);
+  }
+
+  .stats div {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+  }
+
+  .stats dd {
+    margin: 0;
+  }
+
+  .stats .metric-value {
+    font-size: 1.5rem;
+    color: var(--accent);
+  }
+
+  /* portrait */
+  .portrait {
+    margin: 0;
+  }
+
+  .stage {
+    position: relative;
+    aspect-ratio: 5 / 6;
+    width: 100%;
+    max-width: 30rem;
+    margin-inline: auto;
+  }
+
+  .stage > img,
+  .stage > canvas {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    transition: opacity 0.6s ease;
+  }
+
+  .photo {
+    object-fit: cover;
+    object-position: top;
+    opacity: 0;
+  }
+
+  .trails {
+    opacity: 1;
+    /* feather the edges so bridges that wander off-canvas fade instead of clipping */
+    mask-image: radial-gradient(ellipse 75% 70% at 50% 50%, black 45%, transparent 100%);
+  }
+
+  .portrait:global(.is-done) .trails {
+    opacity: 0.22;
+    transition-duration: 1.6s;
+  }
+
+  .portrait[data-mode='photo'] .photo {
+    opacity: 1;
+  }
+
+  .portrait[data-mode='photo'] canvas {
+    opacity: 0 !important;
+  }
+
+  .dots {
+    cursor: crosshair;
+  }
+
+  .tip {
+    position: absolute;
+    margin: 0;
+    padding: 0.3rem 0.55rem;
+    font-size: 0.72rem;
+    background: rgba(11, 14, 19, 0.92);
+    border: 1px solid var(--accent);
+    color: var(--text);
+    pointer-events: none;
+    white-space: nowrap;
+  }
+
+  .controls {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.75rem 1rem;
+    max-width: 30rem;
+    margin: 1.2rem auto 0;
+  }
+
+  .toggle {
+    display: inline-flex;
+    border: 1px solid var(--line-strong);
+    border-radius: 999px;
+    padding: 2px;
+  }
+
+  .toggle button,
+  .link-btn {
+    font: inherit;
+    font-size: 0.85rem;
+    color: var(--muted);
+    background: none;
+    border: 0;
+    cursor: pointer;
+  }
+
+  .toggle button {
+    padding: 0.35rem 0.85rem;
+    border-radius: 999px;
+  }
+
+  .toggle button[aria-pressed='true'] {
+    background: var(--text);
+    color: var(--bg);
+  }
+
+  .link-btn {
+    padding: 0.35rem 0;
+    text-decoration: underline;
+    text-decoration-color: var(--line-strong);
+    text-underline-offset: 0.25em;
+  }
+
+  .link-btn:hover {
+    color: var(--accent);
+  }
+
+  .status {
+    font-size: 0.75rem;
+    color: var(--faint);
+    margin-left: auto;
+  }
+
+  figcaption {
+    max-width: 30rem;
+    margin: 0.9rem auto 0;
+    font-size: 0.82rem;
+    line-height: 1.5;
+    color: var(--faint);
+  }
+
+  @media (max-width: 960px) {
+    .hero-grid {
+      grid-template-columns: minmax(0, 1fr);
+    }
+    .stage {
+      max-width: 22rem;
+    }
+    .stats {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+</style>

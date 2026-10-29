@@ -1,0 +1,78 @@
+---
+import '@fontsource/instrument-serif/400.css';
+import '@fontsource/instrument-serif/400-italic.css';
+import '@fontsource-variable/inter';
+import '@fontsource-variable/jetbrains-mono';
+import '../styles/global.css';
+import { content, links, type Lang } from '../i18n/content';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const t = content[lang];
+const other: Lang = lang === 'en' ? 'es' : 'en';
+const site = Astro.site;
+const url = (l: Lang) => (site ? new URL(l === 'en' ? '/' : '/es/', site).href : undefined);
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@graph': [
+    {
+      '@type': 'Person',
+      '@id': '#fernando',
+      name: 'Fernando Cortés Tejada',
+      alternateName: 'Fernando Javier Cortés Tejada',
+      jobTitle: t.hero.role,
+      email: `mailto:${links.email}`,
+      alumniOf: [
+        { '@type': 'CollegeOrUniversity', name: 'Harvard Business School' },
+        { '@type': 'CollegeOrUniversity', name: 'Pontificia Universidad Católica del Perú' },
+      ],
+      sameAs: [links.linkedin, links.github, links.scholar],
+      knowsAbout: ['Credit risk', 'IFRS 9', 'Expected credit loss', 'Bayesian statistics', 'Machine learning', 'Fraud detection', 'Monte Carlo simulation', 'Quantitative finance'],
+      knowsLanguage: ['en', 'es'],
+    },
+    {
+      '@type': 'ScholarlyArticle',
+      headline: 'Super-App Behavioral Patterns in Credit Risk Models: Financial, Statistical and Regulatory Implications',
+      author: [{ '@id': '#fernando' }],
+      datePublished: '2021-05-01',
+      isPartOf: { '@type': 'Periodical', name: 'Expert Systems with Applications' },
+      sameAs: links.paperDoi,
+    },
+  ],
+};
+---
+
+<!doctype html>
+<html lang={lang}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{t.meta.title}</title>
+    <meta name="description" content={t.meta.description} />
+    <meta name="author" content="Fernando Cortés Tejada" />
+    <meta name="theme-color" content="#0b0e13" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    {url(lang) && <link rel="canonical" href={url(lang)} />}
+    {url(lang) && <link rel="alternate" hreflang={lang} href={url(lang)} />}
+    {url(other) && <link rel="alternate" hreflang={other} href={url(other)} />}
+    {url('en') && <link rel="alternate" hreflang="x-default" href={url('en')} />}
+    <meta property="og:type" content="profile" />
+    <meta property="og:title" content={t.meta.title} />
+    <meta property="og:description" content={t.meta.description} />
+    <meta property="og:locale" content={lang === 'en' ? 'en_US' : 'es_PE'} />
+    {site && <meta property="og:image" content={new URL('/og.jpg', site).href} />}
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="me" href={links.linkedin} />
+    <link rel="me" href={links.github} />
+    <link rel="preload" href="/portrait/cutout.webp" as="image" type="image/webp" />
+    <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+  </head>
+  <body>
+    <a href="#main" class="sr-only skip">Skip to content</a>
+    <slot />
+  </body>
+</html>

@@ -1,0 +1,28 @@
+---
+import Base from '../layouts/Base.astro';
+import Header from './Header.astro';
+import Hero from './Hero.astro';
+import Work from './Work.astro';
+import Research from './Research.astro';
+import Lab from './Lab.astro';
+import Path from './Path.astro';
+import Contact from './Contact.astro';
+import type { Lang } from '../i18n/content';
+
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+---
+
+<Base lang={lang}>
+  <Header lang={lang} />
+  <main id="main">
+    <Hero lang={lang} />
+    <Work lang={lang} />
+    <Research lang={lang} />
+    <Lab lang={lang} />
+    <Path lang={lang} />
+    <Contact lang={lang} />
+  </main>
+</Base>

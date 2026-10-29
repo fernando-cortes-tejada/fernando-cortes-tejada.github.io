@@ -1,0 +1,139 @@
+---
+import { content, type Lang } from '../i18n/content';
+
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+const t = content[lang].work;
+---
+
+<section id="work" class="section">
+  <div class="wrap">
+    <p class="kicker">{t.kicker}</p>
+    <h2 class="section-title">{t.title}</h2>
+    <p class="lede">{t.intro}</p>
+
+    <div class="grid">
+      {
+        t.projects.map((p) => (
+          <article class="card">
+            <header>
+              <p class="org mono">
+                {p.org} <span>· {p.years}</span>
+              </p>
+              <h3>{p.title}</h3>
+            </header>
+            <p class="summary">{p.summary}</p>
+            <dl class="metrics">
+              {p.metrics.map((m) => (
+                <div>
+                  <dt class="metric-value">{m.value}</dt>
+                  <dd class="metric-label">{m.label}</dd>
+                </div>
+              ))}
+            </dl>
+            <footer>
+              <ul class="chips">
+                {p.methods.map((m) => <li>{m}</li>)}
+              </ul>
+              {p.links?.map((l) => (
+                <a class="more" href={l.href} target="_blank" rel="noopener">
+                  {l.label} →
+                </a>
+              ))}
+            </footer>
+          </article>
+        ))
+      }
+    </div>
+  </div>
+</section>
+
+<style>
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1.25rem;
+  }
+
+  .card {
+    display: flex;
+    flex-direction: column;
+    gap: 1.1rem;
+    padding: clamp(1.4rem, 3vw, 2rem);
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    transition: border-color 0.2s;
+  }
+
+  .card:hover {
+    border-color: var(--line-strong);
+  }
+
+  .org {
+    font-size: 0.78rem;
+    color: var(--accent);
+    margin: 0 0 0.5rem;
+  }
+
+  .org span {
+    color: var(--faint);
+  }
+
+  h3 {
+    font-size: 1.22rem;
+    font-weight: 600;
+    line-height: 1.3;
+    letter-spacing: -0.01em;
+    margin: 0;
+  }
+
+  .summary {
+    color: var(--muted);
+    font-size: 0.96rem;
+    margin: 0;
+  }
+
+  .metrics {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem 1.75rem;
+    margin: auto 0 0;
+    padding-top: 1.1rem;
+    border-top: 1px dashed var(--line-strong);
+  }
+
+  .metrics div {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+    max-width: 11rem;
+  }
+
+  .metrics dd {
+    margin: 0;
+  }
+
+  footer {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+  }
+
+  .more {
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: var(--accent);
+    text-decoration: none;
+  }
+
+  @media (max-width: 860px) {
+    .grid {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
+</style>

@@ -1,0 +1,103 @@
+---
+import { content, links, type Lang } from '../i18n/content';
+
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+const c = content[lang];
+const t = c.contact;
+const year = new Date().getFullYear();
+---
+
+<section id="contact" class="section contact">
+  <div class="wrap">
+    <p class="kicker">{t.kicker}</p>
+    <h2 class="section-title">{t.title}</h2>
+    <p class="lede">{t.body}</p>
+    <div class="email" data-copy={links.email} data-copied={t.copied}>
+      <a class="addr" href={`mailto:${links.email}`}>{links.email}</a>
+      <button type="button" class="btn">{t.copy}</button>
+    </div>
+  </div>
+</section>
+
+<footer class="site-footer">
+  <div class="wrap row">
+    <p>© {year} Fernando Cortés Tejada</p>
+    <nav aria-label="Footer">
+      <a href={links.cv} download>CV</a>
+      <a href={links.linkedin} target="_blank" rel="me noopener">LinkedIn</a>
+      <a href={links.github} target="_blank" rel="me noopener">GitHub</a>
+      <a href={links.scholar} target="_blank" rel="noopener">Scholar</a>
+    </nav>
+    <p class="built">{c.footer.built}</p>
+  </div>
+</footer>
+
+<script>
+  document.querySelectorAll<HTMLElement>('[data-copy]').forEach((el) => {
+    const btn = el.querySelector('button')!;
+    const label = btn.textContent;
+    btn.addEventListener('click', async () => {
+      try {
+        await navigator.clipboard.writeText(el.dataset.copy!);
+        btn.textContent = el.dataset.copied!;
+        setTimeout(() => (btn.textContent = label), 1800);
+      } catch {
+        window.location.href = `mailto:${el.dataset.copy}`;
+      }
+    });
+  });
+</script>
+
+<style>
+  .email {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 1rem 1.5rem;
+  }
+
+  .addr {
+    font-family: var(--font-display);
+    font-size: clamp(1.8rem, 5vw, 3.2rem);
+    text-decoration: none;
+    overflow-wrap: anywhere;
+  }
+
+  .site-footer {
+    border-top: 1px solid var(--line);
+    padding-block: 2rem;
+    font-size: 0.85rem;
+    color: var(--faint);
+  }
+
+  .row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem 2rem;
+  }
+
+  .row p {
+    margin: 0;
+  }
+
+  nav {
+    display: flex;
+    gap: 1.25rem;
+  }
+
+  nav a {
+    text-decoration: none;
+    color: var(--muted);
+  }
+
+  .built {
+    width: 100%;
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+  }
+</style>

@@ -1,0 +1,183 @@
+---
+import { content, type Lang } from '../i18n/content';
+
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+const c = content[lang];
+const t = c.path;
+const teach = c.teaching;
+const beyond = c.beyond;
+---
+
+<section id="path" class="section">
+  <div class="wrap">
+    <p class="kicker">{t.kicker}</p>
+    <h2 class="section-title">{t.title}</h2>
+
+    <ol class="timeline">
+      {
+        t.items.map((it) => (
+          <li>
+            <span class="years mono">{it.years}</span>
+            <div>
+              <h3>
+                {it.role}
+              </h3>
+              <p class="org">
+                {it.org} <span>· {it.place}</span>
+              </p>
+              {it.note && <p class="note">{it.note}</p>}
+            </div>
+          </li>
+        ))
+      }
+    </ol>
+
+    <div class="aside-grid">
+      <div class="panel">
+        <p class="kicker">{teach.kicker}</p>
+        <h3>{teach.title}</h3>
+        <p class="muted">{teach.body}</p>
+        <dl class="metrics">
+          {
+            teach.metrics.map((m) => (
+              <div>
+                <dt class="metric-value">{m.value}</dt>
+                <dd class="metric-label">{m.label}</dd>
+              </div>
+            ))
+          }
+        </dl>
+      </div>
+
+      <div class="panel">
+        <p class="kicker">{t.stack}</p>
+        <ul class="chips">{t.stackList.map((s) => <li>{s}</li>)}</ul>
+        <p class="kicker spaced">{t.certs}</p>
+        <ul class="plain">{t.certList.map((s) => <li>{s}</li>)}</ul>
+      </div>
+
+      <div class="panel">
+        <p class="kicker">{beyond.kicker}</p>
+        <h3>{beyond.title}</h3>
+        <p class="muted">{beyond.body}</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .timeline {
+    list-style: none;
+    margin: 2.5rem 0 0;
+    padding: 0;
+  }
+
+  .timeline li {
+    display: grid;
+    grid-template-columns: 8.5rem minmax(0, 1fr);
+    gap: 1.5rem;
+    padding: 1.3rem 0;
+    border-top: 1px solid var(--line);
+  }
+
+  .years {
+    font-size: 0.85rem;
+    color: var(--accent);
+    padding-top: 0.15rem;
+  }
+
+  h3 {
+    font-size: 1.08rem;
+    font-weight: 600;
+    margin: 0 0 0.2rem;
+  }
+
+  .org {
+    margin: 0;
+    color: var(--text);
+    font-size: 0.95rem;
+  }
+
+  .org span {
+    color: var(--faint);
+  }
+
+  .note {
+    margin: 0.35rem 0 0;
+    color: var(--muted);
+    font-size: 0.92rem;
+  }
+
+  .aside-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1.25rem;
+    margin-top: 3.5rem;
+  }
+
+  .panel {
+    padding: 1.6rem;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 14px;
+  }
+
+  .panel h3 {
+    font-family: var(--font-display);
+    font-weight: 400;
+    font-size: 1.6rem;
+    line-height: 1.1;
+    margin-bottom: 0.7rem;
+  }
+
+  .muted {
+    color: var(--muted);
+    font-size: 0.94rem;
+    margin: 0;
+  }
+
+  .spaced {
+    margin-top: 1.6rem;
+  }
+
+  .plain {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    color: var(--muted);
+    font-size: 0.94rem;
+  }
+
+  .metrics {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem 1.5rem;
+    margin: 1.2rem 0 0;
+  }
+
+  .metrics div {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+  }
+
+  .metrics dd {
+    margin: 0;
+  }
+
+  @media (max-width: 900px) {
+    .aside-grid {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
+
+  @media (max-width: 560px) {
+    .timeline li {
+      grid-template-columns: minmax(0, 1fr);
+      gap: 0.3rem;
+    }
+  }
+</style>
