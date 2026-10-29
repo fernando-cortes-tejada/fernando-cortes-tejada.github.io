@@ -12,7 +12,10 @@ const labels = { simulating: t.viz.simulating, converged: t.viz.converged, pathL
 <section class="hero">
   <div class="hero-grid wrap">
     <div class="copy">
-      <p class="location mono">{t.location}</p>
+      <ul class="creds mono">
+        {t.credentials.map((c) => <li>{c}</li>)}
+        <li class="where">{t.location}</li>
+      </ul>
       <h1>
         <span>Fernando</span>
         <span>Cortés Tejada</span>
@@ -99,11 +102,39 @@ const labels = { simulating: t.viz.simulating, converged: t.viz.converged, pathL
     padding-block: clamp(2rem, 5vw, 3.5rem) clamp(4rem, 8vw, 6rem);
   }
 
-  .location {
-    color: var(--muted);
-    font-size: 0.82rem;
-    letter-spacing: 0.06em;
-    margin: 0 0 1.2rem;
+  .creds {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem 1.3rem;
+    list-style: none;
+    margin: 0 0 1.4rem;
+    padding: 0;
+    font-size: 0.8rem;
+    letter-spacing: 0.02em;
+    color: var(--text);
+  }
+
+  /* each item carries its own marker, so wrapping never leaves a dangling separator */
+  .creds li::before {
+    content: '';
+    display: inline-block;
+    width: 0.35rem;
+    height: 0.35rem;
+    margin-right: 0.5rem;
+    vertical-align: 0.12em;
+    background: var(--accent);
+  }
+
+  .creds li:first-child {
+    color: var(--accent);
+  }
+
+  .creds .where::before {
+    background: var(--faint);
+  }
+
+  .creds .where {
+    color: var(--faint);
   }
 
   h1 {

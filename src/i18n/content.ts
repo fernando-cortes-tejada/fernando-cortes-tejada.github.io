@@ -64,11 +64,12 @@ export const content = {
     meta: {
       title: 'Fernando Cortés Tejada | Credit Risk, Quant & ML',
       description:
-        'Statistician and physicist working on credit risk, quantitative modeling and machine learning in production. MS/MBA candidate at Harvard; former fintech CTO.',
+        'Harvard MS/MBA candidate with an MS in Statistics (summa cum laude) and a BS in Physics. Credit risk, quantitative modeling and machine learning in production; former fintech CTO.',
     },
     nav: { work: 'Work', research: 'Research', lab: 'Lab', path: 'Path', contact: 'Contact', switchLabel: 'ES', switchAria: 'Leer en español' },
     hero: {
       location: 'Boston, MA',
+      credentials: ['Harvard MS/MBA candidate, 2028', 'MS Statistics, summa cum laude', 'BS Physics'],
       role: 'Credit risk, quantitative modeling & ML in production',
       pitch:
         'I put prices on risk with statistics: probability of default, expected credit loss, home values, mispriced odds. Then I take the models to production and build the teams that run them.',
@@ -288,11 +289,12 @@ export const content = {
     meta: {
       title: 'Fernando Cortés Tejada | Riesgo de crédito, quant y ML',
       description:
-        'Estadístico y físico que trabaja en riesgo de crédito, modelación cuantitativa y machine learning en producción. Candidato MS/MBA en Harvard; ex-CTO de una fintech.',
+        'Candidato MS/MBA en Harvard, con maestría en Estadística (summa cum laude) y bachiller en Física. Riesgo de crédito, modelación cuantitativa y machine learning en producción; ex-CTO de una fintech.',
     },
     nav: { work: 'Trabajo', research: 'Investigación', lab: 'Lab', path: 'Trayectoria', contact: 'Contacto', switchLabel: 'EN', switchAria: 'Read in English' },
     hero: {
       location: 'Boston, MA',
+      credentials: ['Candidato MS/MBA en Harvard, 2028', 'Maestría en Estadística, summa cum laude', 'Bachiller en Física'],
       role: 'Riesgo de crédito, modelación cuantitativa y ML en producción',
       pitch:
         'Le pongo precio al riesgo con estadística: probabilidad de default, pérdida crediticia esperada, valor de viviendas, cuotas mal valoradas. Luego llevo los modelos a producción y armo los equipos que los operan.',
