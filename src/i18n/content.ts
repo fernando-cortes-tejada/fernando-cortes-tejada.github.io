@@ -30,6 +30,8 @@ export interface Photo {
   alt: string;
   caption: string;
   tall?: boolean;
+  /** CSS object-position, for portrait photos shown in landscape tiles */
+  focus?: string;
 }
 
 export interface PathItem {
@@ -267,9 +269,9 @@ export const content = {
       photos: [
         { src: '/beyond/climbing.webp', alt: 'Fernando lead climbing a granite slab', caption: 'On the wall', tall: true },
         { src: '/beyond/huayhuash-ridge.webp', alt: 'Two hikers sitting on a rocky ridge above a green valley', caption: 'Cordillera Huayhuash, Peru' },
-        { src: '/beyond/huayhuash-pass.webp', alt: 'Two hikers in rain gear at a snowy mountain pass sign', caption: 'A high pass on the Huayhuash circuit' },
+        { src: '/beyond/huayhuash-pass.webp', alt: 'Two hikers in rain gear at a snowy mountain pass sign', caption: 'A high pass on the Huayhuash circuit', focus: 'center 62%' },
         { src: '/beyond/torres-del-paine.webp', alt: 'Two hikers in front of the snowy peaks of Torres del Paine', caption: 'Torres del Paine, Patagonia' },
-        { src: '/beyond/canchacalla.webp', alt: 'Fernando carrying a rope and climbing pack in a dry valley', caption: 'Walking in to the crag, Canchacalla, Lima' },
+        { src: '/beyond/canchacalla.webp', alt: 'Fernando carrying a rope and climbing pack in a dry valley', caption: 'Walking in to the crag, Canchacalla, Lima', focus: 'center 38%' },
       ] satisfies Photo[],
     },
     contact: {
@@ -491,9 +493,9 @@ export const content = {
       photos: [
         { src: '/beyond/climbing.webp', alt: 'Fernando escalando de primero una placa de granito', caption: 'En la pared', tall: true },
         { src: '/beyond/huayhuash-ridge.webp', alt: 'Dos excursionistas sentados en una cresta rocosa sobre un valle verde', caption: 'Cordillera Huayhuash, Perú' },
-        { src: '/beyond/huayhuash-pass.webp', alt: 'Dos excursionistas con ropa de lluvia junto al letrero de un paso nevado', caption: 'Un paso alto del circuito Huayhuash' },
+        { src: '/beyond/huayhuash-pass.webp', alt: 'Dos excursionistas con ropa de lluvia junto al letrero de un paso nevado', caption: 'Un paso alto del circuito Huayhuash', focus: 'center 62%' },
         { src: '/beyond/torres-del-paine.webp', alt: 'Dos excursionistas frente a los picos nevados de Torres del Paine', caption: 'Torres del Paine, Patagonia' },
-        { src: '/beyond/canchacalla.webp', alt: 'Fernando cargando una cuerda y una mochila de escalada en un valle seco', caption: 'Camino a la zona de escalada, Canchacalla, Lima' },
+        { src: '/beyond/canchacalla.webp', alt: 'Fernando cargando una cuerda y una mochila de escalada en un valle seco', caption: 'Camino a la zona de escalada, Canchacalla, Lima', focus: 'center 38%' },
       ] satisfies Photo[],
     },
     contact: {

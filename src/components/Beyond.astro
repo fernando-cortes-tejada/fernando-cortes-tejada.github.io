@@ -22,7 +22,7 @@ const t = content[lang].beyond;
       {
         t.photos.map((p) => (
           <figure class:list={{ tall: p.tall }}>
-            <img src={p.src} alt={p.alt} loading="lazy" decoding="async" />
+            <img src={p.src} alt={p.alt} loading="lazy" decoding="async" style={p.focus ? `object-position: ${p.focus}` : undefined} />
             <figcaption class="mono">{p.caption}</figcaption>
           </figure>
         ))
