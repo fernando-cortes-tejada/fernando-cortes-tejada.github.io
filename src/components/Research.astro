@@ -7,6 +7,18 @@ interface Props {
 const { lang } = Astro.props;
 const t = content[lang].research;
 const isExternal = (href: string) => href.startsWith('http');
+const paperStats =
+  lang === 'en'
+    ? [
+        ['100+', 'citations'],
+        ['80,000', 'users in two countries'],
+        ['Elsevier', 'Expert Systems with Applications'],
+      ]
+    : [
+        ['100+', 'citas'],
+        ['80,000', 'usuarios en dos países'],
+        ['Elsevier', 'Expert Systems with Applications'],
+      ];
 ---
 
 <section id="research" class="section">
@@ -17,23 +29,42 @@ const isExternal = (href: string) => href.startsWith('http');
     <ol class="pubs">
       {
         t.items.map((p, i) => (
-          <li class:list={['pub', { featured: i === 0 }]}>
-            <p class="kind mono">
-              {p.kind}
-              {p.badge && <span class="badge">{p.badge}</span>}
-            </p>
-            <h3>{p.title}</h3>
-            <p class="authors">
-              {p.authors} · <em>{p.venue}</em>
-            </p>
-            <p class="summary">{p.summary}</p>
-            <p class="links">
-              {p.links.map((l) => (
-                <a href={l.href} {...(isExternal(l.href) ? { target: '_blank', rel: 'noopener' } : {})}>
-                  {l.label} ↗
-                </a>
-              ))}
-            </p>
+          <li class="pub">
+            <div class="text">
+              <p class="kind mono">
+                {p.kind}
+                {p.badge && <span class="badge">{p.badge}</span>}
+              </p>
+              <h3>{p.title}</h3>
+              <p class="authors">
+                {p.authors} · <em>{p.venue}</em>
+              </p>
+              <p class="summary">{p.summary}</p>
+              <p class="links">
+                {p.links.map((l) => (
+                  <a href={l.href} {...(isExternal(l.href) ? { target: '_blank', rel: 'noopener' } : {})}>
+                    {l.label} ↗
+                  </a>
+                ))}
+              </p>
+            </div>
+            {p.viz ? (
+              <figure class="fig">
+                <div class="viz-stage" data-research-viz={p.viz} data-labels={JSON.stringify(p.vizLabels)} />
+                {p.vizLabels?.note && <figcaption class="mono">{p.vizLabels.note}</figcaption>}
+              </figure>
+            ) : (
+              i === 0 && (
+                <dl class="stats">
+                  {paperStats.map(([v, l]) => (
+                    <div>
+                      <dt class="mono">{v}</dt>
+                      <dd>{l}</dd>
+                    </div>
+                  ))}
+                </dl>
+              )
+            )}
           </li>
         ))
       }
@@ -41,35 +72,37 @@ const isExternal = (href: string) => href.startsWith('http');
   </div>
 </section>
 
+<script>
+  import { RESEARCH_VIZ } from '../scripts/researchViz';
+  const lang = document.documentElement.lang;
+  document.querySelectorAll<HTMLElement>('[data-research-viz]').forEach((stage) => {
+    RESEARCH_VIZ[stage.dataset.researchViz!](stage, JSON.parse(stage.dataset.labels!), lang);
+  });
+</script>
+
 <style>
   .pubs {
     list-style: none;
     margin: 2.5rem 0 0;
     padding: 0;
-    display: grid;
-    gap: 0;
   }
 
   .pub {
-    padding: 2rem 0;
-    border-top: 1px solid var(--line);
     display: grid;
-    grid-template-columns: 14rem minmax(0, 1fr);
-    column-gap: 2rem;
-  }
-
-  .pub > :not(.kind) {
-    grid-column: 2;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr);
+    gap: clamp(1.5rem, 4vw, 3.5rem);
+    align-items: center;
+    padding: 2.5rem 0;
+    border-top: 1px solid var(--line);
   }
 
   .kind {
-    grid-row: 1 / span 5;
-    font-size: 0.78rem;
+    font-size: 0.76rem;
     color: var(--faint);
-    margin: 0.35rem 0 0;
+    margin: 0 0 0.8rem;
     display: flex;
-    flex-direction: column;
-    align-items: flex-start;
+    flex-wrap: wrap;
+    align-items: center;
     gap: 0.6rem;
   }
 
@@ -84,17 +117,13 @@ const isExternal = (href: string) => href.startsWith('http');
   h3 {
     font-family: var(--font-display);
     font-weight: 400;
-    font-size: clamp(1.45rem, 2.6vw, 1.9rem);
+    font-size: clamp(1.45rem, 2.4vw, 1.85rem);
     line-height: 1.15;
     margin: 0 0 0.6rem;
   }
 
-  .featured h3 {
-    font-size: clamp(1.7rem, 3.2vw, 2.35rem);
-  }
-
   .authors {
-    font-size: 0.88rem;
+    font-size: 0.85rem;
     color: var(--faint);
     margin: 0 0 0.8rem;
   }
@@ -106,7 +135,6 @@ const isExternal = (href: string) => href.startsWith('http');
   .summary {
     color: var(--muted);
     margin: 0 0 1rem;
-    max-width: 68ch;
   }
 
   .links {
@@ -123,18 +151,54 @@ const isExternal = (href: string) => href.startsWith('http');
     text-decoration: none;
   }
 
-  @media (max-width: 760px) {
+  .fig {
+    margin: 0;
+    padding: clamp(1rem, 2.5vw, 1.5rem);
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 14px;
+  }
+
+  .fig figcaption {
+    margin-top: 0.6rem;
+    font-size: 0.7rem;
+    color: var(--faint);
+  }
+
+  .stats {
+    display: grid;
+    gap: 1.4rem;
+    margin: 0;
+    padding-left: clamp(1rem, 3vw, 2.5rem);
+    border-left: 1px solid var(--line);
+  }
+
+  .stats dt {
+    font-size: clamp(2.4rem, 5vw, 3.6rem);
+    line-height: 1;
+    color: var(--accent);
+    letter-spacing: -0.03em;
+  }
+
+  .stats div:not(:first-child) dt {
+    font-size: clamp(1.6rem, 3vw, 2.1rem);
+    color: var(--text);
+  }
+
+  .stats dd {
+    margin: 0.3rem 0 0;
+    color: var(--muted);
+    font-size: 0.9rem;
+  }
+
+  @media (max-width: 900px) {
     .pub {
       grid-template-columns: minmax(0, 1fr);
     }
-    .pub > :not(.kind) {
-      grid-column: 1;
-    }
-    .kind {
-      grid-row: auto;
-      flex-direction: row;
-      align-items: center;
-      margin-bottom: 0.8rem;
+    .stats {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      padding-left: 0;
+      border-left: 0;
     }
   }
 </style>

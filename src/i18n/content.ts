@@ -6,7 +6,10 @@ export interface Metric {
 }
 
 export interface Project {
+  id: string;
   org: string;
+  headline: string;
+  viz: Record<string, string>;
   years: string;
   title: string;
   summary: string;
@@ -16,6 +19,9 @@ export interface Project {
 }
 
 export interface Publication {
+  /** key into RESEARCH_VIZ for an interactive figure */
+  viz?: string;
+  vizLabels?: Record<string, string>;
   kind: string;
   title: string;
   authors: string;
@@ -95,84 +101,98 @@ export const content = {
     work: {
       kicker: 'Selected work',
       title: 'Models that went to production',
-      intro: 'Credit, fraud, valuation and arbitrage: each one shipped and used to make real decisions with real money.',
+      intro: 'Pick a project and play with a small version of it. The models in the visuals are illustrative; the results listed under each one are real.',
+      illustrative: 'Illustrative model, synthetic data',
       projects: [
         {
+          id: 'ifrs9',
           org: 'Interbank',
           years: '2017–2020',
-          title: 'IFRS 9 expected credit loss under stressed macro scenarios',
-          summary:
-            'Provisioning models for credit cards, mortgages and consumer loans: ECL = PD × LGD × EAD (with a credit conversion factor for card limits), 12-month and lifetime, by stage. PD came from Markov transition matrices between delinquency buckets, stressed by shifting the matrices under macroeconomic scenarios. A Monte Carlo simulator produced the full loss distribution, not just its mean.',
-          methods: ['Markov chains', 'Monte Carlo', 'IFRS 9', 'Logistic regression'],
+          title: 'IFRS 9 credit loss under stress',
+          headline: '3M cards',
+          summary: 'Expected credit loss for cards, mortgages and loans: Markov migration between delinquency buckets, stressed under macro scenarios, with a Monte Carlo loss distribution.',
+          methods: ['Markov chains', 'Monte Carlo', 'IFRS 9'],
           metrics: [
             { value: '~3M', label: 'credit cards' },
             { value: 'S/ 60B', label: 'loan book' },
           ],
+          links: [{ label: 'Full stress test in the Lab', href: '#lab' }],
+          viz: { benign: 'Benign', base: 'Base', adverse: 'Adverse', severe: 'Severe', pdTitle: 'Cumulative PD of a current account', pd12: '12-month PD', ecl: 'ECL coverage' },
         },
         {
+          id: 'origination',
           org: 'RappiBank',
           years: '2020–2022',
           title: 'Credit-card origination with super-app data',
-          summary:
-            "RappiBank's first credit-card origination model, adding behavioral data from the Rappi app to credit-bureau data. This work became the peer-reviewed paper below. It ran on a 6TB data platform shared with Rappi and Interbank.",
+          headline: '+5% approvals',
+          summary: 'Adding Rappi app behavior to bureau data separates good and bad applicants better, so the bank approves more people at the same risk. Published in Expert Systems with Applications.',
           methods: ['Gradient boosting', 'TreeSHAP', 'Alternative data'],
           metrics: [
             { value: '+5%', label: 'approvals for underserved customers' },
             { value: '6TB', label: 'data platform' },
           ],
+          viz: { title: 'Approval rate vs bad rate', appetite: 'Risk appetite (bad rate)', xAxis: 'bad rate →', bureau: 'Bureau only', withApp: 'Bureau + app data', approved: 'approved' },
         },
         {
+          id: 'fraud',
           org: 'RappiBank',
           years: '2020–2022',
           title: 'Real-time transaction fraud detection',
-          summary: 'Transaction fraud models in XGBoost and PyTorch, scoring card payments as they happen.',
+          headline: '−8% fraud losses',
+          summary: 'XGBoost and PyTorch models scoring card payments as they happen. Every threshold trades fraud caught against customers wrongly blocked.',
           methods: ['XGBoost', 'PyTorch', 'Real-time inference'],
           metrics: [
-            { value: '100ms', label: 'inference latency (halved)' },
+            { value: '100ms', label: 'latency (halved)' },
             { value: '−8%', label: 'fraud losses' },
             { value: '−25%', label: 'false positives' },
           ],
+          viz: { title: 'Fraud score distributions', threshold: 'Block above score', legit: 'Legitimate', fraud: 'Fraud', lowRisk: '← low risk', highRisk: 'high risk →', caught: 'Fraud caught', fpr: 'Legit blocked', alerts: 'Alerts / 10k txns' },
         },
         {
+          id: 'valuation',
           org: 'Duppla',
           years: '2022–2026',
-          title: 'Home valuation model for a rent-to-own lender',
-          summary:
-            'An ensemble of XGBoost and LightGBM predicts price per m² from location, size, comparable sales, rooms and features, then scales it to a sale price. Together with real-time asset pricing and investor reporting, it supported the portfolio as it grew past $25M.',
-          methods: ['XGBoost', 'LightGBM', 'Ensembles', 'GCP'],
+          title: 'Home valuation for a rent-to-own lender',
+          headline: '~1M homes',
+          summary: 'An XGBoost + LightGBM ensemble predicts price per m² from location, size, comparables and rooms, then scales it to a sale price. It backed real-time asset pricing as the portfolio passed $25M.',
+          methods: ['XGBoost', 'LightGBM', 'Ensembles'],
           metrics: [
             { value: '~1M', label: 'homes in Bogotá' },
             { value: '3 days → live', label: 'investor reporting' },
             { value: '$1M+', label: 'new funding attracted' },
           ],
+          viz: { title: 'Price per m² by model', locality: 'Locality', area: 'Area', rooms: 'Rooms', ensemble: 'Ensemble', estimate: 'estimated price' },
         },
         {
+          id: 'docAi',
           org: 'Duppla',
           years: '2023–2026',
-          title: 'AI document validation for mortgage underwriting',
-          summary:
-            'Built with the legal team: an AI engine that checks property and borrower documents, the bottleneck in every deal. As CTO I also led technical due diligence for both funding rounds and grew engineering from 1 to 7.',
-          methods: ['LLMs', 'Document AI', 'Workflow automation'],
+          title: 'AI document validation for underwriting',
+          headline: '40h → 3h',
+          summary: 'Built with the legal team: an AI engine that checks property and borrower documents, the bottleneck of every deal. As CTO I also led diligence for both rounds and grew engineering from 1 to 7.',
+          methods: ['LLMs', 'Document AI', 'Automation'],
           metrics: [
-            { value: '40h → 3h', label: 'review per deal' },
             { value: '10×', label: 'deal throughput' },
-            { value: '5 → 20', label: 'homes financed per month' },
+            { value: '$14.5M', label: 'raised (seed + Series A)' },
           ],
+          viz: { title: 'Before and after the engine', before: 'Before', after: 'With AI', review: 'Review time per deal', homes: 'Homes financed per month' },
         },
         {
+          id: 'surebets',
           org: 'Side project',
           years: '2023–2024',
           title: 'Real-time sports-betting arbitrage',
-          summary:
-            'Scraped NBA odds from several sportsbooks every five minutes, found prices across books where backing every outcome locks in a profit, and sent the stakes to Telegram. Run with real money, with stakes kept modest so the accounts would not get limited.',
+          headline: '~2% per arb',
+          summary: 'Scraped NBA odds from several sportsbooks, caught the moments when their prices disagreed enough to lock in a profit, and sent the stakes to Telegram. Run with real money.',
           methods: ['Selenium', 'Airflow', 'Python'],
           metrics: [
-            { value: '~2%', label: 'typical edge per arbitrage' },
-            { value: '<30s', label: 'before books corrected the price' },
+            { value: '~2%', label: 'typical edge' },
+            { value: '<30s', label: 'before books corrected' },
           ],
           links: [{ label: 'Code on GitHub', href: links.surebets }],
+          viz: { title: 'Sum of implied probabilities over time', bookA: 'Book A', bookB: 'Book B', over: 'over', under: 'under', zone: 'arbitrage zone', stake: 'stakes', waiting: 'watching for an arbitrage…', pause: 'Pause', play: 'Play' },
         },
-      ] satisfies Project[],
+      ],
     },
     research: {
       kicker: 'Research',
@@ -193,6 +213,8 @@ export const content = {
           ],
         },
         {
+          viz: 'thesis',
+          vizLabels: { title: 'Credit-card utilization paths', raw: 'Raw paths', clustered: 'Clustered', month: 'm', cluster: 'Cluster', defaultRate: 'default rate', note: 'Synthetic paths with the same structure as the thesis data' },
           kind: 'MS thesis · LACSC 2021 talk',
           title: 'Jointly modelling cluster-dependent profiles of fractional and binary variables from a Bayesian point of view',
           authors: authorsBayes,
@@ -205,6 +227,8 @@ export const content = {
           ],
         },
         {
+          viz: 'tobit',
+          vizLabels: { title: 'Beta fit vs the true density', normal: 'Truncated normal', skew: 'Truncated skew-normal', data: '10,000 draws', truth: 'true density', betaFit: 'best beta fit', captionNormal: 'Figure 1a: N(0.85, 0.2²) on (0,1); beta fit α = 4.823, β = 1.409', captionSkew: 'Figure 1b: skew-normal (0.338, 0.2, λ = 6) on (0,1); beta fit α = β = 7.333' },
           kind: 'Working paper',
           title: 'A new normal-like inflated mean regression for bounded responses',
           authors: authorsBayes,
@@ -355,84 +379,98 @@ export const content = {
     work: {
       kicker: 'Trabajo seleccionado',
       title: 'Modelos que llegaron a producción',
-      intro: 'Crédito, fraude, valoración y arbitraje: todos se pusieron en producción y se usaron para tomar decisiones reales con dinero real.',
+      intro: 'Elige un proyecto y juega con una versión pequeña. Los modelos de los gráficos son ilustrativos; los resultados listados debajo de cada uno son reales.',
+      illustrative: 'Modelo ilustrativo, datos sintéticos',
       projects: [
         {
+          id: 'ifrs9',
           org: 'Interbank',
           years: '2017–2020',
-          title: 'Pérdida crediticia esperada IFRS 9 bajo escenarios macro estresados',
-          summary:
-            'Modelos de provisiones para tarjetas de crédito, hipotecas y créditos de consumo: ECL = PD × LGD × EAD (con factor de conversión crediticia para las líneas de tarjeta), a 12 meses y de por vida, por etapa. La PD salía de matrices de transición de Markov entre buckets de morosidad, estresadas desplazando las matrices según escenarios macroeconómicos. Un simulador Monte Carlo daba la distribución completa de pérdidas, no solo su media.',
-          methods: ['Cadenas de Markov', 'Monte Carlo', 'IFRS 9', 'Regresión logística'],
+          title: 'Pérdida crediticia IFRS 9 bajo estrés',
+          headline: '3M tarjetas',
+          summary: 'Pérdida crediticia esperada para tarjetas, hipotecas y créditos: migración de Markov entre buckets de morosidad, estresada con escenarios macro, y una distribución de pérdidas por Monte Carlo.',
+          methods: ['Cadenas de Markov', 'Monte Carlo', 'IFRS 9'],
           metrics: [
             { value: '~3M', label: 'tarjetas de crédito' },
             { value: 'S/ 60 mil M', label: 'cartera de créditos' },
           ],
+          links: [{ label: 'Stress test completo en el Lab', href: '#lab' }],
+          viz: { benign: 'Benigno', base: 'Base', adverse: 'Adverso', severe: 'Severo', pdTitle: 'PD acumulada de una cuenta al día', pd12: 'PD a 12 meses', ecl: 'Cobertura ECL' },
         },
         {
+          id: 'origination',
           org: 'RappiBank',
           years: '2020–2022',
           title: 'Originación de tarjetas con datos de la super-app',
-          summary:
-            'El primer modelo de originación de tarjetas de RappiBank, que sumaba datos de comportamiento de la app de Rappi a los datos del buró de crédito. Este trabajo se convirtió en el artículo arbitrado de abajo. Corría sobre una plataforma de datos de 6TB compartida con Rappi e Interbank.',
+          headline: '+5% aprobaciones',
+          summary: 'Sumar el comportamiento en la app de Rappi a los datos del buró separa mejor a buenos y malos solicitantes, así el banco aprueba a más personas con el mismo riesgo. Publicado en Expert Systems with Applications.',
           methods: ['Gradient boosting', 'TreeSHAP', 'Datos alternativos'],
           metrics: [
             { value: '+5%', label: 'aprobaciones a clientes desatendidos' },
             { value: '6TB', label: 'plataforma de datos' },
           ],
+          viz: { title: 'Tasa de aprobación vs tasa de malos', appetite: 'Apetito de riesgo (tasa de malos)', xAxis: 'tasa de malos →', bureau: 'Solo buró', withApp: 'Buró + datos de la app', approved: 'aprobados' },
         },
         {
+          id: 'fraud',
           org: 'RappiBank',
           years: '2020–2022',
           title: 'Detección de fraude transaccional en tiempo real',
-          summary: 'Modelos de fraude transaccional en XGBoost y PyTorch que califican cada pago con tarjeta en el momento.',
-          methods: ['XGBoost', 'PyTorch', 'Inferencia en tiempo real'],
+          headline: '−8% pérdidas',
+          summary: 'Modelos en XGBoost y PyTorch que califican cada pago con tarjeta en el momento. Cada umbral intercambia fraude detectado por clientes bloqueados por error.',
+          methods: ['XGBoost', 'PyTorch', 'Tiempo real'],
           metrics: [
-            { value: '100ms', label: 'latencia de inferencia (a la mitad)' },
+            { value: '100ms', label: 'latencia (a la mitad)' },
             { value: '−8%', label: 'pérdidas por fraude' },
             { value: '−25%', label: 'falsos positivos' },
           ],
+          viz: { title: 'Distribuciones del score de fraude', threshold: 'Bloquear sobre el score', legit: 'Legítimas', fraud: 'Fraude', lowRisk: '← bajo riesgo', highRisk: 'alto riesgo →', caught: 'Fraude detectado', fpr: 'Legítimas bloqueadas', alerts: 'Alertas / 10 mil txns' },
         },
         {
+          id: 'valuation',
           org: 'Duppla',
           years: '2022–2026',
-          title: 'Modelo de valoración de viviendas para un financiador rent-to-own',
-          summary:
-            'Un ensamble de XGBoost y LightGBM predice el precio por m² a partir de ubicación, área, ventas comparables, habitaciones y características, y luego lo escala al precio de venta. Junto con la valoración de activos y los reportes a inversionistas en tiempo real, sostuvo el crecimiento del portafolio por encima de US$25M.',
-          methods: ['XGBoost', 'LightGBM', 'Ensambles', 'GCP'],
+          title: 'Valoración de viviendas para un financiador rent-to-own',
+          headline: '~1M viviendas',
+          summary: 'Un ensamble de XGBoost y LightGBM predice el precio por m² a partir de ubicación, área, comparables y habitaciones, y lo escala al precio de venta. Sostuvo la valoración en tiempo real cuando el portafolio superó US$25M.',
+          methods: ['XGBoost', 'LightGBM', 'Ensambles'],
           metrics: [
             { value: '~1M', label: 'viviendas en Bogotá' },
             { value: '3 días → en vivo', label: 'reportes a inversionistas' },
-            { value: 'US$1M+', label: 'nuevo financiamiento atraído' },
+            { value: 'US$1M+', label: 'nuevo financiamiento' },
           ],
+          viz: { title: 'Precio por m² según el modelo', locality: 'Localidad', area: 'Área', rooms: 'Habitaciones', ensemble: 'Ensamble', estimate: 'precio estimado' },
         },
         {
+          id: 'docAi',
           org: 'Duppla',
           years: '2023–2026',
-          title: 'Validación de documentos con IA para la evaluación hipotecaria',
-          summary:
-            'Construido con el equipo legal: un motor de IA que revisa los documentos del inmueble y del cliente, el cuello de botella de cada operación. Como CTO también lideré la due diligence técnica de ambas rondas y crecí el equipo de ingeniería de 1 a 7.',
+          title: 'Validación de documentos con IA',
+          headline: '40h → 3h',
+          summary: 'Construido con el equipo legal: un motor de IA que revisa los documentos del inmueble y del cliente, el cuello de botella de cada operación. Como CTO también lideré la due diligence de ambas rondas y crecí ingeniería de 1 a 7.',
           methods: ['LLMs', 'IA documental', 'Automatización'],
           metrics: [
-            { value: '40h → 3h', label: 'revisión por operación' },
             { value: '10×', label: 'operaciones procesadas' },
-            { value: '5 → 20', label: 'viviendas financiadas al mes' },
+            { value: 'US$14.5M', label: 'levantados (semilla + Serie A)' },
           ],
+          viz: { title: 'Antes y después del motor', before: 'Antes', after: 'Con IA', review: 'Horas de revisión por operación', homes: 'Viviendas financiadas al mes' },
         },
         {
+          id: 'surebets',
           org: 'Proyecto personal',
           years: '2023–2024',
           title: 'Arbitraje de apuestas deportivas en tiempo real',
-          summary:
-            'Extraía cuotas de la NBA de varias casas de apuestas cada cinco minutos, encontraba precios entre casas donde apostar a todos los resultados asegura una ganancia, y enviaba los montos a Telegram. Lo operé con dinero real, con montos modestos para que no limitaran las cuentas.',
+          headline: '~2% por arbitraje',
+          summary: 'Extraía cuotas de la NBA de varias casas de apuestas, detectaba los momentos en que sus precios diferían lo suficiente para asegurar una ganancia, y enviaba los montos a Telegram. Operado con dinero real.',
           methods: ['Selenium', 'Airflow', 'Python'],
           metrics: [
-            { value: '~2%', label: 'margen típico por arbitraje' },
-            { value: '<30s', label: 'antes de que la casa corrija la cuota' },
+            { value: '~2%', label: 'margen típico' },
+            { value: '<30s', label: 'antes de que corrijan' },
           ],
           links: [{ label: 'Código en GitHub', href: links.surebets }],
+          viz: { title: 'Suma de probabilidades implícitas en el tiempo', bookA: 'Casa A', bookB: 'Casa B', over: 'más', under: 'menos', zone: 'zona de arbitraje', stake: 'montos', waiting: 'buscando un arbitraje…', pause: 'Pausar', play: 'Reanudar' },
         },
-      ] satisfies Project[],
+      ],
     },
     research: {
       kicker: 'Investigación',
@@ -453,6 +491,8 @@ export const content = {
           ],
         },
         {
+          viz: 'thesis',
+          vizLabels: { title: 'Trayectorias de uso de tarjeta', raw: 'Sin agrupar', clustered: 'Agrupadas', month: 'm', cluster: 'Clúster', defaultRate: 'tasa de default', note: 'Trayectorias sintéticas con la misma estructura que los datos de la tesis' },
           kind: 'Tesis de maestría · Charla LACSC 2021',
           title: 'Jointly modelling cluster-dependent profiles of fractional and binary variables from a Bayesian point of view',
           authors: authorsBayes,
@@ -465,6 +505,8 @@ export const content = {
           ],
         },
         {
+          viz: 'tobit',
+          vizLabels: { title: 'Ajuste beta vs la densidad real', normal: 'Normal truncada', skew: 'Skew-normal truncada', data: '10,000 simulaciones', truth: 'densidad real', betaFit: 'mejor ajuste beta', captionNormal: 'Figura 1a: N(0.85, 0.2²) en (0,1); ajuste beta α = 4.823, β = 1.409', captionSkew: 'Figura 1b: skew-normal (0.338, 0.2, λ = 6) en (0,1); ajuste beta α = β = 7.333' },
           kind: 'Documento de trabajo',
           title: 'A new normal-like inflated mean regression for bounded responses',
           authors: authorsBayes,

@@ -6,6 +6,7 @@ interface Props {
 }
 const { lang } = Astro.props;
 const t = content[lang].work;
+const vizData = Object.fromEntries(t.projects.map((p) => [p.id, p.viz]));
 ---
 
 <section id="work" class="section">
@@ -14,102 +15,206 @@ const t = content[lang].work;
     <h2 class="section-title">{t.title}</h2>
     <p class="lede">{t.intro}</p>
 
-    <div class="grid">
-      {
-        t.projects.map((p) => (
-          <article class="card">
-            <header>
-              <p class="org mono">
-                {p.org} <span>· {p.years}</span>
-              </p>
-              <h3>{p.title}</h3>
-            </header>
-            <p class="summary">{p.summary}</p>
-            <dl class="metrics">
-              {p.metrics.map((m) => (
-                <div>
-                  <dt class="metric-value">{m.value}</dt>
-                  <dd class="metric-label">{m.label}</dd>
-                </div>
-              ))}
-            </dl>
-            <footer>
-              <ul class="chips">
-                {p.methods.map((m) => <li>{m}</li>)}
-              </ul>
-              {p.links?.map((l) => (
-                <a class="more" href={l.href} target="_blank" rel="noopener">
-                  {l.label} →
-                </a>
-              ))}
-            </footer>
-          </article>
-        ))
-      }
+    <div class="explorer" data-explorer data-viz={JSON.stringify(vizData)} data-lang={lang}>
+      <div class="list" role="tablist" aria-label={t.kicker}>
+        {
+          t.projects.map((p, i) => (
+            <button
+              type="button"
+              role="tab"
+              id={`tab-${p.id}`}
+              aria-controls={`panel-${p.id}`}
+              aria-selected={i === 0 ? 'true' : 'false'}
+              tabindex={i === 0 ? 0 : -1}
+              data-id={p.id}
+            >
+              <span class="org mono">
+                {p.org} · {p.years}
+              </span>
+              <span class="name">{p.title}</span>
+              <span class="head mono">{p.headline}</span>
+            </button>
+          ))
+        }
+      </div>
+
+      <div class="panels">
+        {
+          t.projects.map((p, i) => (
+            <article role="tabpanel" id={`panel-${p.id}`} aria-labelledby={`tab-${p.id}`} hidden={i !== 0} data-panel={p.id}>
+              <div class="stage viz-stage" data-stage />
+              {p.id !== 'docAi' && <p class="synthetic mono">{t.illustrative}</p>}
+              <p class="summary">{p.summary}</p>
+              <dl class="metrics">
+                {p.metrics.map((m) => (
+                  <div>
+                    <dt class="metric-value">{m.value}</dt>
+                    <dd class="metric-label">{m.label}</dd>
+                  </div>
+                ))}
+              </dl>
+              <footer>
+                <ul class="chips">
+                  {p.methods.map((m) => (
+                    <li>{m}</li>
+                  ))}
+                </ul>
+                {p.links?.map((l) => (
+                  <a class="more" href={l.href} {...(l.href.startsWith('http') ? { target: '_blank', rel: 'noopener' } : {})}>
+                    {l.label} →
+                  </a>
+                ))}
+              </footer>
+            </article>
+          ))
+        }
+      </div>
     </div>
   </div>
 </section>
 
+<script>
+  import { RENDERERS } from '../scripts/workViz';
+
+  document.querySelectorAll<HTMLElement>('[data-explorer]').forEach((root) => {
+    const viz = JSON.parse(root.dataset.viz!);
+    const lang = root.dataset.lang!;
+    const tabs = [...root.querySelectorAll<HTMLButtonElement>('[role=tab]')];
+    let cleanup: () => void = () => {};
+
+    function select(id: string, focus = false) {
+      cleanup();
+      tabs.forEach((tab) => {
+        const on = tab.dataset.id === id;
+        tab.setAttribute('aria-selected', String(on));
+        tab.tabIndex = on ? 0 : -1;
+        if (on && focus) tab.focus();
+        // on phones the list is a horizontal scroller: keep the active tab visible without moving the page
+        if (on && tab.parentElement!.scrollWidth > tab.parentElement!.clientWidth) {
+          const list = tab.parentElement!;
+          list.scrollTo({ left: tab.offsetLeft - list.offsetLeft - 16, behavior: 'smooth' });
+        }
+      });
+      root.querySelectorAll<HTMLElement>('[data-panel]').forEach((p) => (p.hidden = p.dataset.panel !== id));
+      const stage = root.querySelector<HTMLElement>(`[data-panel="${id}"] [data-stage]`)!;
+      stage.replaceChildren();
+      cleanup = RENDERERS[id](stage, viz[id], lang);
+    }
+
+    root.addEventListener('click', (e) => {
+      const tab = (e.target as HTMLElement).closest<HTMLButtonElement>('[role=tab]');
+      if (tab) select(tab.dataset.id!);
+    });
+    // arrow keys move between tabs (WAI-ARIA tabs pattern)
+    root.querySelector('[role=tablist]')!.addEventListener('keydown', (e) => {
+      const ev = e as KeyboardEvent;
+      const i = tabs.findIndex((t) => t.getAttribute('aria-selected') === 'true');
+      const next = { ArrowDown: 1, ArrowRight: 1, ArrowUp: -1, ArrowLeft: -1 }[ev.key];
+      if (next === undefined) return;
+      ev.preventDefault();
+      select(tabs[(i + next + tabs.length) % tabs.length].dataset.id!, true);
+    });
+    select(tabs[0].dataset.id!);
+  });
+</script>
+
 <style>
-  .grid {
+  .explorer {
     display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.6fr);
     gap: 1.25rem;
+    align-items: start;
   }
 
-  .card {
+  .list {
     display: flex;
     flex-direction: column;
-    gap: 1.1rem;
-    padding: clamp(1.4rem, 3vw, 2rem);
-    background: var(--surface);
-    border: 1px solid var(--line);
-    border-radius: 14px;
-    transition: border-color 0.2s;
+    gap: 0.4rem;
   }
 
-  .card:hover {
-    border-color: var(--line-strong);
+  [role='tab'] {
+    display: grid;
+    gap: 0.2rem;
+    text-align: left;
+    font: inherit;
+    color: var(--text);
+    background: transparent;
+    border: 1px solid transparent;
+    border-left: 2px solid var(--line-strong);
+    border-radius: 0 10px 10px 0;
+    padding: 0.8rem 1rem;
+    cursor: pointer;
+    transition: background 0.15s, border-color 0.15s;
+  }
+
+  [role='tab']:hover {
+    background: var(--surface);
+  }
+
+  [role='tab'][aria-selected='true'] {
+    background: var(--surface);
+    border-color: var(--line);
+    border-left-color: var(--accent);
   }
 
   .org {
-    font-size: 0.78rem;
-    color: var(--accent);
-    margin: 0 0 0.5rem;
-  }
-
-  .org span {
+    font-size: 0.72rem;
     color: var(--faint);
   }
 
-  h3 {
-    font-size: 1.22rem;
-    font-weight: 600;
+  .name {
+    font-size: 0.98rem;
+    font-weight: 500;
     line-height: 1.3;
-    letter-spacing: -0.01em;
-    margin: 0;
+  }
+
+  .head {
+    font-size: 0.8rem;
+    color: var(--accent);
+  }
+
+  [role='tab']:not([aria-selected='true']) .name {
+    color: var(--muted);
+  }
+
+  article {
+    padding: clamp(1.2rem, 3vw, 1.8rem);
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 14px;
+  }
+
+  .stage {
+    position: relative;
+    min-height: 15rem;
+  }
+
+  .synthetic {
+    margin: 0.5rem 0 0;
+    font-size: 0.7rem;
+    color: var(--faint);
   }
 
   .summary {
     color: var(--muted);
     font-size: 0.96rem;
-    margin: 0;
+    margin: 1rem 0 0;
+    max-width: 62ch;
   }
 
   .metrics {
     display: flex;
     flex-wrap: wrap;
-    gap: 1rem 1.75rem;
-    margin: auto 0 0;
-    padding-top: 1.1rem;
+    gap: 0.8rem 2rem;
+    margin: 1.1rem 0 0;
+    padding-top: 1rem;
     border-top: 1px dashed var(--line-strong);
   }
 
   .metrics div {
     display: flex;
     flex-direction: column;
-    gap: 0.15rem;
-    max-width: 11rem;
+    gap: 0.1rem;
   }
 
   .metrics dd {
@@ -122,6 +227,7 @@ const t = content[lang].work;
     align-items: center;
     justify-content: space-between;
     gap: 0.75rem;
+    margin-top: 1.1rem;
   }
 
   .more {
@@ -131,9 +237,28 @@ const t = content[lang].work;
     text-decoration: none;
   }
 
-  @media (max-width: 860px) {
-    .grid {
+  @media (max-width: 900px) {
+    .explorer {
       grid-template-columns: minmax(0, 1fr);
     }
+    /* the list becomes a horizontally scrolling row of tabs */
+    .list {
+      flex-direction: row;
+      overflow-x: auto;
+      scroll-snap-type: x mandatory;
+      padding-bottom: 0.3rem;
+    }
+    [role='tab'] {
+      flex: 0 0 15rem;
+      scroll-snap-align: start;
+      border-left-width: 1px;
+      border-top: 2px solid var(--line-strong);
+      border-radius: 0 0 10px 10px;
+    }
+    [role='tab'][aria-selected='true'] {
+      border-top-color: var(--accent);
+      border-left-color: var(--line);
+    }
   }
+
 </style>
