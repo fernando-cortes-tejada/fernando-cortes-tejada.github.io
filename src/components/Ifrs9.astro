@@ -1,0 +1,497 @@
+---
+import { content, type Lang } from '../i18n/content';
+
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+const t = content[lang].lab.ifrs9;
+const labels = {
+  states: t.states,
+  base: t.base,
+  stressed: t.stressed,
+  month: t.month,
+  today: t.today,
+  in12: t.in12,
+  stage: t.stage,
+  el: t.el,
+  var: t.var,
+  yours: t.yours,
+  percentile: t.percentile,
+  lossRate: t.lossRate,
+  probability: t.probability,
+};
+const kpis = [
+  ['pd12', t.kpi.pd12],
+  ['pdLife', t.kpi.pdLife],
+  ['ecl', t.kpi.ecl],
+  ['stage23', t.kpi.stage23],
+] as const;
+const idx = [0, 1, 2, 3, 4];
+---
+
+<div class="ifrs" data-ifrs9 data-labels={JSON.stringify(labels)}>
+  <div class="head">
+    <div class="explain">
+      <h3>{t.title}</h3>
+      <p>{t.blurb}</p>
+      <p class="formula mono">{t.formula}</p>
+    </div>
+    <div class="controls">
+      <p class="ctl-label">{t.scenario}</p>
+      <div class="seg" role="group" aria-label={t.scenario}>
+        {t.presets.map((p) => <button type="button" data-z={p.z} aria-pressed={p.z === 0 ? 'true' : 'false'}>{p.label}</button>)}
+      </div>
+      <label class="slider">
+        <span>{t.zLabel} <b class="mono" data-out="z">0.0</b></span>
+        <input name="z" type="range" min="-1.5" max="3.5" step="0.1" value="0" />
+      </label>
+      <label class="slider">
+        <span>{t.lgd} <b class="mono" data-out="lgd">60%</b></span>
+        <input name="lgd" type="range" min="20" max="90" step="5" value="60" />
+      </label>
+    </div>
+  </div>
+
+  <dl class="kpis">
+    {
+      kpis.map(([key, label]) => (
+        <div data-kpi={key}>
+          <dt>{label}</dt>
+          <dd class="v mono" />
+          <dd class="d mono" />
+        </div>
+      ))
+    }
+  </dl>
+
+  <div class="charts">
+    <figure>
+      <figcaption>{t.matrixTitle}</figcaption>
+      <div class="scroll">
+        <table class="matrix mono">
+          <thead>
+            <tr>
+              <th scope="col" class="corner">{t.matrixFrom}</th>
+              {idx.map((j) => <th scope="col">{t.states[j]}</th>)}
+            </tr>
+          </thead>
+          <tbody>
+            {
+              idx.map((i) => (
+                <tr>
+                  <th scope="row">{t.states[i]}</th>
+                  {idx.map((j) => <td data-cell={`${i},${j}`} />)}
+                </tr>
+              ))
+            }
+          </tbody>
+        </table>
+      </div>
+    </figure>
+
+    <figure>
+      <figcaption>
+        {t.pdTitle}
+        <span class="legend">
+          <span><i style="background:#3987e5"></i>{t.base}</span>
+          <span><i style="background:#c98500"></i>{t.stressed}</span>
+        </span>
+      </figcaption>
+      <svg data-chart="pd" viewBox="0 0 560 280" role="img" aria-label={t.pdTitle}></svg>
+    </figure>
+
+    <figure>
+      <figcaption>
+        {t.stagesTitle}
+        <span class="legend">
+          {[0, 1, 2].map((i) => <span><i style={`background:${['#184f95', '#3987e5', '#9ec5f4'][i]}`}></i>{t.stage} {i + 1}</span>)}
+        </span>
+      </figcaption>
+      <svg data-chart="stages" viewBox="0 0 560 128" role="img" aria-label={t.stagesTitle}></svg>
+    </figure>
+
+    <figure>
+      <figcaption>{t.lossTitle}</figcaption>
+      <svg data-chart="loss" viewBox="0 0 560 240" role="img" aria-label={t.lossTitle}></svg>
+      <p class="refs mono" data-refs></p>
+    </figure>
+  </div>
+
+  <p class="note">{t.note}</p>
+  <div class="tip mono" data-tip hidden></div>
+</div>
+
+<script>
+  import { mountIfrs9 } from '../scripts/ifrs9View';
+  document.querySelectorAll<HTMLElement>('[data-ifrs9]').forEach((root) => mountIfrs9(root, JSON.parse(root.dataset.labels!)));
+</script>
+
+<style>
+  .ifrs {
+    position: relative;
+    margin-top: 1.5rem;
+    padding: clamp(1.4rem, 3.5vw, 2.5rem);
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 14px;
+  }
+
+  .head {
+    display: grid;
+    grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
+    gap: clamp(1.5rem, 4vw, 3rem);
+  }
+
+  h3 {
+    font-size: 1.3rem;
+    margin: 0 0 0.75rem;
+  }
+
+  .explain p {
+    color: var(--muted);
+    font-size: 0.96rem;
+    margin: 0 0 1rem;
+  }
+
+  .formula {
+    color: var(--text) !important;
+    background: var(--surface-2);
+    border-left: 2px solid var(--accent);
+    padding: 0.7rem 0.9rem;
+    font-size: 0.84rem !important;
+    overflow-x: auto;
+    white-space: pre;
+  }
+
+  .ctl-label,
+  .slider span {
+    font-size: 0.8rem;
+    color: var(--muted);
+    margin: 0 0 0.5rem;
+  }
+
+  .seg {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    border: 1px solid var(--line-strong);
+    border-radius: 999px;
+    padding: 2px;
+    margin-bottom: 1.3rem;
+  }
+
+  .seg button {
+    font: inherit;
+    font-size: 0.84rem;
+    color: var(--muted);
+    background: none;
+    border: 0;
+    border-radius: 999px;
+    padding: 0.4rem 0.2rem;
+    cursor: pointer;
+  }
+
+  .seg button[aria-pressed='true'] {
+    background: var(--text);
+    color: var(--bg);
+  }
+
+  .slider {
+    display: block;
+    margin-bottom: 1.1rem;
+  }
+
+  .slider span {
+    display: flex;
+    justify-content: space-between;
+  }
+
+  .slider b {
+    color: var(--text);
+    font-weight: 500;
+  }
+
+  input[type='range'] {
+    width: 100%;
+    accent-color: var(--accent);
+  }
+
+  .kpis {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 1px;
+    margin: 1.75rem 0;
+    background: var(--line);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    overflow: hidden;
+  }
+
+  .kpis div {
+    background: var(--surface);
+    padding: 0.9rem 1rem;
+  }
+
+  .kpis dt {
+    font-size: 0.78rem;
+    color: var(--muted);
+  }
+
+  .kpis dd {
+    margin: 0;
+  }
+
+  .kpis .v {
+    font-size: 1.55rem;
+    color: var(--text);
+    letter-spacing: -0.02em;
+  }
+
+  .kpis .d {
+    font-size: 0.74rem;
+    color: var(--faint);
+    min-height: 1.1em;
+  }
+
+  .charts {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1.5rem 2rem;
+  }
+
+  figure {
+    margin: 0;
+    min-width: 0;
+  }
+
+  figcaption {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 0.4rem 1rem;
+    font-size: 0.86rem;
+    font-weight: 500;
+    margin-bottom: 0.6rem;
+  }
+
+  .legend {
+    display: inline-flex;
+    gap: 0.9rem;
+    font-weight: 400;
+    font-size: 0.78rem;
+    color: var(--muted);
+  }
+
+  .legend i,
+  .tip :global(i) {
+    display: inline-block;
+    width: 0.6rem;
+    height: 0.6rem;
+    border-radius: 2px;
+    margin-right: 0.35rem;
+  }
+
+  svg {
+    width: 100%;
+    height: auto;
+    display: block;
+    overflow: visible;
+  }
+
+  svg :global(.grid) {
+    stroke: var(--line);
+  }
+  svg :global(.axis) {
+    stroke: var(--line-strong);
+  }
+  svg :global(.tick) {
+    fill: var(--faint);
+    font: 11px var(--font-mono);
+  }
+  svg :global(.lbl) {
+    fill: var(--muted);
+    font: 12px var(--font-body);
+  }
+  svg :global(.line) {
+    fill: none;
+    stroke-width: 2;
+    stroke-linejoin: round;
+  }
+  svg :global(.marker) {
+    stroke: var(--line-strong);
+    stroke-dasharray: 3 3;
+  }
+  svg :global(.cross) {
+    stroke: var(--muted);
+  }
+  svg :global(.ring) {
+    stroke: var(--surface);
+    stroke-width: 2;
+  }
+  svg :global(.bar) {
+    opacity: 0.85;
+  }
+  svg :global(.bar.on) {
+    opacity: 1;
+  }
+  svg :global(.ref) {
+    stroke: var(--text);
+    stroke-dasharray: 3 3;
+  }
+  svg :global(.ref.tail) {
+    stroke-dasharray: 1 3;
+  }
+  svg :global(.you) {
+    stroke: #c98500;
+    stroke-width: 2;
+  }
+  svg :global(.you-lbl) {
+    fill: var(--text);
+  }
+  svg :global(.in) {
+    fill: #fff;
+    font: 11px var(--font-mono);
+    pointer-events: none;
+  }
+  svg :global(.in-dark) {
+    fill: var(--bg);
+  }
+
+  .refs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.3rem 1.2rem;
+    margin: 0.6rem 0 0;
+    font-size: 0.76rem;
+    color: var(--muted);
+  }
+
+  .refs :global(span) {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+  }
+
+  .refs :global(i) {
+    width: 0;
+    height: 0.9rem;
+    border-left: 1px dashed var(--text);
+  }
+
+  .refs :global(.tail i) {
+    border-left-style: dotted;
+  }
+
+  .refs :global(.you) {
+    color: var(--text);
+  }
+
+  .refs :global(.you i) {
+    border-left: 2px solid #c98500;
+  }
+
+  .scroll {
+    overflow-x: auto;
+  }
+
+  .matrix {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 2px;
+    font-size: 0.8rem;
+  }
+
+  .matrix th {
+    font-family: var(--font-body);
+    font-weight: 400;
+    font-size: 0.74rem;
+    color: var(--muted);
+    padding: 0.25rem 0.4rem;
+    white-space: nowrap;
+  }
+
+  .matrix thead th {
+    text-align: center;
+  }
+
+  .matrix tbody th {
+    text-align: right;
+  }
+
+  .matrix .corner {
+    color: var(--faint);
+    text-align: left;
+  }
+
+  .matrix td {
+    --a: 0;
+    text-align: center;
+    padding: 0.55rem 0.2rem;
+    border-radius: 4px;
+    background: rgb(57 135 229 / calc(var(--a) * 0.85));
+    color: var(--text);
+    transition: background 0.2s;
+  }
+
+  /* migration toward worse buckets that grew or shrank vs the base matrix */
+  .matrix td.up {
+    box-shadow: inset 0 -2px 0 #c98500;
+  }
+
+  .matrix td.dn {
+    box-shadow: inset 0 -2px 0 var(--faint);
+  }
+
+  .note {
+    margin: 1.5rem 0 0;
+    font-size: 0.82rem;
+    color: var(--faint);
+  }
+
+  .tip {
+    position: absolute;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+    padding: 0.45rem 0.6rem;
+    font-size: 0.74rem;
+    background: rgba(11, 14, 19, 0.95);
+    border: 1px solid var(--line-strong);
+    border-radius: 6px;
+    pointer-events: none;
+    white-space: nowrap;
+  }
+
+  .tip[hidden] {
+    display: none;
+  }
+
+  .tip :global(b) {
+    font-weight: 600;
+    color: var(--text);
+  }
+
+  /* the SVGs scale with their width; keep chart text legible on phones */
+  @media (max-width: 600px) {
+    svg :global(.tick) {
+      font-size: 17px;
+    }
+    svg :global(.lbl) {
+      font-size: 19px;
+    }
+    svg :global(.in) {
+      font-size: 17px;
+    }
+  }
+
+  @media (max-width: 900px) {
+    .head,
+    .charts {
+      grid-template-columns: minmax(0, 1fr);
+    }
+    .kpis {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+</style>

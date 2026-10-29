@@ -1,5 +1,6 @@
 ---
 import { content, type Lang } from '../i18n/content';
+import Ifrs9 from './Ifrs9.astro';
 
 interface Props {
   lang: Lang;
@@ -75,6 +76,8 @@ const a = t.arb;
         </dl>
       </div>
     </div>
+
+    <Ifrs9 lang={lang} />
 
     <p class="soon">{t.soon}</p>
   </div>
