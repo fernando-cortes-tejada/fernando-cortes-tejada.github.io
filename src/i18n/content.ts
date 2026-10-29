@@ -25,6 +25,13 @@ export interface Publication {
   links: { label: string; href: string }[];
 }
 
+export interface Photo {
+  src: string;
+  alt: string;
+  caption: string;
+  tall?: boolean;
+}
+
 export interface PathItem {
   years: string;
   org: string;
@@ -257,6 +264,13 @@ export const content = {
       kicker: 'Beyond work',
       title: 'Mountains',
       body: 'I climb (up to 5.10c, in seven parks across Peru, Colombia and Yosemite) and trek: the Inca Trail, Huayhuash and Santa Cruz in Peru, and Torres del Paine in Patagonia.',
+      photos: [
+        { src: '/beyond/climbing.webp', alt: 'Fernando lead climbing a granite slab', caption: 'On the wall', tall: true },
+        { src: '/beyond/huayhuash-ridge.webp', alt: 'Two hikers sitting on a rocky ridge above a green valley', caption: 'Cordillera Huayhuash, Peru' },
+        { src: '/beyond/huayhuash-pass.webp', alt: 'Two hikers in rain gear at a snowy mountain pass sign', caption: 'A high pass on the Huayhuash circuit' },
+        { src: '/beyond/torres-del-paine.webp', alt: 'Two hikers in front of the snowy peaks of Torres del Paine', caption: 'Torres del Paine, Patagonia' },
+        { src: '/beyond/canchacalla.webp', alt: 'Fernando carrying a rope and climbing pack in a dry valley', caption: 'Walking in to the crag, Canchacalla, Lima' },
+      ] satisfies Photo[],
     },
     contact: {
       kicker: 'Contact',
@@ -474,6 +488,13 @@ export const content = {
       kicker: 'Fuera del trabajo',
       title: 'Montañas',
       body: 'Escalo (hasta 5.10c, en siete parques de Perú, Colombia y Yosemite) y hago trekking: el Camino Inca, Huayhuash y Santa Cruz en Perú, y Torres del Paine en la Patagonia.',
+      photos: [
+        { src: '/beyond/climbing.webp', alt: 'Fernando escalando de primero una placa de granito', caption: 'En la pared', tall: true },
+        { src: '/beyond/huayhuash-ridge.webp', alt: 'Dos excursionistas sentados en una cresta rocosa sobre un valle verde', caption: 'Cordillera Huayhuash, Perú' },
+        { src: '/beyond/huayhuash-pass.webp', alt: 'Dos excursionistas con ropa de lluvia junto al letrero de un paso nevado', caption: 'Un paso alto del circuito Huayhuash' },
+        { src: '/beyond/torres-del-paine.webp', alt: 'Dos excursionistas frente a los picos nevados de Torres del Paine', caption: 'Torres del Paine, Patagonia' },
+        { src: '/beyond/canchacalla.webp', alt: 'Fernando cargando una cuerda y una mochila de escalada en un valle seco', caption: 'Camino a la zona de escalada, Canchacalla, Lima' },
+      ] satisfies Photo[],
     },
     contact: {
       kicker: 'Contacto',

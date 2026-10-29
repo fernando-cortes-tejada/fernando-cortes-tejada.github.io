@@ -1,9 +1,10 @@
 // @ts-check
 import { defineConfig } from 'astro/config';
 
-// TODO: set `site` once the domain is chosen; it enables canonical,
-// hreflang and og:image URLs in Base.astro.
+// `site` drives canonical, hreflang and og:image URLs in Base.astro;
+// switch it when a custom domain is added.
 export default defineConfig({
+  site: 'https://fernando-cortes-tejada.github.io',
   i18n: {
     locales: ['en', 'es'],
     defaultLocale: 'en',

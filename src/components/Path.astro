@@ -8,7 +8,6 @@ const { lang } = Astro.props;
 const c = content[lang];
 const t = c.path;
 const teach = c.teaching;
-const beyond = c.beyond;
 ---
 
 <section id="path" class="section">
@@ -57,12 +56,6 @@ const beyond = c.beyond;
         <ul class="chips">{t.stackList.map((s) => <li>{s}</li>)}</ul>
         <p class="kicker spaced">{t.certs}</p>
         <ul class="plain">{t.certList.map((s) => <li>{s}</li>)}</ul>
-      </div>
-
-      <div class="panel">
-        <p class="kicker">{beyond.kicker}</p>
-        <h3>{beyond.title}</h3>
-        <p class="muted">{beyond.body}</p>
       </div>
     </div>
   </div>
@@ -113,7 +106,7 @@ const beyond = c.beyond;
 
   .aside-grid {
     display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 1.25rem;
     margin-top: 3.5rem;
   }
