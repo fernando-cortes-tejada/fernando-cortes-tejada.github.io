@@ -21,7 +21,10 @@ const jsonLd = {
   '@graph': [
     {
       '@type': 'Person',
-      '@id': '#fernando',
+      '@id': site ? new URL('/#fernando', site).href : '#fernando',
+      url: url('en'),
+      image: site ? new URL('/portrait/photo.webp', site).href : undefined,
+      description: t.meta.description,
       name: 'Fernando Cortés Tejada',
       alternateName: 'Fernando Javier Cortés Tejada',
       jobTitle: t.hero.role,
@@ -37,7 +40,7 @@ const jsonLd = {
     {
       '@type': 'ScholarlyArticle',
       headline: 'Super-App Behavioral Patterns in Credit Risk Models: Financial, Statistical and Regulatory Implications',
-      author: [{ '@id': '#fernando' }],
+      author: [{ '@id': site ? new URL('/#fernando', site).href : '#fernando' }],
       datePublished: '2021-05-01',
       isPartOf: { '@type': 'Periodical', name: 'Expert Systems with Applications' },
       sameAs: links.paperDoi,
@@ -56,6 +59,7 @@ const jsonLd = {
     <meta name="author" content="Fernando Cortés Tejada" />
     <meta name="theme-color" content="#0b0e13" />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="sitemap" href="/sitemap-index.xml" />
     {url(lang) && <link rel="canonical" href={url(lang)} />}
     {url(lang) && <link rel="alternate" hreflang={lang} href={url(lang)} />}
     {url(other) && <link rel="alternate" hreflang={other} href={url(other)} />}
