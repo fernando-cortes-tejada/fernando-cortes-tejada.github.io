@@ -1,6 +1,6 @@
 /** Interactive figures for the Research section. */
 import { normCdf } from './ifrs9';
-import { C, el, local, svgBox, type Labels } from './workViz';
+import { C, el, svgBox, type Labels } from './workViz';
 
 type Renderer = (stage: HTMLElement, L: Labels, lang: string) => void;
 
@@ -93,118 +93,157 @@ const thesis: Renderer = (stage, L, lang) => {
 };
 
 // ---------------------------------------------------------------------------
-// Tobit paper, Figure 1: beta regression misfits bounded data dense near 1
-function lgamma(x: number): number {
-  // Lanczos approximation (g = 7, n = 9)
-  const g = [0.99999999999980993, 676.5203681218851, -1259.1392167224028, 771.32342877765313, -176.61502916214059, 12.507343278686905, -0.13857109526572012, 9.9843695780195716e-6, 1.5056327351493116e-7];
-  if (x < 0.5) return Math.log(Math.PI / Math.sin(Math.PI * x)) - lgamma(1 - x);
-  x -= 1;
-  let a = g[0];
-  const t = x + 7.5;
-  for (let i = 1; i < 9; i++) a += g[i] / (x + i);
-  return 0.5 * Math.log(2 * Math.PI) + (x + 0.5) * Math.log(t) - t + Math.log(a);
+// Tobit paper: the three proposed models, parameterized by the marginal mean.
+// You set E[Y]; the latent location μ has no closed form, so it is solved
+// numerically (bisection), exactly as in the paper.
+export type ModelKey = 'tobit' | 'itn' | 'itsn';
+
+interface Params {
+  mean: number;
+  sigma: number;
+  d0: number;
+  d1: number;
+  lambda: number;
 }
-const betaPdf = (x: number, a: number, b: number) =>
-  Math.exp((a - 1) * Math.log(x) + (b - 1) * Math.log(1 - x) - (lgamma(a) + lgamma(b) - lgamma(a + b)));
+
+/** log Φ(t), accurate far into the lower tail (Mills-ratio asymptotic below −8). */
+function logNormCdf(t: number) {
+  if (t > -8) return Math.log(normCdf(t));
+  return -0.5 * t * t - Math.log(-t) - 0.5 * Math.log(2 * Math.PI) + Math.log(1 - 1 / (t * t));
+}
+
+/**
+ * Continuous part on (0,1) for location mu: the (skew-)normal truncated to (0,1).
+ * Weights are computed in log space so far-off locations do not underflow.
+ */
+function continuous(model: ModelKey, mu: number, p: Params) {
+  const lam = model === 'itsn' ? p.lambda : 0;
+  const logf = (x: number) => {
+    const z = (x - mu) / p.sigma;
+    return -0.5 * z * z + (lam === 0 ? Math.log(0.5) : logNormCdf(lam * z));
+  };
+  const K = 400;
+  const lw = Array.from({ length: K }, (_, k) => logf((k + 0.5) / K));
+  const M = Math.max(...lw);
+  let mass = 0, first = 0;
+  lw.forEach((l, k) => {
+    const w = Math.exp(l - M);
+    mass += w / K;
+    first += ((k + 0.5) / K) * (w / K);
+  });
+  return {
+    /** truncated density on (0,1), integrates to 1 */
+    shape: (x: number) => Math.exp(logf(x) - M) / mass,
+    condMean: first / mass,
+  };
+}
+
+/** Distribution implied by location mu: point masses at 0 and 1, plus a density on (0,1). */
+export function implied(model: ModelKey, mu: number, p: Params) {
+  const c = continuous(model, mu, p);
+  if (model === 'tobit') {
+    // censored normal: the tails beyond the bounds pile up at 0 and 1
+    const p0 = normCdf((0 - mu) / p.sigma);
+    const p1 = 1 - normCdf((1 - mu) / p.sigma);
+    const w = 1 - p0 - p1;
+    return { p0, p1, density: (x: number) => w * c.shape(x), mean: p1 + w * c.condMean };
+  }
+  // inflated: fixed masses d0, d1; the continuous part is a truncated (skew-)normal
+  const w = 1 - p.d0 - p.d1;
+  return { p0: p.d0, p1: p.d1, density: (x: number) => w * c.shape(x), mean: p.d1 + w * c.condMean };
+}
+
+export function solveMu(model: ModelKey, p: Params) {
+  let lo = -6, hi = 7;
+  for (let k = 0; k < 60; k++) {
+    const mid = (lo + hi) / 2;
+    if (implied(model, mid, p).mean < p.mean) lo = mid;
+    else hi = mid;
+  }
+  return (lo + hi) / 2;
+}
 
 const tobit: Renderer = (stage, L) => {
-  // parameters exactly as reported in Figure 1 of the paper
-  const cases = {
-    tn: {
-      label: L.normal,
-      caption: L.captionNormal,
-      sample: (r: ReturnType<typeof rng>) => {
-        for (;;) {
-          const x = 0.85 + 0.2 * r.n();
-          if (x > 0 && x < 1) return x;
-        }
-      },
-      pdf: (x: number) => normPdf((x - 0.85) / 0.2) / 0.2 / (normCdf((1 - 0.85) / 0.2) - normCdf(-0.85 / 0.2)),
-      beta: [4.823, 1.409] as const,
-    },
-    tsn: {
-      label: L.skew,
-      caption: L.captionSkew,
-      sample: (r: ReturnType<typeof rng>) => {
-        const d = 6 / Math.sqrt(37);
-        for (;;) {
-          const z = d * Math.abs(r.n()) + Math.sqrt(1 - d * d) * r.n();
-          const x = 0.338 + 0.2 * z;
-          if (x > 0 && x < 1) return x;
-        }
-      },
-      pdf: (() => {
-        const raw = (x: number) => {
-          const z = (x - 0.338) / 0.2;
-          return (2 / 0.2) * normPdf(z) * normCdf(6 * z);
-        };
-        let Z = 0;
-        for (let k = 0; k < 2000; k++) Z += raw((k + 0.5) / 2000) / 2000;
-        return (x: number) => raw(x) / Z;
-      })(),
-      beta: [7.333, 7.333] as const,
-    },
-  };
-
-  const toggle = seg(stage, [['tn', cases.tn.label], ['tsn', cases.tsn.label]], 'tn');
-  const s = svgBox(stage, 560, 240, L.title);
+  const models: [ModelKey, string, number][] = [
+    ['tobit', 'Tobit-m', 2],
+    ['itn', 'ITNm', 4],
+    ['itsn', 'ITSNm', 5],
+  ];
   stage.insertAdjacentHTML(
     'beforeend',
-    `<p class="viz-legend"><span><i style="background:#3a4250"></i>${L.data}</span><span><i style="background:${C.amber}"></i>${L.truth}</span><span><i class="dash" style="border-color:${C.blue}"></i>${L.betaFit}</span></p><p class="viz-read mono" data-cap></p>`,
+    `<div class="viz-seg three" role="group">${models.map(([k, n]) => `<button type="button" data-v="${k}" aria-pressed="${k === 'itsn'}">${n}</button>`).join('')}</div>
+     <div class="viz-form two-col">
+       <label class="viz-slider"><span>${L.mean} <b class="mono" data-v="mean"></b></span><input name="mean" type="range" min="0.1" max="0.9" step="0.01" value="0.62"></label>
+       <label class="viz-slider"><span>σ <b class="mono" data-v="sigma"></b></span><input name="sigma" type="range" min="0.08" max="0.6" step="0.01" value="0.2"></label>
+       <label class="viz-slider" data-only="itn itsn"><span>δ₀ = P(Y = 0) <b class="mono" data-v="d0"></b></span><input name="d0" type="range" min="0" max="0.3" step="0.01" value="0.08"></label>
+       <label class="viz-slider" data-only="itn itsn"><span>δ₁ = P(Y = 1) <b class="mono" data-v="d1"></b></span><input name="d1" type="range" min="0" max="0.3" step="0.01" value="0.12"></label>
+       <label class="viz-slider" data-only="itsn"><span>${L.skew} λ <b class="mono" data-v="lambda"></b></span><input name="lambda" type="range" min="-8" max="8" step="0.5" value="-4"></label>
+     </div>`,
   );
-  const cap = stage.querySelector<HTMLElement>('[data-cap]')!;
-  const W = 560, H = 240, m = { l: 16, r: 16, t: 10, b: 26 };
-  const X = (x: number) => m.l + x * (W - m.l - m.r);
+  const s = svgBox(stage, 560, 230, L.title);
+  stage.insertAdjacentHTML(
+    'beforeend',
+    `<p class="viz-legend"><span><i style="background:${C.amber}"></i>${L.density}</span><span><i style="background:${C.blue}"></i>${L.masses}</span><span><i class="dash" style="border-color:var(--text)"></i>E[Y]</span></p><p class="viz-read mono" data-out></p>`,
+  );
+  const out = stage.querySelector<HTMLElement>('[data-out]')!;
+  let model: ModelKey = 'itsn';
+  const val = (n: string) => +stage.querySelector<HTMLInputElement>(`input[name=${n}]`)!.value;
 
-  function draw(key: 'tn' | 'tsn') {
-    const c = cases[key];
+  function draw() {
+    const p: Params = { mean: val('mean'), sigma: val('sigma'), d0: val('d0'), d1: val('d1'), lambda: val('lambda') };
+    stage.querySelectorAll<HTMLElement>('[data-only]').forEach((n) => (n.hidden = !n.dataset.only!.split(' ').includes(model)));
+    for (const k of ['mean', 'sigma', 'd0', 'd1'] as const) stage.querySelector(`[data-v=${k}]`)!.textContent = p[k].toFixed(2);
+    stage.querySelector('[data-v=lambda]')!.textContent = p.lambda.toFixed(1);
+    stage.querySelectorAll<HTMLButtonElement>('.viz-seg button').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.v === model)));
+
+    // an inflated model can only reach means between d1 and 1 - d0
+    let note = '';
+    if (model !== 'tobit') {
+      const lo = p.d1 + 0.01, hi = 1 - p.d0 - 0.01;
+      if (p.mean < lo || p.mean > hi) {
+        p.mean = Math.min(hi, Math.max(lo, p.mean));
+        note = ` · ${L.clamped} ${p.mean.toFixed(2)}`;
+      }
+    }
+    const mu = solveMu(model, p);
+    const d = implied(model, mu, p);
+
     s.replaceChildren();
-    const r = rng(key === 'tn' ? 5 : 8);
-    const bins = 40;
-    const counts = new Array(bins).fill(0);
-    const N = 10000;
-    for (let k = 0; k < N; k++) counts[Math.min(bins - 1, Math.floor(c.sample(r) * bins))]++;
-    const dens = counts.map((cnt) => (cnt / N) * bins);
+    const W = 560, H = 230, m = { l: 34, r: 34, t: 30, b: 26 };
+    const X = (x: number) => m.l + x * (W - m.l - m.r);
     const grid = Array.from({ length: 199 }, (_, k) => (k + 1) / 200);
-    const yMax = Math.max(...dens, ...grid.map((x) => c.pdf(x)), ...grid.map((x) => betaPdf(x, c.beta[0], c.beta[1]))) * 1.08;
-    const Y = (d: number) => H - m.b - (d / yMax) * (H - m.t - m.b);
+    const dens = grid.map((x) => d.density(x));
+    const yMax = Math.max(2.2, ...dens) * 1.1;
+    const Y = (v: number) => H - m.b - (Math.min(v, yMax) / yMax) * (H - m.t - m.b);
+    // spikes share the axis: probability mass p is drawn as if it were density p * 10
+    const spikeScale = (H - m.t - m.b) / 1.0;
     el(s, 'line', { x1: m.l, x2: W - m.r, y1: Y(0), y2: Y(0), class: 'axis' });
-    dens.forEach((d, i) => {
-      const x0 = X(i / bins);
-      el(s, 'rect', { x: x0 + 1, y: Y(d), width: Math.max(0, X(1 / bins) - m.l - 2), height: Y(0) - Y(d), rx: 1.5, fill: '#3a4250' });
-    });
-    const curve = (f: (x: number) => number) => 'M' + grid.map((x) => `${X(x).toFixed(1)},${Y(Math.min(f(x), yMax)).toFixed(1)}`).join('L');
-    el(s, 'path', { d: curve(c.pdf), class: 'line', stroke: C.amber });
-    el(s, 'path', { d: curve((x) => betaPdf(x, c.beta[0], c.beta[1])), class: 'line dashed', stroke: C.blue });
-    for (const x of [0, 0.25, 0.5, 0.75, 1]) el(s, 'text', { x: X(x), y: H - 8, class: 'tick', 'text-anchor': x === 0 ? 'start' : x === 1 ? 'end' : 'middle' }, x.toFixed(2));
+    el(s, 'path', { d: 'M' + [`${X(0)},${Y(0)}`, ...grid.map((x, k) => `${X(x).toFixed(1)},${Y(dens[k]).toFixed(1)}`), `${X(1)},${Y(0)}`].join('L') + 'Z', fill: C.amber, 'fill-opacity': 0.25, stroke: C.amber, 'stroke-width': 2.5 });
+    for (const [x, pm] of [
+      [0, d.p0],
+      [1, d.p1],
+    ] as const) {
+      const h = Math.min(1, pm / 0.5) * spikeScale * 0.9; // spike height ∝ probability, full height at 50%
+      el(s, 'line', { x1: X(x), x2: X(x), y1: Y(0), y2: Y(0) - h, stroke: C.blue, 'stroke-width': 6, 'stroke-linecap': 'round' });
+      el(s, 'circle', { cx: X(x), cy: Y(0) - h, r: 5, fill: C.blue, class: 'ring' });
+      el(s, 'text', { x: X(x), y: Y(0) - h - 10, class: 'lbl strong', 'text-anchor': 'middle' }, `${(pm * 100).toFixed(1)}%`);
+    }
+    el(s, 'line', { x1: X(p.mean), x2: X(p.mean), y1: m.t - 8, y2: Y(0), class: 'ref' });
+    el(s, 'text', { x: X(p.mean), y: m.t - 14, class: 'lbl strong', 'text-anchor': 'middle' }, `E[Y] = ${p.mean.toFixed(2)}`);
+    for (const x of [0, 0.25, 0.5, 0.75, 1]) el(s, 'text', { x: X(x), y: H - 8, class: 'tick', 'text-anchor': 'middle' }, x.toFixed(2));
 
-    // hover: compare the two densities at x
-    const cross = el(s, 'line', { y1: m.t, y2: H - m.b, class: 'cross', visibility: 'hidden' });
-    const hit = el(s, 'rect', { x: m.l, y: m.t, width: W - m.l - m.r, height: H - m.t - m.b, fill: 'transparent' });
-    const tip = el(s, 'text', { y: m.t + 14, class: 'lbl strong' });
-    hit.addEventListener('pointermove', (e) => {
-      const p = local(s, e as PointerEvent);
-      const x = Math.min(0.995, Math.max(0.005, (p.x - m.l) / (W - m.l - m.r)));
-      cross.setAttribute('x1', String(X(x)));
-      cross.setAttribute('x2', String(X(x)));
-      cross.setAttribute('visibility', 'visible');
-      const right = x < 0.6;
-      tip.setAttribute('x', String(X(x) + (right ? 8 : -8)));
-      tip.setAttribute('text-anchor', right ? 'start' : 'end');
-      tip.textContent = `y = ${x.toFixed(2)} · ${L.truth} ${c.pdf(x).toFixed(2)} · beta ${betaPdf(x, c.beta[0], c.beta[1]).toFixed(2)}`;
-    });
-    hit.addEventListener('pointerleave', () => {
-      cross.setAttribute('visibility', 'hidden');
-      tip.textContent = '';
-    });
-    cap.textContent = c.caption;
-    toggle.querySelectorAll('button').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.v === key)));
+    const params = models.find(([k]) => k === model)![2];
+    out.textContent = `${L.solved}: μ = ${mu.toFixed(3)} · ${params} ${L.params}${note}`;
   }
-  toggle.addEventListener('click', (e) => {
-    const b = (e.target as HTMLElement).closest('button');
-    if (b) draw(b.dataset.v as 'tn' | 'tsn');
+
+  stage.addEventListener('input', draw);
+  stage.querySelector('.viz-seg')!.addEventListener('click', (e) => {
+    const b = (e.target as HTMLElement).closest<HTMLButtonElement>('button');
+    if (!b) return;
+    model = b.dataset.v as ModelKey;
+    draw();
   });
-  draw('tn');
+  draw();
 };
 
 export const RESEARCH_VIZ: Record<string, Renderer> = { thesis, tobit };

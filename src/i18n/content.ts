@@ -228,7 +228,7 @@ export const content = {
         },
         {
           viz: 'tobit',
-          vizLabels: { title: 'Beta fit vs the true density', normal: 'Truncated normal', skew: 'Truncated skew-normal', data: '10,000 draws', truth: 'true density', betaFit: 'best beta fit', captionNormal: 'Figure 1a: N(0.85, 0.2²) on (0,1); beta fit α = 4.823, β = 1.409', captionSkew: 'Figure 1b: skew-normal (0.338, 0.2, λ = 6) on (0,1); beta fit α = β = 7.333' },
+          vizLabels: { title: 'Distribution implied by the chosen marginal mean', mean: 'Marginal mean E[Y]', skew: 'Skewness', density: 'density on (0,1)', masses: 'mass at 0 and 1', solved: 'latent location solved numerically', params: 'parameters', clamped: 'mean outside the reachable range, clamped to', note: 'Pick E[Y] directly; the model finds the latent location that produces it' },
           kind: 'Working paper',
           title: 'A new normal-like inflated mean regression for bounded responses',
           authors: authorsBayes,
@@ -506,7 +506,7 @@ export const content = {
         },
         {
           viz: 'tobit',
-          vizLabels: { title: 'Ajuste beta vs la densidad real', normal: 'Normal truncada', skew: 'Skew-normal truncada', data: '10,000 simulaciones', truth: 'densidad real', betaFit: 'mejor ajuste beta', captionNormal: 'Figura 1a: N(0.85, 0.2²) en (0,1); ajuste beta α = 4.823, β = 1.409', captionSkew: 'Figura 1b: skew-normal (0.338, 0.2, λ = 6) en (0,1); ajuste beta α = β = 7.333' },
+          vizLabels: { title: 'Distribución implicada por la media marginal elegida', mean: 'Media marginal E[Y]', skew: 'Asimetría', density: 'densidad en (0,1)', masses: 'masa en 0 y 1', solved: 'ubicación latente resuelta numéricamente', params: 'parámetros', clamped: 'media fuera del rango alcanzable, ajustada a', note: 'Eliges E[Y] directamente; el modelo encuentra la ubicación latente que la produce' },
           kind: 'Documento de trabajo',
           title: 'A new normal-like inflated mean regression for bounded responses',
           authors: authorsBayes,

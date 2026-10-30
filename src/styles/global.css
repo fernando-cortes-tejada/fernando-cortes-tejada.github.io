@@ -230,6 +230,9 @@ a:hover {
 }
 .viz-stage .viz-seg.two { grid-template-columns: repeat(2, auto); width: fit-content; max-width: 100%; }
 .viz-stage .viz-seg.two button { padding-inline: 1rem; white-space: nowrap; }
+.viz-stage .viz-seg.three { grid-template-columns: repeat(3, minmax(0, 1fr)); max-width: 20rem; }
+.viz-stage .viz-form.two-col { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.2rem 1.2rem; }
+.viz-stage .viz-form.two-col .viz-slider { margin-bottom: 0.5rem; }
 .viz-stage .viz-seg button {
   font: inherit;
   font-size: 0.84rem;
@@ -358,3 +361,6 @@ a:hover {
     transition: none;
   }
 }
+
+/* elements toggled with the hidden attribute must stay hidden despite display rules above */
+.viz-stage [hidden] { display: none !important; }
