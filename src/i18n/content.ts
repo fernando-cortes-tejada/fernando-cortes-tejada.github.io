@@ -41,11 +41,19 @@ export interface Photo {
 }
 
 export interface PathItem {
-  years: string;
+  lane: 'edu' | 'work' | 'teach' | 'side';
+  /** decimal years, e.g. 2026.6 ≈ August 2026 */
+  from: number;
+  to: number;
+  /** short text drawn on the bar */
+  label: string;
   org: string;
   place: string;
   role: string;
   note?: string;
+  /** Work-explorer tab to open from the details panel */
+  goto?: string;
+  current?: boolean;
 }
 
 export const links = {
@@ -307,14 +315,21 @@ export const content = {
     path: {
       kicker: 'Path',
       title: 'From physics to credit risk to building a fintech',
+      intro: 'Click any bar for the details.',
+      lanes: { edu: 'Education', work: 'Work', teach: 'Teaching', side: 'Side projects' },
+      now: 'today',
+      inProgress: 'in progress',
+      seeModel: 'See the model',
       items: [
-        { years: '2026–2028', org: 'Harvard Business School & SEAS', place: 'Boston', role: 'MS/MBA candidate, Engineering Sciences', note: 'Dupré and Nunnelly Fellowship. Tech, Fintech and Latin America clubs.' },
-        { years: '2022–2026', org: 'Duppla', place: 'Bogotá', role: 'CTO (2023–26) · Lead Data Engineer (2022–23)', note: 'First employee at a Series A rent-to-own fintech; subject of an HBS case study.' },
-        { years: '2022–2024', org: 'PUCP', place: 'Lima', role: 'Adjunct Professor, Computational Statistics' },
-        { years: '2020–2022', org: 'RappiBank', place: 'Lima', role: 'Lead Data Engineer, founding team', note: 'Digital bank of Rappi and Interbank.' },
-        { years: '2017–2020', org: 'Interbank', place: 'Lima', role: 'Data Scientist, credit risk' },
-        { years: '2018–2019', org: 'PUCP', place: 'Lima', role: 'MS in Statistics, summa cum laude', note: 'Full-tuition scholarship.' },
-        { years: '2012–2016', org: 'PUCP', place: 'Lima', role: 'BS in Physics, magna cum laude', note: 'Founder and first president of the Physics Student Association; PAIN-PUCP research grant.' },
+        { lane: 'edu', from: 2012, to: 2016, label: 'BS Physics', org: 'PUCP', place: 'Lima', role: 'BS in Physics, magna cum laude', note: 'Founder and first president of the Physics Student Association; PAIN-PUCP research grant.' },
+        { lane: 'work', from: 2017, to: 2020, label: 'Interbank', org: 'Interbank', place: 'Lima', role: 'Data Scientist, credit risk', note: 'IFRS 9 expected credit loss for ~3M cards and a S/ 60B loan book; Monte Carlo loss simulation; origination models.', goto: 'ifrs9' },
+        { lane: 'edu', from: 2018, to: 2019.9, label: 'MS Stats', org: 'PUCP', place: 'Lima', role: 'MS in Statistics, summa cum laude', note: 'Full-tuition scholarship. Bayesian thesis on credit-card utilization, presented at LACSC 2021.' },
+        { lane: 'work', from: 2020, to: 2022, label: 'RappiBank', org: 'RappiBank', place: 'Lima', role: 'Lead Data Engineer, founding team', note: 'Digital bank of Rappi and Interbank. First origination model (published) and real-time fraud detection.', goto: 'origination' },
+        { lane: 'work', from: 2022, to: 2023, label: 'Data', org: 'Duppla', place: 'Bogotá', role: 'Lead Data Engineer, first employee', note: 'Home valuation ensemble over ~1M Bogotá homes; investor reporting from 3 days to real time.', goto: 'valuation' },
+        { lane: 'work', from: 2023, to: 2026.4, label: 'Duppla · CTO', org: 'Duppla', place: 'Bogotá', role: 'Chief Technology Officer', note: 'Led diligence for the $2.5M seed and $12M Series A, grew engineering from 1 to 7, built the AI document engine. Subject of an HBS case study.', goto: 'docAi' },
+        { lane: 'teach', from: 2022, to: 2024, label: 'Professor', org: 'PUCP', place: 'Lima', role: 'Adjunct Professor, Computational Statistics', note: 'Designed the course in R and Python for 200+ students; sections averaged 15.45/20 vs 13.41, with the faculty’s top student NPS (98).' },
+        { lane: 'side', from: 2023, to: 2024.5, label: 'Surebets', org: 'Side project', place: 'Lima', role: 'Real-time sports-betting arbitrage', note: 'Scraped NBA odds across sportsbooks and alerted on arbitrages; run with real money.', goto: 'surebets' },
+        { lane: 'edu', from: 2026.6, to: 2028.4, label: 'Harvard', org: 'Harvard Business School & SEAS', place: 'Boston', role: 'MS/MBA candidate, Engineering Sciences', note: 'Dupré and Nunnelly Fellowship. Graduating May 2028.', current: true },
       ] satisfies PathItem[],
       certs: 'Certifications',
       certList: ['Anthropic: Claude Certified Architect', 'Snowflake: SnowPro Core'],
@@ -584,14 +599,21 @@ export const content = {
     path: {
       kicker: 'Trayectoria',
       title: 'De la física al riesgo de crédito y a construir una fintech',
+      intro: 'Haz clic en cualquier barra para ver el detalle.',
+      lanes: { edu: 'Educación', work: 'Trabajo', teach: 'Docencia', side: 'Proyectos' },
+      now: 'hoy',
+      inProgress: 'en curso',
+      seeModel: 'Ver el modelo',
       items: [
-        { years: '2026–2028', org: 'Harvard Business School & SEAS', place: 'Boston', role: 'Candidato MS/MBA, Engineering Sciences', note: 'Beca Dupré and Nunnelly. Clubs de Tech, Fintech y Latinoamérica.' },
-        { years: '2022–2026', org: 'Duppla', place: 'Bogotá', role: 'CTO (2023–26) · Lead Data Engineer (2022–23)', note: 'Primer empleado de una fintech rent-to-own con Serie A; caso de estudio de HBS.' },
-        { years: '2022–2024', org: 'PUCP', place: 'Lima', role: 'Profesor, Estadística Computacional' },
-        { years: '2020–2022', org: 'RappiBank', place: 'Lima', role: 'Lead Data Engineer, equipo fundador', note: 'Banco digital de Rappi e Interbank.' },
-        { years: '2017–2020', org: 'Interbank', place: 'Lima', role: 'Data Scientist, riesgo de crédito' },
-        { years: '2018–2019', org: 'PUCP', place: 'Lima', role: 'Maestría en Estadística, summa cum laude', note: 'Beca completa.' },
-        { years: '2012–2016', org: 'PUCP', place: 'Lima', role: 'Bachiller en Física, magna cum laude', note: 'Fundador y primer presidente de la Asociación de Estudiantes de Física; beca de investigación PAIN-PUCP.' },
+        { lane: 'edu', from: 2012, to: 2016, label: 'Física', org: 'PUCP', place: 'Lima', role: 'Bachiller en Física, magna cum laude', note: 'Fundador y primer presidente de la Asociación de Estudiantes de Física; beca de investigación PAIN-PUCP.' },
+        { lane: 'work', from: 2017, to: 2020, label: 'Interbank', org: 'Interbank', place: 'Lima', role: 'Data Scientist, riesgo de crédito', note: 'Pérdida crediticia esperada IFRS 9 para ~3M tarjetas y una cartera de S/ 60 mil M; simulación Monte Carlo de pérdidas; modelos de originación.', goto: 'ifrs9' },
+        { lane: 'edu', from: 2018, to: 2019.9, label: 'Maestría', org: 'PUCP', place: 'Lima', role: 'Maestría en Estadística, summa cum laude', note: 'Beca completa. Tesis bayesiana sobre uso de tarjetas de crédito, presentada en LACSC 2021.' },
+        { lane: 'work', from: 2020, to: 2022, label: 'RappiBank', org: 'RappiBank', place: 'Lima', role: 'Lead Data Engineer, equipo fundador', note: 'Banco digital de Rappi e Interbank. Primer modelo de originación (publicado) y detección de fraude en tiempo real.', goto: 'origination' },
+        { lane: 'work', from: 2022, to: 2023, label: 'Data', org: 'Duppla', place: 'Bogotá', role: 'Lead Data Engineer, primer empleado', note: 'Ensamble de valoración sobre ~1M viviendas en Bogotá; reportes a inversionistas de 3 días a tiempo real.', goto: 'valuation' },
+        { lane: 'work', from: 2023, to: 2026.4, label: 'Duppla · CTO', org: 'Duppla', place: 'Bogotá', role: 'Chief Technology Officer', note: 'Lideré la due diligence de la ronda semilla de US$2.5M y la Serie A de US$12M, crecí ingeniería de 1 a 7 y construí el motor de documentos con IA. Caso de estudio de HBS.', goto: 'docAi' },
+        { lane: 'teach', from: 2022, to: 2024, label: 'Profesor', org: 'PUCP', place: 'Lima', role: 'Profesor, Estadística Computacional', note: 'Diseñé el curso en R y Python para más de 200 estudiantes; mis horarios promediaron 15.45/20 vs 13.41, con el NPS más alto de la facultad (98).' },
+        { lane: 'side', from: 2023, to: 2024.5, label: 'Surebets', org: 'Proyecto personal', place: 'Lima', role: 'Arbitraje de apuestas deportivas en tiempo real', note: 'Extraía cuotas de la NBA de varias casas y alertaba arbitrajes; operado con dinero real.', goto: 'surebets' },
+        { lane: 'edu', from: 2026.6, to: 2028.4, label: 'Harvard', org: 'Harvard Business School & SEAS', place: 'Boston', role: 'Candidato MS/MBA, Engineering Sciences', note: 'Beca Dupré and Nunnelly. Egreso en mayo de 2028.', current: true },
       ] satisfies PathItem[],
       certs: 'Certificaciones',
       certList: ['Anthropic: Claude Certified Architect', 'Snowflake: SnowPro Core'],

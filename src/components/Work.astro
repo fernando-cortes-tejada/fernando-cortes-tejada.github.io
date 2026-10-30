@@ -114,6 +114,11 @@ const vizData = Object.fromEntries(t.projects.map((p) => [p.id, p.viz]));
       ev.preventDefault();
       select(tabs[(i + next + tabs.length) % tabs.length].dataset.id!, true);
     });
+    // links elsewhere on the page (e.g. the Path timeline) can open a specific project
+    document.addEventListener('click', (e) => {
+      const link = (e.target as HTMLElement).closest<HTMLElement>('[data-goto]');
+      if (link?.dataset.goto && tabs.some((t) => t.dataset.id === link.dataset.goto)) select(link.dataset.goto);
+    });
     select(tabs[0].dataset.id!);
   });
 </script>

@@ -8,6 +8,16 @@ const { lang } = Astro.props;
 const c = content[lang];
 const t = c.path;
 const teach = c.teaching;
+
+const START = 2012;
+const END = 2029;
+const NOW = 2026.83; // late October 2026
+const pos = (y: number) => ((y - START) / (END - START)) * 100;
+const ticks = Array.from({ length: (2028 - START) / 2 + 1 }, (_, k) => START + 2 * k);
+const lanes = (['edu', 'work', 'teach', 'side'] as const).map((key) => ({ key, label: t.lanes[key] }));
+const yearSpan = (it: { from: number; to: number }) => `${Math.floor(it.from)}–${Math.floor(it.to)}`;
+const DEFAULT = t.items.findIndex((it) => it.role === 'Chief Technology Officer');
+const sel = t.items[DEFAULT];
 ---
 
 <section id="path" class="section">
@@ -15,24 +25,55 @@ const teach = c.teaching;
     <p class="kicker">{t.kicker}</p>
     <h2 class="section-title">{t.title}</h2>
 
-    <ol class="timeline">
-      {
-        t.items.map((it) => (
-          <li>
-            <span class="years mono">{it.years}</span>
-            <div>
-              <h3>
-                {it.role}
-              </h3>
-              <p class="org">
-                {it.org} <span>· {it.place}</span>
-              </p>
-              {it.note && <p class="note">{it.note}</p>}
+    <p class="lede">{t.intro}</p>
+
+    <div class="tl-scroll">
+      <div class="tl" data-tl data-items={JSON.stringify(t.items)} data-see={t.seeModel} data-progress={t.inProgress}>
+        <div class="tl-overlay" aria-hidden="true">
+          {ticks.map((y) => <span class="tick-line" style={`left:${pos(y)}%`} />)}
+          <span class="now" style={`left:${pos(NOW)}%`}><b class="mono">{t.now}</b></span>
+        </div>
+        {
+          lanes.map((lane) => (
+            <div class="lane">
+              <span class="lane-label">{lane.label}</span>
+              <div class="track">
+                {t.items.map((it, i) =>
+                  it.lane === lane.key ? (
+                    <button
+                      type="button"
+                      class:list={['bar', `bar-${it.lane}`, { current: it.current, on: i === DEFAULT }]}
+                      style={`left:${pos(it.from)}%;width:calc(${pos(it.to) - pos(it.from)}% - 3px)`}
+                      data-i={i}
+                      aria-pressed={i === DEFAULT ? 'true' : 'false'}
+                      aria-label={`${yearSpan(it)}: ${it.role}, ${it.org}`}
+                    >
+                      <span>{it.label}</span>
+                    </button>
+                  ) : null,
+                )}
+              </div>
             </div>
-          </li>
-        ))
-      }
-    </ol>
+          ))
+        }
+        <div class="axis" aria-hidden="true">
+          <span class="lane-label" />
+          <div class="track">
+            {ticks.map((y) => <span class="mono" style={`left:${pos(y)}%`}>{y}</span>)}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="detail" data-detail aria-live="polite">
+      <p class="d-years mono" data-f="years">{yearSpan(sel)}</p>
+      <div>
+        <h3 data-f="role">{sel.role}</h3>
+        <p class="org"><span data-f="org">{sel.org}</span> <span class="place" data-f="place">· {sel.place}</span></p>
+        <p class="note" data-f="note">{sel.note}</p>
+        <a class="goto" href="#work" data-goto={sel.goto} data-f="goto" hidden={!sel.goto}>{t.seeModel} →</a>
+      </div>
+    </div>
 
     <div class="aside-grid">
       <div class="panel">
@@ -61,47 +102,227 @@ const teach = c.teaching;
   </div>
 </section>
 
+<script>
+  document.querySelectorAll<HTMLElement>('[data-tl]').forEach((tl) => {
+    const scroller = tl.parentElement!;
+    if (scroller.scrollWidth > scroller.clientWidth) scroller.scrollLeft = scroller.scrollWidth;
+    const items = JSON.parse(tl.dataset.items!);
+    const detail = tl.closest('section')!.querySelector<HTMLElement>('[data-detail]')!;
+    const f = (k: string) => detail.querySelector<HTMLElement>(`[data-f=${k}]`)!;
+    const bars = [...tl.querySelectorAll<HTMLButtonElement>('.bar')];
+    tl.addEventListener('click', (e) => {
+      const bar = (e.target as HTMLElement).closest<HTMLButtonElement>('.bar');
+      if (!bar) return;
+      const it = items[+bar.dataset.i!];
+      bars.forEach((b) => {
+        b.classList.toggle('on', b === bar);
+        b.setAttribute('aria-pressed', String(b === bar));
+      });
+      f('years').textContent = `${Math.floor(it.from)}–${Math.floor(it.to)}${it.current ? ` · ${tl.dataset.progress}` : ''}`;
+      f('role').textContent = it.role;
+      f('org').textContent = it.org;
+      f('place').textContent = `· ${it.place}`;
+      f('note').textContent = it.note ?? '';
+      const go = f('goto') as HTMLAnchorElement;
+      go.hidden = !it.goto;
+      if (it.goto) go.dataset.goto = it.goto;
+    });
+  });
+</script>
+
 <style>
-  .timeline {
-    list-style: none;
-    margin: 2.5rem 0 0;
-    padding: 0;
+  .tl-scroll {
+    position: relative;
+    overflow-x: auto;
+    margin: 0 calc(var(--gutter) * -1);
+    padding: 1.6rem var(--gutter) 0.5rem;
+    scrollbar-width: thin;
   }
 
-  .timeline li {
+  .tl {
+    position: relative;
+    min-width: 44rem;
+  }
+
+  .lane,
+  .axis {
     display: grid;
-    grid-template-columns: 8.5rem minmax(0, 1fr);
-    gap: 1.5rem;
-    padding: 1.3rem 0;
+    grid-template-columns: 8rem minmax(0, 1fr);
+    align-items: center;
+  }
+
+  .lane {
+    height: 3.4rem;
     border-top: 1px solid var(--line);
   }
 
-  .years {
-    font-size: 0.85rem;
-    color: var(--accent);
-    padding-top: 0.15rem;
+  .lane-label {
+    position: sticky;
+    left: 0;
+    z-index: 3;
+    align-self: stretch;
+    display: flex;
+    align-items: center;
+    font-size: 0.82rem;
+    color: var(--muted);
+    background: var(--bg);
+    /* cover the scroller's side padding too, so bars never peek out on the left */
+    box-shadow: calc(var(--gutter) * -1) 0 0 var(--bg);
   }
 
-  h3 {
-    font-size: 1.08rem;
+  .axis .lane-label {
+    background: none;
+    box-shadow: none;
+    z-index: 0;
+  }
+
+  .track {
+    position: relative;
+    height: 100%;
+  }
+
+  /* gridlines and the "today" marker sit over the track column only */
+  .tl-overlay {
+    position: absolute;
+    inset: 0 0 1.8rem 8rem;
+    pointer-events: none;
+  }
+
+  .tick-line {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    border-left: 1px solid var(--line);
+  }
+
+  .now {
+    position: absolute;
+    top: -0.6rem;
+    bottom: 0;
+    border-left: 1.5px dashed var(--text);
+  }
+
+  .now b {
+    position: absolute;
+    top: -1.2rem;
+    left: 0;
+    transform: translateX(-50%);
+    font-size: 0.68rem;
+    font-weight: 500;
+    color: var(--text);
+    white-space: nowrap;
+  }
+
+  .bar {
+    position: absolute;
+    z-index: 1;
+    top: 0.65rem;
+    bottom: 0.65rem;
+    display: flex;
+    align-items: center;
+    min-width: 0;
+    padding: 0 0.55rem;
+    font: 600 0.78rem var(--font-body);
+    color: var(--bg);
+    border: 0;
+    border-radius: 6px;
+    cursor: pointer;
+    overflow: hidden;
+    transition: transform 0.15s, box-shadow 0.15s, opacity 0.15s;
+    opacity: 0.8;
+  }
+
+  .bar span {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .bar:hover {
+    opacity: 1;
+    transform: translateY(-1px);
+  }
+
+  .bar.on {
+    opacity: 1;
+    box-shadow: 0 0 0 2px var(--bg), 0 0 0 4px var(--text);
+  }
+
+  .bar-edu { background: #c98500; }
+  .bar-work { background: #3987e5; }
+  .bar-teach { background: #9ec5f4; }
+  .bar-side { background: #9085e9; }
+
+  /* still in progress: hatched */
+  .bar.current {
+    background-image: repeating-linear-gradient(135deg, transparent 0 6px, rgba(11, 14, 19, 0.28) 6px 9px);
+  }
+
+  .axis {
+    height: 1.8rem;
+    border-top: 1px solid var(--line-strong);
+  }
+
+  .axis .track span {
+    position: absolute;
+    top: 0.4rem;
+    transform: translateX(-50%);
+    font-size: 0.72rem;
+    color: var(--faint);
+  }
+
+  .detail {
+    display: grid;
+    grid-template-columns: 8rem minmax(0, 1fr);
+    gap: 0 1rem;
+    margin-top: 1.5rem;
+    padding: 1.4rem 1.6rem;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-left: 2px solid var(--accent);
+    border-radius: 0 12px 12px 0;
+    min-height: 9.5rem;
+  }
+
+  .d-years {
+    font-size: 0.85rem;
+    color: var(--accent);
+    margin: 0.2rem 0 0;
+  }
+
+  .detail h3 {
+    font-size: 1.15rem;
     font-weight: 600;
     margin: 0 0 0.2rem;
   }
 
   .org {
     margin: 0;
-    color: var(--text);
     font-size: 0.95rem;
   }
 
-  .org span {
+  .org .place {
     color: var(--faint);
   }
 
   .note {
-    margin: 0.35rem 0 0;
+    margin: 0.5rem 0 0;
     color: var(--muted);
-    font-size: 0.92rem;
+    font-size: 0.94rem;
+    max-width: 70ch;
+  }
+
+  .goto {
+    display: inline-block;
+    margin-top: 0.7rem;
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: var(--accent);
+    text-decoration: none;
+  }
+
+  .goto[hidden] {
+    display: none;
   }
 
   .aside-grid {
@@ -167,10 +388,23 @@ const teach = c.teaching;
     }
   }
 
+  @media (max-width: 700px) {
+    .lane,
+    .axis {
+      grid-template-columns: 5.5rem minmax(0, 1fr);
+    }
+    .tl-overlay {
+      left: 5.5rem;
+    }
+    .tl {
+      min-width: 40rem;
+    }
+  }
+
   @media (max-width: 560px) {
-    .timeline li {
+    .detail {
       grid-template-columns: minmax(0, 1fr);
-      gap: 0.3rem;
+      padding: 1.2rem;
     }
   }
 </style>
