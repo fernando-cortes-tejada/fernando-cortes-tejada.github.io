@@ -294,7 +294,6 @@ export const content = {
         probability: 'Probability',
         note: 'Synthetic, calibrated to a credit-card book (base 12-month PD ≈ 4%). The model is the same structure I built at Interbank, at toy scale.',
       },
-      soon: 'Coming next: the thesis clustering model running live.',
     },
     teaching: {
       kicker: 'Teaching',
@@ -572,7 +571,6 @@ export const content = {
         probability: 'Probabilidad',
         note: 'Sintético, calibrado a una cartera de tarjetas (PD base a 12 meses ≈ 4%). Es la misma estructura que construí en Interbank, a escala de juguete.',
       },
-      soon: 'Lo próximo: el modelo de clústeres de la tesis corriendo en vivo.',
     },
     teaching: {
       kicker: 'Docencia',
