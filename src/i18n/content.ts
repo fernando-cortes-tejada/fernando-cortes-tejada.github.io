@@ -67,6 +67,7 @@ export const links = {
   thesis: 'https://tesis.pucp.edu.pe/items/5a27ae63-1011-45bc-9b7f-36c755306b12',
   lacsc: '/docs/LACSC_2021_slides.pdf',
   tobit: '/docs/Tobit_mean_regression_working_paper.pdf',
+  tobitCode: 'https://github.com/fernando-cortes-tejada/tobit_mean_regression',
   surebets: 'https://github.com/fernando-cortes-tejada/nba-surebets',
 };
 
@@ -243,7 +244,7 @@ export const content = {
           venue: 'Working paper',
           summary:
             'Three models (Tobit-m, ITNm, ITSNm) for bounded data with mass at the boundaries and high density near them, where beta regression fails. They model the marginal mean directly. Fitted with Bayesian MCMC and applied to a medical dataset.',
-          links: [{ label: 'PDF', href: links.tobit }],
+          links: [{ label: 'PDF', href: links.tobit }, { label: 'Stan code', href: links.tobitCode }],
         },
       ] satisfies Publication[],
     },
@@ -527,7 +528,7 @@ export const content = {
           venue: 'Documento de trabajo',
           summary:
             'Tres modelos (Tobit-m, ITNm, ITSNm) para datos acotados con masa en los extremos y alta densidad cerca de ellos, donde la regresión beta falla. Modelan directamente la media marginal. Estimados con MCMC bayesiano y aplicados a datos médicos.',
-          links: [{ label: 'PDF', href: links.tobit }],
+          links: [{ label: 'PDF', href: links.tobit }, { label: 'Stan code', href: links.tobitCode }],
         },
       ] satisfies Publication[],
     },
