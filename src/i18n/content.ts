@@ -92,7 +92,7 @@ export const content = {
         { value: '100+', label: 'citations, Expert Systems with Applications' },
         { value: '3M', label: 'credit cards under IFRS 9 models' },
         { value: '1M', label: 'Bogotá homes priced' },
-        { value: '$14.5M', label: 'raised as CTO (seed + Series A)' },
+        { value: '$14.5M', label: 'raised (seed + Series A)' },
       ],
       viz: {
         paths: 'Paths',
@@ -309,7 +309,7 @@ export const content = {
       body: 'I designed and taught a course in R and Python for 200+ industrial engineering students, teaching statistical modeling through credit cards, loans and mortgages.',
       metrics: [
         { value: '15.45 / 20', label: 'my sections’ average (course: 13.41)' },
-        { value: '98', label: 'faculty-top student NPS' },
+        { value: '98', label: 'student Net Promoter Score, highest in the faculty' },
       ],
     },
     path: {
@@ -327,7 +327,7 @@ export const content = {
         { lane: 'work', from: 2020, to: 2022, label: 'RappiBank', org: 'RappiBank', place: 'Lima', role: 'Lead Data Engineer, founding team', note: 'Digital bank of Rappi and Interbank. First origination model (published) and real-time fraud detection.', goto: 'origination' },
         { lane: 'work', from: 2022, to: 2023, label: 'Data', org: 'Duppla', place: 'Bogotá', role: 'Lead Data Engineer, first employee', note: 'Home valuation ensemble over ~1M Bogotá homes; investor reporting from 3 days to real time.', goto: 'valuation' },
         { lane: 'work', from: 2023, to: 2026.4, label: 'Duppla · CTO', org: 'Duppla', place: 'Bogotá', role: 'Chief Technology Officer', note: 'Led diligence for the $2.5M seed and $12M Series A, grew engineering from 1 to 7, built the AI document engine. Subject of an HBS case study.', goto: 'docAi' },
-        { lane: 'teach', from: 2022, to: 2024, label: 'Professor', org: 'PUCP', place: 'Lima', role: 'Adjunct Professor, Computational Statistics', note: 'Designed the course in R and Python for 200+ students; sections averaged 15.45/20 vs 13.41, with the faculty’s top student NPS (98).' },
+        { lane: 'teach', from: 2022, to: 2024, label: 'Professor', org: 'PUCP', place: 'Lima', role: 'Adjunct Professor, Computational Statistics', note: 'Designed the course in R and Python for 200+ students; sections averaged 15.45/20 vs a 13.41 course average, and a student Net Promoter Score of 98, highest in the faculty.' },
         { lane: 'side', from: 2023, to: 2024.5, label: 'Surebets', org: 'Side project', place: 'Lima', role: 'Real-time sports-betting arbitrage', note: 'Scraped NBA odds across sportsbooks and alerted on arbitrages; run with real money.', goto: 'surebets' },
         { lane: 'edu', from: 2026.6, to: 2028.4, label: 'Harvard', org: 'Harvard Business School & SEAS', place: 'Boston', role: 'MS/MBA candidate, Engineering Sciences', note: 'Dupré and Nunnelly Fellowship. Graduating May 2028.', current: true },
       ] satisfies PathItem[],
@@ -345,7 +345,7 @@ export const content = {
         { src: '/beyond/huayhuash-ridge.webp', alt: 'Two hikers sitting on a rocky ridge above a green valley', caption: 'Cordillera Huayhuash, Peru' },
         { src: '/beyond/huayhuash-pass.webp', alt: 'Two hikers in rain gear at a snowy mountain pass sign', caption: 'A high pass on the Huayhuash circuit', focus: 'center 62%' },
         { src: '/beyond/torres-del-paine.webp', alt: 'Two hikers in front of the snowy peaks of Torres del Paine', caption: 'Torres del Paine, Patagonia' },
-        { src: '/beyond/canchacalla.webp', alt: 'Fernando carrying a rope and climbing pack in a dry valley', caption: 'Walking in to the crag, Canchacalla, Lima', focus: 'center 38%' },
+        { src: '/beyond/canchacalla.webp', alt: 'Fernando carrying a rope and climbing pack in a dry valley', caption: 'On the approach to the crag, Canchacalla, Lima', focus: 'center 38%' },
       ] satisfies Photo[],
     },
     contact: {
@@ -376,7 +376,7 @@ export const content = {
         { value: '100+', label: 'citas, Expert Systems with Applications' },
         { value: '3M', label: 'tarjetas de crédito bajo modelos IFRS 9' },
         { value: '1M', label: 'viviendas valoradas en Bogotá' },
-        { value: 'US$14.5M', label: 'levantados como CTO (semilla + Serie A)' },
+        { value: 'US$14.5M', label: 'levantados (semilla + Serie A)' },
       ],
       viz: {
         paths: 'Trayectorias',
@@ -593,7 +593,7 @@ export const content = {
       body: 'Diseñé y dicté un curso en R y Python para más de 200 estudiantes de ingeniería industrial, enseñando modelación estadística con tarjetas de crédito, préstamos e hipotecas.',
       metrics: [
         { value: '15.45 / 20', label: 'promedio de mis horarios (curso: 13.41)' },
-        { value: '98', label: 'NPS estudiantil, el más alto de la facultad' },
+        { value: '98', label: 'Net Promoter Score estudiantil, el más alto de la facultad' },
       ],
     },
     path: {
@@ -611,7 +611,7 @@ export const content = {
         { lane: 'work', from: 2020, to: 2022, label: 'RappiBank', org: 'RappiBank', place: 'Lima', role: 'Lead Data Engineer, equipo fundador', note: 'Banco digital de Rappi e Interbank. Primer modelo de originación (publicado) y detección de fraude en tiempo real.', goto: 'origination' },
         { lane: 'work', from: 2022, to: 2023, label: 'Data', org: 'Duppla', place: 'Bogotá', role: 'Lead Data Engineer, primer empleado', note: 'Ensamble de valoración sobre ~1M viviendas en Bogotá; reportes a inversionistas de 3 días a tiempo real.', goto: 'valuation' },
         { lane: 'work', from: 2023, to: 2026.4, label: 'Duppla · CTO', org: 'Duppla', place: 'Bogotá', role: 'Chief Technology Officer', note: 'Lideré la due diligence de la ronda semilla de US$2.5M y la Serie A de US$12M, crecí ingeniería de 1 a 7 y construí el motor de documentos con IA. Caso de estudio de HBS.', goto: 'docAi' },
-        { lane: 'teach', from: 2022, to: 2024, label: 'Profesor', org: 'PUCP', place: 'Lima', role: 'Profesor, Estadística Computacional', note: 'Diseñé el curso en R y Python para más de 200 estudiantes; mis horarios promediaron 15.45/20 vs 13.41, con el NPS más alto de la facultad (98).' },
+        { lane: 'teach', from: 2022, to: 2024, label: 'Profesor', org: 'PUCP', place: 'Lima', role: 'Profesor, Estadística Computacional', note: 'Diseñé el curso en R y Python para más de 200 estudiantes; mis horarios promediaron 15.45/20 frente a un promedio del curso de 13.41, y un Net Promoter Score estudiantil de 98, el más alto de la facultad.' },
         { lane: 'side', from: 2023, to: 2024.5, label: 'Surebets', org: 'Proyecto personal', place: 'Lima', role: 'Arbitraje de apuestas deportivas en tiempo real', note: 'Extraía cuotas de la NBA de varias casas y alertaba arbitrajes; operado con dinero real.', goto: 'surebets' },
         { lane: 'edu', from: 2026.6, to: 2028.4, label: 'Harvard', org: 'Harvard Business School & SEAS', place: 'Boston', role: 'Candidato MS/MBA, Engineering Sciences', note: 'Beca Dupré and Nunnelly. Egreso en mayo de 2028.', current: true },
       ] satisfies PathItem[],

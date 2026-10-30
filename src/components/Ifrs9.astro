@@ -1,5 +1,6 @@
 ---
 import { content, type Lang } from '../i18n/content';
+import { evaluate } from '../scripts/ifrs9';
 
 interface Props {
   lang: Lang;
@@ -28,6 +29,16 @@ const kpis = [
   ['stage23', t.kpi.stage23],
 ] as const;
 const idx = [0, 1, 2, 3, 4];
+// base-scenario numbers rendered into the HTML, so the page reads correctly before (or without) JavaScript
+const base = evaluate(0, 0.6);
+const pct = (x: number) => new Intl.NumberFormat(lang, { style: 'percent', minimumFractionDigits: 1, maximumFractionDigits: 1 }).format(x);
+const initial: Record<string, string> = {
+  pd12: pct(base.pd12),
+  pdLife: pct(base.pdLife),
+  ecl: pct(base.ecl),
+  stage23: pct(base.stages12m[1] + base.stages12m[2]),
+};
+const cell = (p: number) => (p < 0.0005 ? '·' : (p * 100).toFixed(p < 0.1 ? 1 : 0));
 ---
 
 <div class="ifrs" data-ifrs9 data-labels={JSON.stringify(labels)}>
@@ -58,7 +69,7 @@ const idx = [0, 1, 2, 3, 4];
       kpis.map(([key, label]) => (
         <div data-kpi={key}>
           <dt>{label}</dt>
-          <dd class="v mono" />
+          <dd class="v mono">{initial[key]}</dd>
           <dd class="d mono" />
         </div>
       ))
@@ -81,7 +92,7 @@ const idx = [0, 1, 2, 3, 4];
               idx.map((i) => (
                 <tr>
                   <th scope="row">{t.states[i]}</th>
-                  {idx.map((j) => <td data-cell={`${i},${j}`} />)}
+                  {idx.map((j) => <td data-cell={`${i},${j}`} style={`--a:${Math.sqrt(base.matrix[i][j])}`}>{cell(base.matrix[i][j])}</td>)}
                 </tr>
               ))
             }
@@ -92,9 +103,9 @@ const idx = [0, 1, 2, 3, 4];
 
     <figure>
       <figcaption>
-        {t.pdTitle}
+        {t.pdTitle}{' '}
         <span class="legend">
-          <span><i style="background:#3987e5"></i>{t.base}</span>
+          <span><i style="background:#3987e5"></i>{t.base}</span>{' '}
           <span><i style="background:#c98500"></i>{t.stressed}</span>
         </span>
       </figcaption>
@@ -103,9 +114,9 @@ const idx = [0, 1, 2, 3, 4];
 
     <figure>
       <figcaption>
-        {t.stagesTitle}
+        {t.stagesTitle}{' '}
         <span class="legend">
-          {[0, 1, 2].map((i) => <span><i style={`background:${['#184f95', '#3987e5', '#9ec5f4'][i]}`}></i>{t.stage} {i + 1}</span>)}
+          {[0, 1, 2].map((i) => <span><i style={`background:${['#184f95', '#3987e5', '#9ec5f4'][i]}`}></i>{t.stage} {i + 1} </span>)}
         </span>
       </figcaption>
       <svg data-chart="stages" viewBox="0 0 560 128" role="img" aria-label={t.stagesTitle}></svg>

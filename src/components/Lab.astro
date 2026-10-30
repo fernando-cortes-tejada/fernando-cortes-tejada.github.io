@@ -8,6 +8,20 @@ interface Props {
 const { lang } = Astro.props;
 const t = content[lang].lab;
 const a = t.arb;
+
+// defaults shown before JavaScript runs (same math as the inline script and surebets/arbitrage.py)
+const OA = 2.08, OB = 2.0, BANK = 100;
+const S = 1 / OA + 1 / OB;
+const money = new Intl.NumberFormat(lang, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+const pctS = new Intl.NumberFormat(lang, { style: 'percent', minimumFractionDigits: 2, signDisplay: 'always' });
+const init = {
+  sum: new Intl.NumberFormat(lang, { minimumFractionDigits: 4, maximumFractionDigits: 4 }).format(S),
+  verdict: S < 1 ? a.verdictYes : a.verdictNo,
+  sa: money.format((BANK / OA) / S),
+  sb: money.format((BANK / OB) / S),
+  profit: (BANK / S - BANK >= 0 ? '+' : '') + money.format(BANK / S - BANK),
+  roi: pctS.format(1 / S - 1),
+};
 ---
 
 <section id="lab" class="section">
@@ -16,7 +30,7 @@ const a = t.arb;
     <h2 class="section-title">{t.title}</h2>
     <p class="lede">{t.intro}</p>
 
-    <div class="demo" data-arb data-yes={a.verdictYes} data-no={a.verdictNo} data-lang={lang}>
+    <div class="demo is-arb" data-arb data-yes={a.verdictYes} data-no={a.verdictNo} data-lang={lang}>
       <div class="explain">
         <h3>{a.title}</h3>
         <p>{a.blurb}</p>
@@ -51,27 +65,27 @@ const a = t.arb;
         <dl class="out">
           <div>
             <dt>{a.implied}</dt>
-            <dd class="mono" data-out="sum"></dd>
+            <dd class="mono" data-out="sum">{init.sum}</dd>
           </div>
           <div class="verdict">
             <dt class="sr-only">Verdict</dt>
-            <dd data-out="verdict"></dd>
+            <dd data-out="verdict">{init.verdict}</dd>
           </div>
           <div>
             <dt>{a.stakeA}</dt>
-            <dd class="mono" data-out="sa"></dd>
+            <dd class="mono" data-out="sa">{init.sa}</dd>
           </div>
           <div>
             <dt>{a.stakeB}</dt>
-            <dd class="mono" data-out="sb"></dd>
+            <dd class="mono" data-out="sb">{init.sb}</dd>
           </div>
           <div>
             <dt>{a.locked}</dt>
-            <dd class="mono" data-out="profit"></dd>
+            <dd class="mono" data-out="profit">{init.profit}</dd>
           </div>
           <div>
             <dt>{a.roi}</dt>
-            <dd class="mono" data-out="roi"></dd>
+            <dd class="mono" data-out="roi">{init.roi}</dd>
           </div>
         </dl>
       </div>
@@ -104,7 +118,7 @@ const a = t.arb;
       const profit = bank / s - bank;
       const arb = s < 1;
 
-      out('sum').textContent = s.toFixed(4);
+      out('sum').textContent = new Intl.NumberFormat(root.dataset.lang, { minimumFractionDigits: 4, maximumFractionDigits: 4 }).format(s);
       out('verdict').textContent = arb ? root.dataset.yes! : root.dataset.no!;
       out('sa').textContent = money.format(sa);
       out('sb').textContent = money.format(sb);
