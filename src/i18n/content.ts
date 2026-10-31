@@ -79,7 +79,7 @@ export const content = {
     meta: {
       title: 'Fernando Cortés Tejada | Credit Risk, Quant & ML',
       description:
-        'Harvard MS/MBA candidate with an MS in Statistics (summa cum laude) and a BS in Physics. Credit risk, quantitative modeling and machine learning in production; former fintech CTO.',
+        'Harvard MS/MBA candidate with an MS in Statistics (summa cum laude) and a BS in Physics. Credit risk, quantitative modeling and machine learning in production; founding engineer at a Series A fintech.',
     },
     nav: { work: 'Work', research: 'Research', lab: 'Lab', path: 'Path', contact: 'Contact', switchLabel: 'ES', switchAria: 'Leer en español' },
     hero: {
@@ -87,13 +87,13 @@ export const content = {
       credentials: ['Harvard MS/MBA candidate, 2028', 'MS Statistics, summa cum laude', 'BS Physics'],
       role: 'Credit risk, quantitative modeling & ML in production',
       pitch:
-        'I put prices on risk with statistics: probability of default, expected credit loss, home values, mispriced odds. Then I take the models to production and build the teams that run them.',
+        'I put prices on risk with statistics: probability of default, expected credit loss, home values, mispriced odds. Then I take the models to production and build the systems that run them.',
       cv: 'Download CV',
       stats: [
         { value: '100+', label: 'citations, Expert Systems with Applications' },
         { value: '3M', label: 'credit cards under IFRS 9 models' },
         { value: '1M', label: 'Bogotá homes priced' },
-        { value: '$14.5M', label: 'raised (seed + Series A)' },
+        { value: '40h → 3h', label: 'legal review per deal, AI engine' },
       ],
       viz: {
         paths: 'Paths',
@@ -119,7 +119,7 @@ export const content = {
           years: '2017–2020',
           title: 'IFRS 9 credit loss under stress',
           headline: '3M cards',
-          summary: 'Expected credit loss for cards, mortgages and loans: Markov migration between delinquency buckets, stressed under macro scenarios, with a Monte Carlo loss distribution.',
+          summary: 'Expected credit loss for ~3M credit cards and a S/ 60B loan book: Markov migration between delinquency buckets, stressed under macro scenarios, with a Monte Carlo loss distribution.',
           methods: ['Markov chains', 'Monte Carlo', 'IFRS 9'],
           metrics: [
             { value: '~3M', label: 'credit cards' },
@@ -153,7 +153,7 @@ export const content = {
           metrics: [
             { value: '100ms', label: 'latency (halved)' },
             { value: '−8%', label: 'fraud losses' },
-            { value: '−25%', label: 'false positives' },
+            { value: '−25%+', label: 'false positives' },
           ],
           viz: { title: 'Fraud score distributions', threshold: 'Block above score', legit: 'Legitimate', fraud: 'Fraud', lowRisk: '← low risk', highRisk: 'high risk →', caught: 'Fraud caught', fpr: 'Legit blocked', alerts: 'Alerts / 10k txns' },
         },
@@ -163,7 +163,7 @@ export const content = {
           years: '2022–2026',
           title: 'Home valuation for a rent-to-own lender',
           headline: '~1M homes',
-          summary: 'An XGBoost + LightGBM ensemble predicts price per m² from location, size, comparables and rooms, then scales it to a sale price. It backed real-time asset pricing as the portfolio passed $25M.',
+          summary: 'An XGBoost + LightGBM ensemble predicts price per m² from location, size, comparables and rooms, then scales it to a sale price. It moved asset pricing and investor reporting from a 3-day manual process to real time.',
           methods: ['XGBoost', 'LightGBM', 'Ensembles'],
           metrics: [
             { value: '~1M', label: 'homes in Bogotá' },
@@ -178,11 +178,11 @@ export const content = {
           years: '2023–2026',
           title: 'AI document validation for underwriting',
           headline: '40h → 3h',
-          summary: 'Built with the legal team: an AI engine that checks property and borrower documents, the bottleneck of every deal. As CTO I also led diligence for both rounds and grew engineering from 1 to 7.',
-          methods: ['LLMs', 'Document AI', 'Automation'],
+          summary: 'Built with the legal team: an AI engine that checks property and borrower documents, the bottleneck of every deal. I also wrote the core platform in Python (FastAPI, PostgreSQL) and split it into microservices on GCP and AWS.',
+          methods: ['LLMs', 'Document AI', 'FastAPI', 'Microservices'],
           metrics: [
-            { value: '10×', label: 'deal throughput' },
-            { value: '$14.5M', label: 'raised (seed + Series A)' },
+            { value: '5 → 20', label: 'homes financed a month' },
+            { value: '$70K', label: 'cloud costs saved a year' },
           ],
           viz: { title: 'Before and after the engine', before: 'Before', after: 'With AI', review: 'Review time per deal', homes: 'Homes financed per month' },
         },
@@ -322,19 +322,19 @@ export const content = {
       inProgress: 'in progress',
       seeModel: 'See the model',
       items: [
-        { lane: 'edu', from: 2012, to: 2016.99, label: 'BS Physics', org: 'PUCP', place: 'Lima', role: 'BS in Physics, magna cum laude', note: 'Founder and first president of the Physics Student Association; PAIN-PUCP research grant.' },
+        { lane: 'edu', from: 2012, to: 2016.99, label: 'BS Physics', org: 'PUCP', place: 'Lima', role: 'BS in Physics, magna cum laude', note: 'Quantum Optics Research Group; Jorge André Swieca School on Nonlinear and Quantum Optics (Brazil, 2016); PAIN-PUCP research grant. Founder and first president of the Physics Student Association.' },
         { lane: 'work', from: 2017, to: 2020, label: 'Interbank', org: 'Interbank', place: 'Lima', role: 'Data Scientist, credit risk', note: 'IFRS 9 expected credit loss for ~3M cards and a S/ 60B loan book; Monte Carlo loss simulation; origination models.', goto: 'ifrs9' },
         { lane: 'edu', from: 2018, to: 2019.99, label: 'MS Stats', org: 'PUCP', place: 'Lima', role: 'MS in Statistics, summa cum laude', note: 'Full-tuition scholarship. Bayesian thesis on credit-card utilization, presented at LACSC 2021.' },
-        { lane: 'work', from: 2020, to: 2022, label: 'RappiBank', org: 'RappiBank', place: 'Lima', role: 'Lead Data Engineer, founding team', note: 'Digital bank of Rappi and Interbank. First origination model (published) and real-time fraud detection.', goto: 'origination' },
-        { lane: 'work', from: 2022, to: 2026.4, label: 'Duppla', org: 'Duppla', place: 'Bogotá', role: 'First employee (Lead Data Engineer), then CTO from 2023', note: 'Built the home valuation ensemble over ~1M Bogotá homes. As CTO, led diligence for the $2.5M seed and $12M Series A, grew engineering from 1 to 7, and built the AI document engine. Subject of an HBS case study.', goto: 'docAi' },
-        { lane: 'teach', from: 2022, to: 2024, label: 'Professor', org: 'PUCP', place: 'Lima', role: 'Adjunct Professor, Computational Statistics', note: 'Designed the course in R and Python for 200+ students; sections averaged 15.45/20 vs a 13.41 course average, and a student Net Promoter Score of 98, highest in the faculty.' },
+        { lane: 'work', from: 2020, to: 2022, label: 'RappiBank', org: 'RappiBank', place: 'Lima', role: 'Machine Learning Engineer, founding team', note: 'Digital bank of Rappi and Interbank. The bank’s first origination model (published) and real-time fraud detection.', goto: 'origination' },
+        { lane: 'work', from: 2022, to: 2026.4, label: 'Duppla', org: 'Duppla', place: 'Bogotá', role: 'Founding Engineer, first employee', note: 'LatAm Series A fintech. Built the home valuation ensemble over ~1M Bogotá homes, the core Python platform on GCP and AWS, and an AI document engine that cut legal review from 40 to 3 hours per deal. Subject of an HBS case study.', goto: 'docAi' },
+        { lane: 'teach', from: 2022, to: 2024, label: 'Professor', org: 'PUCP', place: 'Lima', role: 'Adjunct Professor (part-time), Computational Statistics', note: 'Designed the course in R and Python for 200+ students; sections averaged 15.45/20 vs a 13.41 course average, and a student Net Promoter Score of 98, highest in the faculty.' },
         { lane: 'side', from: 2023, to: 2024.5, label: 'Surebets', org: 'Side project', place: 'Lima', role: 'Real-time sports-betting arbitrage', note: 'Scraped NBA odds across sportsbooks and executed arbitrages automatically in under 30 seconds; run with real money.', goto: 'surebets' },
         { lane: 'edu', from: 2026.6, to: 2028.4, label: 'Harvard', org: 'Harvard Business School & SEAS', place: 'Boston', role: 'MS/MBA candidate, Engineering Sciences', note: 'Dupré and Nunnelly Fellowship. Graduating May 2028.', current: true },
       ] satisfies PathItem[],
       certs: 'Certifications',
       certList: ['Anthropic: Claude Certified Architect', 'Snowflake: SnowPro Core'],
       stack: 'Tools',
-      stackList: ['Python', 'R', 'SQL', 'PyTorch', 'XGBoost', 'JAGS / MCMC', 'Snowflake', 'Databricks', 'Airflow', 'dbt', 'GCP', 'AWS', 'TypeScript'],
+      stackList: ['Python', 'NumPy / Pandas', 'SciPy', 'statsmodels', 'scikit-learn', 'PyTorch', 'XGBoost', 'R', 'JAGS / MCMC', 'SQL', 'PostgreSQL', 'FastAPI', 'GCP', 'AWS'],
     },
     beyond: {
       kicker: 'Beyond work',
@@ -362,7 +362,7 @@ export const content = {
     meta: {
       title: 'Fernando Cortés Tejada | Riesgo de crédito, quant y ML',
       description:
-        'Candidato MS/MBA en Harvard, con maestría en Estadística (summa cum laude) y bachiller en Física. Riesgo de crédito, modelación cuantitativa y machine learning en producción; ex-CTO de una fintech.',
+        'Candidato MS/MBA en Harvard, con maestría en Estadística (summa cum laude) y bachiller en Física. Riesgo de crédito, modelación cuantitativa y machine learning en producción; ingeniero fundador de una fintech Serie A.',
     },
     nav: { work: 'Trabajo', research: 'Investigación', lab: 'Lab', path: 'Trayectoria', contact: 'Contacto', switchLabel: 'EN', switchAria: 'Read in English' },
     hero: {
@@ -370,13 +370,13 @@ export const content = {
       credentials: ['Candidato MS/MBA en Harvard, 2028', 'Maestría en Estadística, summa cum laude', 'Bachiller en Física'],
       role: 'Riesgo de crédito, modelación cuantitativa y ML en producción',
       pitch:
-        'Le pongo precio al riesgo con estadística: probabilidad de default, pérdida crediticia esperada, valor de viviendas, cuotas mal valoradas. Luego llevo los modelos a producción y armo los equipos que los operan.',
+        'Le pongo precio al riesgo con estadística: probabilidad de default, pérdida crediticia esperada, valor de viviendas, cuotas mal valoradas. Luego llevo los modelos a producción y construyo los sistemas que los operan.',
       cv: 'Descargar CV',
       stats: [
         { value: '100+', label: 'citas, Expert Systems with Applications' },
         { value: '3M', label: 'tarjetas de crédito bajo modelos IFRS 9' },
         { value: '1M', label: 'viviendas valoradas en Bogotá' },
-        { value: 'US$14.5M', label: 'levantados (semilla + Serie A)' },
+        { value: '40h → 3h', label: 'revisión legal por operación, motor de IA' },
       ],
       viz: {
         paths: 'Trayectorias',
@@ -402,7 +402,7 @@ export const content = {
           years: '2017–2020',
           title: 'Pérdida crediticia IFRS 9 bajo estrés',
           headline: '3M tarjetas',
-          summary: 'Pérdida crediticia esperada para tarjetas, hipotecas y créditos: migración de Markov entre buckets de morosidad, estresada con escenarios macro, y una distribución de pérdidas por Monte Carlo.',
+          summary: 'Pérdida crediticia esperada para ~3M tarjetas y una cartera de S/ 60 mil M: migración de Markov entre buckets de morosidad, estresada con escenarios macro, y una distribución de pérdidas por Monte Carlo.',
           methods: ['Cadenas de Markov', 'Monte Carlo', 'IFRS 9'],
           metrics: [
             { value: '~3M', label: 'tarjetas de crédito' },
@@ -436,7 +436,7 @@ export const content = {
           metrics: [
             { value: '100ms', label: 'latencia (a la mitad)' },
             { value: '−8%', label: 'pérdidas por fraude' },
-            { value: '−25%', label: 'falsos positivos' },
+            { value: '−25%+', label: 'falsos positivos' },
           ],
           viz: { title: 'Distribuciones del score de fraude', threshold: 'Bloquear sobre el score', legit: 'Legítimas', fraud: 'Fraude', lowRisk: '← bajo riesgo', highRisk: 'alto riesgo →', caught: 'Fraude detectado', fpr: 'Legítimas bloqueadas', alerts: 'Alertas / 10 mil txns' },
         },
@@ -446,7 +446,7 @@ export const content = {
           years: '2022–2026',
           title: 'Valoración de viviendas para un financiador rent-to-own',
           headline: '~1M viviendas',
-          summary: 'Un ensamble de XGBoost y LightGBM predice el precio por m² a partir de ubicación, área, comparables y habitaciones, y lo escala al precio de venta. Sostuvo la valoración en tiempo real cuando el portafolio superó US$25M.',
+          summary: 'Un ensamble de XGBoost y LightGBM predice el precio por m² a partir de ubicación, área, comparables y habitaciones, y lo escala al precio de venta. Llevó la valoración de activos y los reportes a inversionistas de un proceso manual de 3 días a tiempo real.',
           methods: ['XGBoost', 'LightGBM', 'Ensambles'],
           metrics: [
             { value: '~1M', label: 'viviendas en Bogotá' },
@@ -461,11 +461,11 @@ export const content = {
           years: '2023–2026',
           title: 'Validación de documentos con IA',
           headline: '40h → 3h',
-          summary: 'Construido con el equipo legal: un motor de IA que revisa los documentos del inmueble y del cliente, el cuello de botella de cada operación. Como CTO también lideré la due diligence de ambas rondas y crecí ingeniería de 1 a 7.',
-          methods: ['LLMs', 'IA documental', 'Automatización'],
+          summary: 'Construido con el equipo legal: un motor de IA que revisa los documentos del inmueble y del cliente, el cuello de botella de cada operación. También escribí la plataforma central en Python (FastAPI, PostgreSQL) y la separé en microservicios sobre GCP y AWS.',
+          methods: ['LLMs', 'IA documental', 'FastAPI', 'Microservicios'],
           metrics: [
-            { value: '10×', label: 'operaciones procesadas' },
-            { value: 'US$14.5M', label: 'levantados (semilla + Serie A)' },
+            { value: '5 → 20', label: 'viviendas financiadas al mes' },
+            { value: 'US$70K', label: 'ahorro anual en nube' },
           ],
           viz: { title: 'Antes y después del motor', before: 'Antes', after: 'Con IA', review: 'Horas de revisión por operación', homes: 'Viviendas financiadas al mes' },
         },
@@ -605,19 +605,19 @@ export const content = {
       inProgress: 'en curso',
       seeModel: 'Ver el modelo',
       items: [
-        { lane: 'edu', from: 2012, to: 2016.99, label: 'Física', org: 'PUCP', place: 'Lima', role: 'Bachiller en Física, magna cum laude', note: 'Fundador y primer presidente de la Asociación de Estudiantes de Física; beca de investigación PAIN-PUCP.' },
+        { lane: 'edu', from: 2012, to: 2016.99, label: 'Física', org: 'PUCP', place: 'Lima', role: 'Bachiller en Física, magna cum laude', note: 'Grupo de Investigación en Óptica Cuántica; Escuela Jorge André Swieca de Óptica No Lineal y Cuántica (Brasil, 2016); beca de investigación PAIN-PUCP. Fundador y primer presidente de la Asociación de Estudiantes de Física.' },
         { lane: 'work', from: 2017, to: 2020, label: 'Interbank', org: 'Interbank', place: 'Lima', role: 'Data Scientist, riesgo de crédito', note: 'Pérdida crediticia esperada IFRS 9 para ~3M tarjetas y una cartera de S/ 60 mil M; simulación Monte Carlo de pérdidas; modelos de originación.', goto: 'ifrs9' },
         { lane: 'edu', from: 2018, to: 2019.99, label: 'Maestría', org: 'PUCP', place: 'Lima', role: 'Maestría en Estadística, summa cum laude', note: 'Beca completa. Tesis bayesiana sobre uso de tarjetas de crédito, presentada en LACSC 2021.' },
-        { lane: 'work', from: 2020, to: 2022, label: 'RappiBank', org: 'RappiBank', place: 'Lima', role: 'Lead Data Engineer, equipo fundador', note: 'Banco digital de Rappi e Interbank. Primer modelo de originación (publicado) y detección de fraude en tiempo real.', goto: 'origination' },
-        { lane: 'work', from: 2022, to: 2026.4, label: 'Duppla', org: 'Duppla', place: 'Bogotá', role: 'Primer empleado (Lead Data Engineer), luego CTO desde 2023', note: 'Construí el ensamble de valoración sobre ~1M viviendas en Bogotá. Como CTO, lideré la due diligence de la ronda semilla de US$2.5M y la Serie A de US$12M, crecí ingeniería de 1 a 7 y construí el motor de documentos con IA. Caso de estudio de HBS.', goto: 'docAi' },
-        { lane: 'teach', from: 2022, to: 2024, label: 'Profesor', org: 'PUCP', place: 'Lima', role: 'Profesor, Estadística Computacional', note: 'Diseñé el curso en R y Python para más de 200 estudiantes; mis horarios promediaron 15.45/20 frente a un promedio del curso de 13.41, y un Net Promoter Score estudiantil de 98, el más alto de la facultad.' },
+        { lane: 'work', from: 2020, to: 2022, label: 'RappiBank', org: 'RappiBank', place: 'Lima', role: 'Machine Learning Engineer, equipo fundador', note: 'Banco digital de Rappi e Interbank. Primer modelo de originación del banco (publicado) y detección de fraude en tiempo real.', goto: 'origination' },
+        { lane: 'work', from: 2022, to: 2026.4, label: 'Duppla', org: 'Duppla', place: 'Bogotá', role: 'Founding Engineer, primer empleado', note: 'Fintech latinoamericana en Serie A. Construí el ensamble de valoración sobre ~1M viviendas en Bogotá, la plataforma central en Python sobre GCP y AWS, y un motor de documentos con IA que redujo la revisión legal de 40 a 3 horas por operación. Caso de estudio de HBS.', goto: 'docAi' },
+        { lane: 'teach', from: 2022, to: 2024, label: 'Profesor', org: 'PUCP', place: 'Lima', role: 'Profesor adjunto (tiempo parcial), Estadística Computacional', note: 'Diseñé el curso en R y Python para más de 200 estudiantes; mis horarios promediaron 15.45/20 frente a un promedio del curso de 13.41, y un Net Promoter Score estudiantil de 98, el más alto de la facultad.' },
         { lane: 'side', from: 2023, to: 2024.5, label: 'Surebets', org: 'Proyecto personal', place: 'Lima', role: 'Arbitraje de apuestas deportivas en tiempo real', note: 'Extraía cuotas de la NBA de varias casas y ejecutaba los arbitrajes automáticamente en menos de 30 segundos; operado con dinero real.', goto: 'surebets' },
         { lane: 'edu', from: 2026.6, to: 2028.4, label: 'Harvard', org: 'Harvard Business School & SEAS', place: 'Boston', role: 'Candidato MS/MBA, Engineering Sciences', note: 'Beca Dupré and Nunnelly. Egreso en mayo de 2028.', current: true },
       ] satisfies PathItem[],
       certs: 'Certificaciones',
       certList: ['Anthropic: Claude Certified Architect', 'Snowflake: SnowPro Core'],
       stack: 'Herramientas',
-      stackList: ['Python', 'R', 'SQL', 'PyTorch', 'XGBoost', 'JAGS / MCMC', 'Snowflake', 'Databricks', 'Airflow', 'dbt', 'GCP', 'AWS', 'TypeScript'],
+      stackList: ['Python', 'NumPy / Pandas', 'SciPy', 'statsmodels', 'scikit-learn', 'PyTorch', 'XGBoost', 'R', 'JAGS / MCMC', 'SQL', 'PostgreSQL', 'FastAPI', 'GCP', 'AWS'],
     },
     beyond: {
       kicker: 'Fuera del trabajo',
