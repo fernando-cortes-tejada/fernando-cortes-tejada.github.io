@@ -16,7 +16,7 @@ const pos = (y: number) => ((y - START) / (END - START)) * 100;
 const ticks = Array.from({ length: (2028 - START) / 2 + 1 }, (_, k) => START + 2 * k);
 const lanes = (['edu', 'work', 'teach', 'side'] as const).map((key) => ({ key, label: t.lanes[key] }));
 const yearSpan = (it: { from: number; to: number }) => `${Math.floor(it.from)}–${Math.floor(it.to)}`;
-const DEFAULT = t.items.findIndex((it) => it.role === 'Chief Technology Officer');
+const DEFAULT = t.items.findIndex((it) => it.org === 'Duppla');
 const sel = t.items[DEFAULT];
 ---
 
