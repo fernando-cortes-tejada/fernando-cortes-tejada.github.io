@@ -104,6 +104,10 @@ export const content = {
         caption:
           'Each dot is the end of a Brownian bridge: random-walk paths that start from one point and are conditioned to land on my portrait. Hover to trace a path.',
         pathLabel: 'path',
+        density: 'Density',
+        densityNote: 'Where the endpoints are drawn from: bright skin and edges are dense, and the face is weighted about 4.5× over the sweater so it stays recognizable.',
+        low: 'low',
+        high: 'high',
         alt: 'Portrait of Fernando Cortés Tejada',
       },
     },
@@ -387,6 +391,10 @@ export const content = {
         caption:
           'Cada punto es el final de un puente browniano: caminatas aleatorias que parten de un mismo punto y están condicionadas a llegar a mi retrato. Pasa el cursor para seguir una trayectoria.',
         pathLabel: 'trayectoria',
+        density: 'Densidad',
+        densityNote: 'De dónde se muestrean los puntos finales: la piel clara y los bordes son densos, y el rostro pesa unas 4.5× más que el suéter para que siga siendo reconocible.',
+        low: 'baja',
+        high: 'alta',
         alt: 'Retrato de Fernando Cortés Tejada',
       },
     },

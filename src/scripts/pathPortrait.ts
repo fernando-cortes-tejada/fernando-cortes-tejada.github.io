@@ -45,6 +45,8 @@ interface Sample {
   y: Float32Array;
   r: Float32Array; // dot radius in css px
   color: string[];
+  /** the sampling weights, on the W×H grid */
+  density: { w: number; h: number; weight: Float32Array };
 }
 
 /** Weighted stippling of the portrait. */
@@ -79,7 +81,9 @@ function stipple(img: HTMLImageElement, n: number, rand: () => number): Sample {
   const weight = new Float32Array(W * H);
   let total = 0;
   for (let y = 1; y < H - 1; y++) {
-    const head = y / H < 0.6 ? 1 : 0.22; // spend more points on the face than the sweater
+    // spend more points on the face than the sweater, easing from 1 to 0.22 across the shoulders
+    const f = Math.min(1, Math.max(0, (y / H - 0.54) / 0.12));
+    const head = 1 - 0.78 * f * f * (3 - 2 * f);
     for (let x = 1; x < W - 1; x++) {
       const i = y * W + x;
       if (alpha[i] < 0.5) continue;
@@ -106,6 +110,7 @@ function stipple(img: HTMLImageElement, n: number, rand: () => number): Sample {
     y: new Float32Array(n),
     r: new Float32Array(n),
     color: new Array(n),
+    density: { w: W, h: H, weight },
   };
   for (let k = 0; k < n; k++) {
     const target = rand() * total;
@@ -136,6 +141,28 @@ function boxBlur(src: Float32Array, W: number, H: number) {
   return out;
 }
 
+/** Paint the sampling density as a heatmap (dark blue → light blue → amber → cream). */
+function drawDensity(canvas: HTMLCanvasElement, { w, h, weight }: Sample['density']) {
+  canvas.width = w;
+  canvas.height = h;
+  const ctx = canvas.getContext('2d')!;
+  const img = ctx.createImageData(w, h);
+  // scale to the 99th percentile so a few edge pixels do not wash out the rest
+  const nz = Array.from(weight).filter((v) => v > 0).sort((a, b) => a - b);
+  const top = nz[Math.floor(nz.length * 0.99)] || 1;
+  const stops: Rgb[] = [[29, 58, 82], [124, 184, 214], [242, 165, 65], [255, 243, 220]];
+  for (let i = 0; i < w * h; i++) {
+    if (weight[i] <= 0) continue;
+    const t = Math.min(1, Math.sqrt(weight[i] / top));
+    const u = t * (stops.length - 1);
+    const k = Math.min(stops.length - 2, Math.floor(u));
+    const f = u - k;
+    for (let c = 0; c < 3; c++) img.data[4 * i + c] = stops[k][c] + (stops[k + 1][c] - stops[k][c]) * f;
+    img.data[4 * i + 3] = Math.round(255 * Math.min(1, 0.25 + t));
+  }
+  ctx.putImageData(img, 0, 0);
+}
+
 /** Keep photo colors but lift dark tones toward steel blue so they read on a dark ground;
  * `lift` < 1 dims the sweater so the face carries the image. */
 function tint([r, g, b]: Rgb, l: number, lift: number): string {
@@ -150,6 +177,7 @@ export function mountPathPortrait(root: HTMLElement, labels: Labels) {
   const trails = root.querySelector<HTMLCanvasElement>('canvas.trails')!;
   const dots = root.querySelector<HTMLCanvasElement>('canvas.dots')!;
   const hl = root.querySelector<HTMLCanvasElement>('canvas.highlight')!;
+  const densityCanvas = root.querySelector<HTMLCanvasElement>('canvas.density')!;
   const status = root.querySelector<HTMLElement>('[data-status]')!;
   const tip = root.querySelector<HTMLElement>('[data-tip]')!;
   const modeButtons = root.querySelectorAll<HTMLButtonElement>('[data-mode]');
@@ -183,6 +211,7 @@ export function mountPathPortrait(root: HTMLElement, labels: Labels) {
     const rand = mulberry32(seed);
     n = size.w < 420 ? 3600 : 6500;
     sample = stipple(img, n, rand);
+    drawDensity(densityCanvas, sample.density);
     paths = new Float32Array(n * (STEPS + 1));
     delays = new Float32Array(n);
     drawnStep = new Int16Array(n);
@@ -304,7 +333,7 @@ export function mountPathPortrait(root: HTMLElement, labels: Labels) {
   }
 
   function inspect(e: PointerEvent) {
-    if (!done || root.dataset.mode === 'photo') return;
+    if (!done || root.dataset.mode !== 'paths') return;
     const rect = dots.getBoundingClientRect();
     const mx = e.clientX - rect.left;
     const my = e.clientY - rect.top;
@@ -343,6 +372,8 @@ export function mountPathPortrait(root: HTMLElement, labels: Labels) {
     b.addEventListener('click', () => {
       root.dataset.mode = b.dataset.mode!;
       modeButtons.forEach((o) => o.setAttribute('aria-pressed', String(o === b)));
+      hl.getContext('2d')!.clearRect(0, 0, size.w, size.h);
+      tip.hidden = true;
     }),
   );
 

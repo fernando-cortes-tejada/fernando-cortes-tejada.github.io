@@ -350,8 +350,8 @@ a:hover {
   .viz-stage .ticker {
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
-  .viz-stage .tick { font-size: 16px; }
-  .viz-stage .lbl { font-size: 18px; }
+  .viz-stage .tick { font-size: 20px; }
+  .viz-stage .lbl { font-size: 21px; }
   .viz-stage .big-num { font-size: 26px; }
 }
 

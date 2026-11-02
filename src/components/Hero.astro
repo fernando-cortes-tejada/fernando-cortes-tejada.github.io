@@ -49,17 +49,23 @@ const labels = { simulating: t.viz.simulating, converged: t.viz.converged, pathL
         <canvas class="trails" aria-hidden="true"></canvas>
         <canvas class="dots" aria-hidden="true"></canvas>
         <canvas class="highlight" aria-hidden="true"></canvas>
+        <canvas class="density" aria-hidden="true"></canvas>
+        <p class="legend mono"><span>{t.viz.low}</span><i></i><span>{t.viz.high}</span></p>
         <p class="tip mono" data-tip hidden></p>
       </div>
       <div class="controls">
         <div class="toggle" role="group">
           <button type="button" data-mode="paths" aria-pressed="true">{t.viz.paths}</button>
+          <button type="button" data-mode="density" aria-pressed="false">{t.viz.density}</button>
           <button type="button" data-mode="photo" aria-pressed="false">{t.viz.photo}</button>
         </div>
         <button type="button" class="link-btn" data-resimulate>{t.viz.resimulate} ↻</button>
         <span class="status mono" data-status aria-live="polite"></span>
       </div>
-      <figcaption>{t.viz.caption}</figcaption>
+      <figcaption>
+        <span class="cap-paths">{t.viz.caption}</span>
+        <span class="cap-density">{t.viz.densityNote}</span>
+      </figcaption>
     </figure>
   </div>
 </section>
@@ -245,8 +251,49 @@ const labels = { simulating: t.viz.simulating, converged: t.viz.converged, pathL
     opacity: 1;
   }
 
-  .portrait[data-mode='photo'] canvas {
+  .portrait[data-mode='photo'] canvas,
+  .portrait[data-mode='density'] canvas:not(.density) {
     opacity: 0 !important;
+  }
+
+  .density,
+  .legend {
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .portrait[data-mode='density'] .density,
+  .portrait[data-mode='density'] .legend {
+    opacity: 1;
+  }
+
+  .legend {
+    position: absolute;
+    left: 0;
+    bottom: 0.4rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin: 0;
+    font-size: 0.7rem;
+    color: var(--faint);
+    transition: opacity 0.6s ease;
+  }
+
+  .legend i {
+    width: 6rem;
+    height: 0.4rem;
+    border-radius: 999px;
+    background: linear-gradient(90deg, #1d3a52, #7cb8d6, #f2a541, #fff3dc);
+  }
+
+  .cap-density,
+  .portrait[data-mode='density'] .cap-paths {
+    display: none;
+  }
+
+  .portrait[data-mode='density'] .cap-density {
+    display: inline;
   }
 
   .dots {

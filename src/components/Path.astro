@@ -18,6 +18,8 @@ const lanes = (['edu', 'work', 'teach', 'side'] as const).map((key) => ({ key, l
 const yearSpan = (it: { from: number; to: number }) => `${Math.floor(it.from)}–${Math.floor(it.to)}`;
 const DEFAULT = t.items.findIndex((it) => it.org === 'Duppla');
 const sel = t.items[DEFAULT];
+// phones get a vertical list, newest first, with every detail visible
+const listed = [...t.items].sort((a, b) => b.from - a.from);
 ---
 
 <section id="path" class="section">
@@ -64,6 +66,23 @@ const sel = t.items[DEFAULT];
         </div>
       </div>
     </div>
+
+    <ol class="tl-list">
+      {
+        listed.map((it) => (
+          <li class={`li-${it.lane}`}>
+            <p class="li-meta mono">
+              <span>{yearSpan(it)}{it.current ? ` · ${t.inProgress}` : ''}</span>
+              <span class="li-lane">{t.lanes[it.lane]}</span>
+            </p>
+            <h3>{it.role}</h3>
+            <p class="org">{it.org} <span class="place">· {it.place}</span></p>
+            {it.note && <p class="note">{it.note}</p>}
+            {it.goto && <a class="goto" href="#work" data-goto={it.goto}>{t.seeModel} →</a>}
+          </li>
+        ))
+      }
+    </ol>
 
     <div class="detail" data-detail aria-live="polite">
       <p class="d-years mono" data-f="years">{yearSpan(sel)}</p>
@@ -398,6 +417,77 @@ const sel = t.items[DEFAULT];
     }
     .tl {
       min-width: 40rem;
+    }
+  }
+
+  .tl-list {
+    display: none;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .tl-list li {
+    position: relative;
+    padding: 0 0 1.6rem 1.3rem;
+    border-left: 2px solid var(--line-strong);
+  }
+
+  .tl-list li::before {
+    content: '';
+    position: absolute;
+    left: -0.4rem;
+    top: 0.3rem;
+    width: 0.7rem;
+    height: 0.7rem;
+    border-radius: 50%;
+    background: var(--dot);
+  }
+
+  .li-edu { --dot: #c98500; }
+  .li-work { --dot: #3987e5; }
+  .li-teach { --dot: #9ec5f4; }
+  .li-side { --dot: #9085e9; }
+
+  .li-meta {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    margin: 0 0 0.3rem;
+    font-size: 0.78rem;
+    color: var(--accent);
+  }
+
+  .li-lane {
+    color: var(--faint);
+  }
+
+  .tl-list h3 {
+    font-size: 1.02rem;
+    font-weight: 600;
+    line-height: 1.35;
+    margin: 0 0 0.15rem;
+  }
+
+  .tl-list .org {
+    margin: 0 0 0.4rem;
+    font-size: 0.92rem;
+  }
+
+  .tl-list .note {
+    margin: 0 0 0.4rem;
+    font-size: 0.92rem;
+    color: var(--muted);
+  }
+
+  @media (max-width: 700px) {
+    .lede,
+    .tl-scroll,
+    .detail {
+      display: none;
+    }
+    .tl-list {
+      display: block;
     }
   }
 

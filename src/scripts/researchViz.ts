@@ -49,7 +49,7 @@ const thesis: Renderer = (stage, L, lang) => {
     return g.filter((c) => c.defaulted).length / g.length;
   });
 
-  const toggle = seg(stage, [['raw', L.raw], ['clustered', L.clustered]], 'raw');
+  const toggle = seg(stage, [['raw', L.raw], ['clustered', L.clustered]], 'clustered');
   const s = svgBox(stage, 560, 240, L.title);
   const W = 560, H = 240, m = { l: 40, r: 16, t: 10, b: 26 };
   const X = (t: number) => m.l + (t / 11) * (W - m.l - m.r);
@@ -89,7 +89,7 @@ const thesis: Renderer = (stage, L, lang) => {
     const b = (e.target as HTMLElement).closest('button');
     if (b) draw(b.dataset.v!);
   });
-  draw('raw');
+  draw('clustered');
 };
 
 // ---------------------------------------------------------------------------
