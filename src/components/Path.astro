@@ -16,7 +16,7 @@ const pos = (y: number) => ((y - START) / (END - START)) * 100;
 const ticks = Array.from({ length: (2028 - START) / 2 + 1 }, (_, k) => START + 2 * k);
 const lanes = (['edu', 'work', 'teach', 'side'] as const).map((key) => ({ key, label: t.lanes[key] }));
 const yearSpan = (it: { from: number; to: number }) => `${Math.floor(it.from)}–${Math.floor(it.to)}`;
-const DEFAULT = t.items.findIndex((it) => it.org === 'Duppla');
+const DEFAULT = t.items.findIndex((it) => it.current);
 const sel = t.items[DEFAULT];
 // phones get a vertical list, newest first, with every detail visible
 const listed = [...t.items].sort((a, b) => b.from - a.from);
@@ -85,7 +85,7 @@ const listed = [...t.items].sort((a, b) => b.from - a.from);
     </ol>
 
     <div class="detail" data-detail aria-live="polite">
-      <p class="d-years mono" data-f="years">{yearSpan(sel)}</p>
+      <p class="d-years mono" data-f="years">{yearSpan(sel)}{sel.current ? ` · ${t.inProgress}` : ''}</p>
       <div>
         <h3 data-f="role">{sel.role}</h3>
         <p class="org"><span data-f="org">{sel.org}</span> <span class="place" data-f="place">· {sel.place}</span></p>
