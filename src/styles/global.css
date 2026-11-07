@@ -364,3 +364,56 @@ a:hover {
 
 /* elements toggled with the hidden attribute must stay hidden despite display rules above */
 .viz-stage [hidden] { display: none !important; }
+
+/* detail dialogs (Work projects, Research figures) */
+.modal {
+  width: min(56rem, calc(100vw - 2rem));
+  max-height: calc(100dvh - 2rem);
+  padding: clamp(1.2rem, 3vw, 2rem);
+  color: var(--text);
+  background: var(--surface);
+  border: 1px solid var(--line-strong);
+  border-radius: 16px;
+  overscroll-behavior: contain;
+}
+
+.modal::backdrop {
+  background: rgba(5, 7, 10, 0.72);
+  backdrop-filter: blur(3px);
+}
+
+.modal header {
+  padding-right: 4.5rem;
+  margin-bottom: 1rem;
+}
+
+.modal h3 {
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: clamp(1.6rem, 3.4vw, 2.2rem);
+  line-height: 1.1;
+  margin: 0.3rem 0 0;
+}
+
+.modal .close {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  font-size: 0.72rem;
+  color: var(--muted);
+  background: var(--bg);
+  border: 1px solid var(--line-strong);
+  border-radius: 6px;
+  padding: 0.3rem 0.55rem;
+  cursor: pointer;
+}
+
+.modal .close:hover {
+  color: var(--text);
+  border-color: var(--text);
+}
+.modal-eyebrow {
+  font-size: 0.72rem;
+  color: var(--faint);
+  margin: 0;
+}

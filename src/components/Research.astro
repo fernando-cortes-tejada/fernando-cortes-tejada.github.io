@@ -49,10 +49,12 @@ const paperStats =
               </p>
             </div>
             {p.viz ? (
-              <figure class="fig">
-                <div class="viz-stage" data-research-viz={p.viz} data-labels={JSON.stringify(p.vizLabels)} />
-                {p.vizLabels?.note && <figcaption class="mono">{p.vizLabels.note}</figcaption>}
-              </figure>
+              <button type="button" class="peek" data-open-fig={p.viz} aria-haspopup="dialog">
+                <span class="peek-kind mono">{t.figure}</span>
+                <span class="peek-title">{p.vizLabels?.title}</span>
+                <span class="peek-note">{p.vizLabels?.note}</span>
+                <span class="peek-go mono">{t.explore} →</span>
+              </button>
             ) : (
               i === 0 && (
                 <dl class="stats">
@@ -69,15 +71,51 @@ const paperStats =
         ))
       }
     </ol>
+
+    <dialog class="modal" data-fig-dialog>
+      {
+        t.items.filter((p) => p.viz).map((p) => (
+          <article data-fig={p.viz} hidden>
+            <header>
+              <p class="modal-eyebrow mono">{p.kind}</p>
+              <h3>{p.vizLabels?.title}</h3>
+            </header>
+            <div class="viz-stage" data-research-viz={p.viz} data-labels={JSON.stringify(p.vizLabels)} />
+            {p.vizLabels?.note && <p class="fig-note mono">{p.vizLabels.note}</p>}
+            <p class="fig-summary">{p.summary}</p>
+          </article>
+        ))
+      }
+      <button type="button" class="close mono" data-close aria-label={t.close}>Esc ✕</button>
+    </dialog>
   </div>
 </section>
 
 <script>
   import { RESEARCH_VIZ } from '../scripts/researchViz';
   const lang = document.documentElement.lang;
-  document.querySelectorAll<HTMLElement>('[data-research-viz]').forEach((stage) => {
-    RESEARCH_VIZ[stage.dataset.researchViz!](stage, JSON.parse(stage.dataset.labels!), lang);
+  const dialog = document.querySelector<HTMLDialogElement>('[data-fig-dialog]')!;
+  let opener: HTMLElement | null = null;
+  // figures render on first open; they keep their state if reopened
+  const rendered = new Set<string>();
+  document.querySelectorAll<HTMLElement>('[data-open-fig]').forEach((btn) =>
+    btn.addEventListener('click', () => {
+      const key = btn.dataset.openFig!;
+      opener = btn;
+      dialog.querySelectorAll<HTMLElement>('[data-fig]').forEach((a) => (a.hidden = a.dataset.fig !== key));
+      dialog.showModal();
+      dialog.scrollTop = 0;
+      if (!rendered.has(key)) {
+        const stage = dialog.querySelector<HTMLElement>(`[data-fig="${key}"] [data-research-viz]`)!;
+        RESEARCH_VIZ[key](stage, JSON.parse(stage.dataset.labels!), lang);
+        rendered.add(key);
+      }
+    }),
+  );
+  dialog.addEventListener('click', (e) => {
+    if (e.target === dialog || (e.target as HTMLElement).closest('[data-close]')) dialog.close();
   });
+  dialog.addEventListener('close', () => opener?.focus());
 </script>
 
 <style>
@@ -149,6 +187,61 @@ const paperStats =
     font-size: 0.84rem;
     color: var(--accent);
     text-decoration: none;
+  }
+
+  .peek {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    width: 100%;
+    text-align: left;
+    font: inherit;
+    color: var(--text);
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    padding: 1.3rem 1.4rem;
+    cursor: pointer;
+    transition: border-color 0.15s, background 0.15s;
+  }
+
+  .peek:hover {
+    border-color: var(--accent);
+    background: var(--surface-2);
+  }
+
+  .peek-kind {
+    font-size: 0.72rem;
+    color: var(--faint);
+  }
+
+  .peek-title {
+    font-size: 1.05rem;
+    font-weight: 600;
+  }
+
+  .peek-note {
+    font-size: 0.88rem;
+    color: var(--muted);
+  }
+
+  .peek-go {
+    margin-top: 0.4rem;
+    font-size: 0.78rem;
+    color: var(--accent);
+  }
+
+  .fig-note {
+    margin: 0.6rem 0 0;
+    font-size: 0.7rem;
+    color: var(--faint);
+  }
+
+  .fig-summary {
+    margin: 1rem 0 0;
+    color: var(--muted);
+    font-size: 0.95rem;
+    max-width: 62ch;
   }
 
   .fig {

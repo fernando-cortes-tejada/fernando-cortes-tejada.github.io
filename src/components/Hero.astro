@@ -22,6 +22,7 @@ const labels = { simulating: t.viz.simulating, converged: t.viz.converged, pathL
       </h1>
       <p class="role">{t.role}</p>
       <p class="pitch">{t.pitch}</p>
+      <p class="seeking mono"><span aria-hidden="true"></span>{t.seeking}</p>
       <div class="actions">
         <a class="btn btn-primary" href={links.cv} download>
           <svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M11 3h2v10.17l3.59-3.58L18 11l-6 6-6-6 1.41-1.41L11 13.17zM5 19h14v2H5z"/></svg>
@@ -170,7 +171,25 @@ const labels = { simulating: t.viz.simulating, converged: t.viz.converged, pathL
   .pitch {
     color: var(--muted);
     max-width: 52ch;
-    margin: 0 0 2rem;
+    margin: 0 0 1.1rem;
+  }
+
+  .seeking {
+    display: flex;
+    align-items: baseline;
+    gap: 0.55rem;
+    margin: 0 0 1.8rem;
+    font-size: 0.8rem;
+    color: var(--good);
+  }
+
+  .seeking span {
+    flex: none;
+    width: 0.5rem;
+    height: 0.5rem;
+    border-radius: 50%;
+    background: var(--good);
+    box-shadow: 0 0 0 3px rgba(127, 207, 154, 0.18);
   }
 
   .actions {

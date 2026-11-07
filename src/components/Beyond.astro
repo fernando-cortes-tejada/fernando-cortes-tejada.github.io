@@ -1,4 +1,6 @@
 ---
+import { geoNaturalEarth1, geoPath } from 'd3-geo';
+import { feature, mesh } from 'topojson-client';
 import { content, type Lang } from '../i18n/content';
 
 interface Props {
@@ -6,16 +8,72 @@ interface Props {
 }
 const { lang } = Astro.props;
 const t = content[lang].beyond;
+
+// Americas map, projected at build time so the page ships a static SVG
+const MW = 460, MH = 520;
+const topo = (await import('world-atlas/countries-110m.json')).default as any;
+const land = feature(topo, topo.objects.land);
+const borders = mesh(topo, topo.objects.countries, (a, b) => a !== b);
+const projection = geoNaturalEarth1()
+  .rotate([75, 0])
+  .fitExtent([[10, 10], [MW - 10, MH - 10]], { type: 'MultiPoint', coordinates: [[-125, 52], [-30, -42], [-125, -42], [-30, 52]] });
+const draw = geoPath(projection);
+const pins = t.places.map((p) => {
+  const [x, y] = projection([p.lon, p.lat])!;
+  return { ...p, x, y };
+});
+const DEFAULT = Math.max(0, pins.findIndex((p) => p.now));
 ---
 
 <section id="beyond" class="section">
   <div class="wrap">
-    <div class="intro">
-      <div>
-        <p class="kicker">{t.kicker}</p>
-        <h2 class="section-title">{t.title}</h2>
+    <p class="kicker">{t.kicker}</p>
+    <h2 class="section-title">{t.title}</h2>
+
+    <div class="about">
+      <div class="where" data-places={JSON.stringify(pins.map(({ name, years, note, now }) => ({ name, years, note, now })))} data-based={t.basedHere}>
+        <p class="label mono">{t.mapTitle}</p>
+        <svg class="map" viewBox={`0 0 ${MW} ${MH}`} role="group" aria-label={t.mapTitle}>
+          <path class="land" d={draw(land)} />
+          <path class="borders" d={draw(borders)} />
+          {
+            pins.map((p, i) => (
+              <g class:list={['pin', { now: p.now, on: i === DEFAULT }]} transform={`translate(${p.x.toFixed(1)},${p.y.toFixed(1)})`} data-i={i} tabindex="0" role="button" aria-pressed={i === DEFAULT ? 'true' : 'false'} aria-label={`${p.name}, ${p.years}`}>
+                <circle class="halo" r="11" />
+                <circle class="dot" r="5" />
+                <text class="name mono" x={p.lon < -72 ? -10 : 10} y="4" text-anchor={p.lon < -72 ? 'end' : 'start'}>{p.name}</text>
+              </g>
+            ))
+          }
+        </svg>
+        <div class="place" aria-live="polite">
+          <p class="p-head"><b data-f="name">{pins[DEFAULT].name}</b> <span class="mono" data-f="tag">{pins[DEFAULT].now ? t.basedHere : pins[DEFAULT].years}</span></p>
+          <p class="p-note" data-f="note">{pins[DEFAULT].note}</p>
+        </div>
       </div>
-      <p class="lede">{t.body}</p>
+
+      <div class="facts">
+        <div>
+          <p class="label mono">{t.authTitle}</p>
+          <p class="auth">{t.auth}</p>
+        </div>
+        <div>
+          <p class="label mono">{t.langTitle}</p>
+          <ul class="tiles">
+            {t.languages.map((l) => (
+              <li><span class="badge mono">{l.code}</span><span><b>{l.name}</b><small>{l.level}</small></span></li>
+            ))}
+          </ul>
+        </div>
+        <div>
+          <p class="label mono">{t.outsideTitle}</p>
+          <ul class="tiles">
+            {t.interests.map((it) => (
+              <li><span class="emoji" aria-hidden="true">{it.icon}</span><span><b>{it.name}</b><small>{it.detail}</small></span></li>
+            ))}
+          </ul>
+        </div>
+      </div>
     </div>
 
     <div class="gallery">
@@ -31,17 +89,191 @@ const t = content[lang].beyond;
   </div>
 </section>
 
+<script>
+  document.querySelectorAll<HTMLElement>('[data-places]').forEach((root) => {
+    const places = JSON.parse(root.dataset.places!);
+    const pins = [...root.querySelectorAll<SVGGElement>('.pin')];
+    const f = (k: string) => root.querySelector<HTMLElement>(`[data-f=${k}]`)!;
+    const select = (pin: SVGGElement) => {
+      const p = places[+pin.dataset.i!];
+      pins.forEach((o) => {
+        o.classList.toggle('on', o === pin);
+        o.setAttribute('aria-pressed', String(o === pin));
+      });
+      f('name').textContent = p.name;
+      f('tag').textContent = p.now ? root.dataset.based! : p.years;
+      f('note').textContent = p.note;
+    };
+    pins.forEach((pin) => {
+      pin.addEventListener('click', () => select(pin));
+      pin.addEventListener('mouseenter', () => select(pin));
+      pin.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          select(pin);
+        }
+      });
+    });
+  });
+</script>
+
 <style>
-  .intro {
+  .about {
     display: grid;
-    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-    gap: 1rem 3rem;
-    align-items: end;
-    margin-bottom: 2.5rem;
+    grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
+    gap: 2rem clamp(2rem, 5vw, 4rem);
+    margin: 1rem 0 3rem;
   }
 
-  .intro .lede {
-    margin: 0 0 1rem;
+  .label {
+    margin: 0 0 0.9rem;
+    font-size: 0.72rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--faint);
+  }
+
+  .map {
+    display: block;
+    width: 100%;
+    max-width: 30rem;
+    height: auto;
+    /* the map is cropped to the Americas: fade the cut edges instead of a hard line */
+    mask-image: linear-gradient(to bottom, transparent, black 9%, black 92%, transparent);
+  }
+
+  .land {
+    fill: var(--surface-2);
+    stroke: var(--line-strong);
+    stroke-width: 0.6;
+  }
+
+  .borders {
+    fill: none;
+    stroke: var(--line);
+    stroke-width: 0.5;
+  }
+
+  .pin {
+    cursor: pointer;
+    outline: none;
+  }
+
+  .pin .halo {
+    fill: transparent;
+  }
+
+  .pin .dot {
+    fill: var(--path);
+    stroke: var(--bg);
+    stroke-width: 2;
+    transition: r 0.2s;
+  }
+
+  .pin.now .dot {
+    fill: var(--accent);
+  }
+
+  .pin.on .dot,
+  .pin:focus-visible .dot {
+    r: 7;
+  }
+
+  .pin.on .halo {
+    fill: rgba(242, 165, 65, 0.18);
+  }
+
+  .pin .name {
+    fill: var(--muted);
+    font-size: 13px;
+    paint-order: stroke;
+    stroke: var(--bg);
+    stroke-width: 4px;
+  }
+
+  .pin.on .name {
+    fill: var(--text);
+  }
+
+  .place {
+    max-width: 30rem;
+    margin-top: 0.6rem;
+    min-height: 5.5rem;
+  }
+
+  .p-head {
+    margin: 0 0 0.3rem;
+  }
+
+  .p-head span {
+    margin-left: 0.5rem;
+    font-size: 0.72rem;
+    color: var(--faint);
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    padding: 0.1rem 0.5rem;
+  }
+
+  .p-note {
+    margin: 0;
+    color: var(--muted);
+    font-size: 0.94rem;
+  }
+
+  .facts {
+    display: grid;
+    align-content: start;
+    gap: 2.2rem;
+  }
+
+  .auth {
+    margin: 0;
+    font-size: 0.95rem;
+  }
+
+  .tiles {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1.1rem 1.5rem;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .tiles li {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+  }
+
+  .tiles b {
+    display: block;
+    font-weight: 500;
+  }
+
+  .tiles small {
+    display: block;
+    font-size: 0.8rem;
+    color: var(--faint);
+    line-height: 1.35;
+  }
+
+  .badge,
+  .emoji {
+    flex: none;
+    display: grid;
+    place-items: center;
+    width: 2.4rem;
+    height: 2.4rem;
+    border: 1px solid var(--line-strong);
+    border-radius: 8px;
+    font-size: 0.8rem;
+    color: var(--muted);
+  }
+
+  .emoji {
+    font-size: 1.3rem;
+    border-color: var(--line);
   }
 
   .gallery {
@@ -86,8 +318,11 @@ const t = content[lang].beyond;
   }
 
   @media (max-width: 860px) {
-    .intro {
+    .about {
       grid-template-columns: minmax(0, 1fr);
+    }
+    .map {
+      margin-inline: auto;
     }
     .gallery {
       grid-template-columns: repeat(2, minmax(0, 1fr));

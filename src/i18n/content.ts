@@ -9,6 +9,8 @@ export interface Project {
   id: string;
   org: string;
   headline: string;
+  /** one line for the card; the full story opens in the dialog */
+  teaser: string;
   viz: Record<string, string>;
   years: string;
   title: string;
@@ -38,6 +40,15 @@ export interface Photo {
   tall?: boolean;
   /** CSS object-position, for portrait photos shown in landscape tiles */
   focus?: string;
+}
+
+export interface Place {
+  name: string;
+  lon: number;
+  lat: number;
+  years: string;
+  note: string;
+  now?: boolean;
 }
 
 export interface PathItem {
@@ -88,6 +99,7 @@ export const content = {
       role: 'Credit risk, quantitative modeling & ML in production',
       pitch:
         'I put prices on risk with statistics: probability of default, expected credit loss, home values, mispriced odds. Then I take the models to production and build the systems that run them.',
+      seeking: 'Seeking quant research and credit risk internships for summer 2027',
       cv: 'Download CV',
       stats: [
         { value: '100+', label: 'citations, Expert Systems with Applications' },
@@ -114,14 +126,17 @@ export const content = {
     work: {
       kicker: 'Selected work',
       title: 'Models that went to production',
-      intro: 'Pick a project and play with a small version of it. The models in the visuals are illustrative; the results listed under each one are real.',
+      intro: 'The headline result of each project, real numbers. Open one to play with a small version of the model.',
       illustrative: 'Illustrative model, synthetic data',
+      open: 'Explore',
+      close: 'Close',
       projects: [
         {
           id: 'surebets',
           org: 'Side project',
           years: '2023–2024',
           title: 'Real-time sports-betting arbitrage',
+          teaser: 'Odds scraper and execution bot for cross-book NBA arbitrage, run with real money.',
           headline: '~2% per arb',
           summary: 'Scraped NBA odds from several sportsbooks, caught the moments when their prices disagreed enough to lock in a profit, and an execution bot placed both legs within seconds. Run with real money.',
           methods: ['Selenium', 'Airflow', 'Python'],
@@ -137,6 +152,7 @@ export const content = {
           org: 'Interbank',
           years: '2017–2020',
           title: 'IFRS 9 credit loss under stress',
+          teaser: 'Expected credit loss for ~3M cards: Markov migration, stressed under macro scenarios.',
           headline: '3M cards',
           summary: 'Expected credit loss for ~3M credit cards and a S/ 60B loan book: Markov migration between delinquency buckets, stressed under macro scenarios, with a Monte Carlo loss distribution.',
           methods: ['Markov chains', 'Monte Carlo', 'IFRS 9'],
@@ -152,6 +168,7 @@ export const content = {
           org: 'RappiBank',
           years: '2020–2022',
           title: 'Credit-card origination with super-app data',
+          teaser: 'Super-app behavior plus bureau data: more approvals at the same risk. Published.',
           headline: '+5% approvals',
           summary: 'Adding Rappi app behavior to bureau data separates good and bad applicants better, so the bank approves more people at the same risk. Published in Expert Systems with Applications.',
           methods: ['Gradient boosting', 'TreeSHAP', 'Alternative data'],
@@ -166,6 +183,7 @@ export const content = {
           org: 'RappiBank',
           years: '2020–2022',
           title: 'Real-time transaction fraud detection',
+          teaser: 'XGBoost and PyTorch scoring every card payment in 100ms.',
           headline: '−8% fraud losses',
           summary: 'XGBoost and PyTorch models scoring card payments as they happen. Every threshold trades fraud caught against customers wrongly blocked.',
           methods: ['XGBoost', 'PyTorch', 'Real-time inference'],
@@ -181,6 +199,7 @@ export const content = {
           org: 'Duppla',
           years: '2022–2026',
           title: 'Home valuation for a rent-to-own lender',
+          teaser: 'An XGBoost + LightGBM ensemble pricing ~1M Bogotá homes in real time.',
           headline: '~1M homes',
           summary: 'An XGBoost + LightGBM ensemble predicts price per m² from location, size, comparables and rooms, then scales it to a sale price. It moved asset pricing and investor reporting from a 3-day manual process to real time.',
           methods: ['XGBoost', 'LightGBM', 'Ensembles'],
@@ -196,6 +215,7 @@ export const content = {
           org: 'Duppla',
           years: '2023–2026',
           title: 'AI document validation for underwriting',
+          teaser: 'An AI engine that checks property and borrower documents, the bottleneck of every deal.',
           headline: '40h → 3h',
           summary: 'Built with the legal team: an AI engine that checks property and borrower documents, the bottleneck of every deal. I also wrote the core platform in Python (FastAPI, PostgreSQL) and split it into microservices on GCP and AWS.',
           methods: ['LLMs', 'Document AI', 'FastAPI', 'Microservices'],
@@ -210,6 +230,9 @@ export const content = {
     research: {
       kicker: 'Research',
       title: 'Papers and theses',
+      figure: 'Interactive figure',
+      explore: 'Explore the model',
+      close: 'Close',
       items: [
         {
           kind: 'Journal article',
@@ -342,7 +365,29 @@ export const content = {
     },
     beyond: {
       kicker: 'Beyond work',
-      title: 'Mountains',
+      title: 'Background & interests',
+      mapTitle: 'Where I’ve studied and worked',
+      places: [
+        { name: 'Lima', lon: -77.04, lat: -12.05, years: '2012–2022', note: 'BS Physics and MS Statistics at PUCP; credit risk at Interbank, machine learning at RappiBank; taught Computational Statistics.' },
+        { name: 'São Paulo', lon: -46.63, lat: -23.55, years: '2016', note: 'Jorge André Swieca School on Nonlinear and Quantum Optics, as a member of PUCP’s Quantum Optics Research Group.' },
+        { name: 'Bogotá', lon: -74.07, lat: 4.71, years: '2022–2026', note: 'Founding engineer at Duppla: home valuation, the core platform and the AI document engine.' },
+        { name: 'Boston', lon: -71.06, lat: 42.36, years: '2026–', note: 'MS in Engineering Sciences at Harvard, joint with the MBA.', now: true },
+      ] satisfies Place[],
+      basedHere: 'Based here',
+      authTitle: 'Work authorization',
+      auth: 'F-1 student · CPT for internships · eligible for STEM OPT',
+      langTitle: 'Languages',
+      languages: [
+        { code: 'ES', name: 'Spanish', level: 'Native' },
+        { code: 'EN', name: 'English', level: 'Fluent' },
+      ],
+      outsideTitle: 'Outside work',
+      interests: [
+        { icon: '🧗', name: 'Rock climbing', detail: 'up to 5.10c' },
+        { icon: '🥾', name: 'Trekking', detail: 'Inca Trail, Huayhuash, Torres del Paine' },
+        { icon: '♟️', name: 'Chess', detail: 'casual' },
+        { icon: '🎮', name: 'Dota 2', detail: 'casual' },
+      ],
       body: 'I climb (up to 5.10c, in seven parks across Peru, Colombia and Yosemite) and trek: the Inca Trail, Huayhuash and Santa Cruz in Peru, and Torres del Paine in Patagonia. Off the mountain, I play chess and Dota 2.',
       photos: [
         { src: '/beyond/climbing.webp', alt: 'Fernando lead climbing a granite slab', caption: 'On the wall', tall: true },
@@ -375,6 +420,7 @@ export const content = {
       role: 'Riesgo de crédito, modelación cuantitativa y ML en producción',
       pitch:
         'Le pongo precio al riesgo con estadística: probabilidad de default, pérdida crediticia esperada, valor de viviendas, cuotas mal valoradas. Luego llevo los modelos a producción y construyo los sistemas que los operan.',
+      seeking: 'Busco prácticas en investigación cuantitativa y riesgo de crédito para el verano de 2027',
       cv: 'Descargar CV',
       stats: [
         { value: '100+', label: 'citas, Expert Systems with Applications' },
@@ -401,14 +447,17 @@ export const content = {
     work: {
       kicker: 'Trabajo seleccionado',
       title: 'Modelos que llegaron a producción',
-      intro: 'Elige un proyecto y juega con una versión pequeña. Los modelos de los gráficos son ilustrativos; los resultados listados debajo de cada uno son reales.',
+      intro: 'El resultado principal de cada proyecto, con números reales. Abre uno para jugar con una versión pequeña del modelo.',
       illustrative: 'Modelo ilustrativo, datos sintéticos',
+      open: 'Explorar',
+      close: 'Cerrar',
       projects: [
         {
           id: 'surebets',
           org: 'Proyecto personal',
           years: '2023–2024',
           title: 'Arbitraje de apuestas deportivas en tiempo real',
+          teaser: 'Extractor de cuotas y bot de ejecución para arbitraje de la NBA entre casas, con dinero real.',
           headline: '~2% por arbitraje',
           summary: 'Extraía cuotas de la NBA de varias casas de apuestas, detectaba los momentos en que sus precios diferían lo suficiente para asegurar una ganancia, y un bot de ejecución colocaba ambas apuestas en segundos. Operado con dinero real.',
           methods: ['Selenium', 'Airflow', 'Python'],
@@ -424,6 +473,7 @@ export const content = {
           org: 'Interbank',
           years: '2017–2020',
           title: 'Pérdida crediticia IFRS 9 bajo estrés',
+          teaser: 'Pérdida esperada para ~3M tarjetas: migración de Markov estresada con escenarios macro.',
           headline: '3M tarjetas',
           summary: 'Pérdida crediticia esperada para ~3M tarjetas y una cartera de S/ 60 mil M: migración de Markov entre buckets de morosidad, estresada con escenarios macro, y una distribución de pérdidas por Monte Carlo.',
           methods: ['Cadenas de Markov', 'Monte Carlo', 'IFRS 9'],
@@ -439,6 +489,7 @@ export const content = {
           org: 'RappiBank',
           years: '2020–2022',
           title: 'Originación de tarjetas con datos de la super-app',
+          teaser: 'Comportamiento en la super-app más buró: más aprobaciones con el mismo riesgo. Publicado.',
           headline: '+5% aprobaciones',
           summary: 'Sumar el comportamiento en la app de Rappi a los datos del buró separa mejor a buenos y malos solicitantes, así el banco aprueba a más personas con el mismo riesgo. Publicado en Expert Systems with Applications.',
           methods: ['Gradient boosting', 'TreeSHAP', 'Datos alternativos'],
@@ -453,6 +504,7 @@ export const content = {
           org: 'RappiBank',
           years: '2020–2022',
           title: 'Detección de fraude transaccional en tiempo real',
+          teaser: 'XGBoost y PyTorch calificando cada pago con tarjeta en 100ms.',
           headline: '−8% pérdidas',
           summary: 'Modelos en XGBoost y PyTorch que califican cada pago con tarjeta en el momento. Cada umbral intercambia fraude detectado por clientes bloqueados por error.',
           methods: ['XGBoost', 'PyTorch', 'Tiempo real'],
@@ -468,6 +520,7 @@ export const content = {
           org: 'Duppla',
           years: '2022–2026',
           title: 'Valoración de viviendas para un financiador rent-to-own',
+          teaser: 'Un ensamble de XGBoost y LightGBM que valora ~1M viviendas en Bogotá en tiempo real.',
           headline: '~1M viviendas',
           summary: 'Un ensamble de XGBoost y LightGBM predice el precio por m² a partir de ubicación, área, comparables y habitaciones, y lo escala al precio de venta. Llevó la valoración de activos y los reportes a inversionistas de un proceso manual de 3 días a tiempo real.',
           methods: ['XGBoost', 'LightGBM', 'Ensambles'],
@@ -483,6 +536,7 @@ export const content = {
           org: 'Duppla',
           years: '2023–2026',
           title: 'Validación de documentos con IA',
+          teaser: 'Un motor de IA que revisa los documentos del inmueble y del cliente, el cuello de botella de cada operación.',
           headline: '40h → 3h',
           summary: 'Construido con el equipo legal: un motor de IA que revisa los documentos del inmueble y del cliente, el cuello de botella de cada operación. También escribí la plataforma central en Python (FastAPI, PostgreSQL) y la separé en microservicios sobre GCP y AWS.',
           methods: ['LLMs', 'IA documental', 'FastAPI', 'Microservicios'],
@@ -497,6 +551,9 @@ export const content = {
     research: {
       kicker: 'Investigación',
       title: 'Artículos y tesis',
+      figure: 'Figura interactiva',
+      explore: 'Explorar el modelo',
+      close: 'Cerrar',
       items: [
         {
           kind: 'Artículo en revista',
@@ -629,7 +686,29 @@ export const content = {
     },
     beyond: {
       kicker: 'Fuera del trabajo',
-      title: 'Montañas',
+      title: 'Trayectoria e intereses',
+      mapTitle: 'Dónde he estudiado y trabajado',
+      places: [
+        { name: 'Lima', lon: -77.04, lat: -12.05, years: '2012–2022', note: 'Bachiller en Física y Maestría en Estadística en la PUCP; riesgo de crédito en Interbank, machine learning en RappiBank; dicté Estadística Computacional.' },
+        { name: 'São Paulo', lon: -46.63, lat: -23.55, years: '2016', note: 'Escuela Jorge André Swieca de Óptica No Lineal y Cuántica, como miembro del Grupo de Óptica Cuántica de la PUCP.' },
+        { name: 'Bogotá', lon: -74.07, lat: 4.71, years: '2022–2026', note: 'Ingeniero fundador en Duppla: valoración de viviendas, la plataforma central y el motor de documentos con IA.' },
+        { name: 'Boston', lon: -71.06, lat: 42.36, years: '2026–', note: 'MS en Engineering Sciences en Harvard, conjunto con el MBA.', now: true },
+      ] satisfies Place[],
+      basedHere: 'Vivo aquí',
+      authTitle: 'Autorización de trabajo',
+      auth: 'Estudiante F-1 · CPT para prácticas · elegible para STEM OPT',
+      langTitle: 'Idiomas',
+      languages: [
+        { code: 'ES', name: 'Español', level: 'Nativo' },
+        { code: 'EN', name: 'Inglés', level: 'Fluido' },
+      ],
+      outsideTitle: 'Fuera del trabajo',
+      interests: [
+        { icon: '🧗', name: 'Escalada en roca', detail: 'hasta 5.10c' },
+        { icon: '🥾', name: 'Trekking', detail: 'Camino Inca, Huayhuash, Torres del Paine' },
+        { icon: '♟️', name: 'Ajedrez', detail: 'casual' },
+        { icon: '🎮', name: 'Dota 2', detail: 'casual' },
+      ],
       body: 'Escalo (hasta 5.10c, en siete parques de Perú, Colombia y Yosemite) y hago trekking: el Camino Inca, Huayhuash y Santa Cruz en Perú, y Torres del Paine en la Patagonia. Fuera de la montaña, juego ajedrez y Dota 2.',
       photos: [
         { src: '/beyond/climbing.webp', alt: 'Fernando escalando de primero una placa de granito', caption: 'En la pared', tall: true },
