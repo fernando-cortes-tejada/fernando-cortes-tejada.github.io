@@ -30,6 +30,22 @@ const init = {
     <h2 class="section-title">{t.title}</h2>
     <p class="lede">{t.intro}</p>
 
+    <ul class="tools">
+      {[
+        ['arb', a.title, a.card],
+        ['ifrs9', t.ifrs9.title, t.ifrs9.card],
+      ].map(([key, title, card]) => (
+        <li>
+          <button type="button" class="tool" data-open-lab={key} aria-haspopup="dialog">
+            <span class="tool-title">{title}</span>
+            <span class="tool-card">{card}</span>
+            <span class="tool-go mono">{t.open} →</span>
+          </button>
+        </li>
+      ))}
+    </ul>
+
+    <dialog class="modal lab-modal" data-lab-dialog="arb">
     <div class="demo is-arb" data-arb data-yes={a.verdictYes} data-no={a.verdictNo} data-lang={lang}>
       <div class="explain">
         <h3>{a.title}</h3>
@@ -90,13 +106,37 @@ const init = {
         </dl>
       </div>
     </div>
+    <button type="button" class="close mono" data-close aria-label={t.close}>Esc ✕</button>
+    </dialog>
 
-    <Ifrs9 lang={lang} />
-
+    <dialog class="modal lab-modal" data-lab-dialog="ifrs9">
+      <Ifrs9 lang={lang} />
+      <button type="button" class="close mono" data-close aria-label={t.close}>Esc ✕</button>
+    </dialog>
   </div>
 </section>
 
 <script>
+  document.querySelectorAll<HTMLButtonElement>('[data-open-lab]').forEach((btn) => {
+    const dialog = document.querySelector<HTMLDialogElement>(`[data-lab-dialog="${btn.dataset.openLab}"]`)!;
+    btn.addEventListener('click', () => {
+      dialog.showModal();
+      dialog.scrollTop = 0;
+    });
+    dialog.addEventListener('click', (e) => {
+      if (e.target === dialog || (e.target as HTMLElement).closest('[data-close]')) dialog.close();
+    });
+    dialog.addEventListener('close', () => btn.focus());
+  });
+  // links elsewhere (e.g. the IFRS 9 project) can open the full stress test
+  document.addEventListener('click', (e) => {
+    const link = (e.target as HTMLElement).closest<HTMLAnchorElement>('a[href="#lab-ifrs9"]');
+    if (!link) return;
+    e.preventDefault();
+    link.closest('dialog')?.close();
+    document.querySelector<HTMLDialogElement>('[data-lab-dialog="ifrs9"]')!.showModal();
+  });
+
   document.querySelectorAll<HTMLElement>('[data-arb]').forEach((root) => {
     const num = (name: string) => parseFloat(root.querySelector<HTMLInputElement>(`[name=${name}]`)!.value);
     const out = (key: string) => root.querySelector<HTMLElement>(`[data-out=${key}]`)!;
@@ -138,6 +178,76 @@ const init = {
 </script>
 
 <style>
+  .tools {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.9rem;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .tool {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    width: 100%;
+    height: 100%;
+    text-align: left;
+    font: inherit;
+    color: var(--text);
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 1.2rem 1.3rem;
+    cursor: pointer;
+    transition: border-color 0.15s, background 0.15s;
+  }
+
+  .tool:hover {
+    border-color: var(--accent);
+    background: var(--surface-2);
+  }
+
+  .tool-title {
+    font-size: 1.05rem;
+    font-weight: 600;
+  }
+
+  .tool-card {
+    font-size: 0.9rem;
+    color: var(--muted);
+    flex: 1;
+  }
+
+  .tool-go {
+    margin-top: 0.4rem;
+    font-size: 0.78rem;
+    color: var(--accent);
+  }
+
+  .lab-modal {
+    width: min(68rem, calc(100vw - 2rem));
+  }
+
+  .lab-modal :global(.ifrs) {
+    border: 0;
+    padding: 0;
+    margin: 0;
+    background: none;
+  }
+
+  .lab-modal .demo {
+    border: 0;
+    padding: 0;
+    background: none;
+  }
+
+  @media (max-width: 640px) {
+    .tools {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
   .demo {
     display: grid;
     grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);

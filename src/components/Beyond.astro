@@ -8,6 +8,7 @@ interface Props {
 }
 const { lang } = Astro.props;
 const t = content[lang].beyond;
+const p = content[lang].path;
 
 // Americas map, projected at build time so the page ships a static SVG
 const MW = 460, MH = 520;
@@ -90,6 +91,11 @@ const FLAGS: Record<string, string> = {
               <li><svg class="flag" viewBox="0 0 30 20" aria-hidden="true" set:html={FLAGS[l.flag]} /><span><b>{l.name}</b><small>{l.level}</small></span></li>
             ))}
           </ul>
+        </div>
+        <div>
+          <p class="label mono">{p.stack}</p>
+          <ul class="chips">{p.stackList.map((s) => <li>{s}</li>)}</ul>
+          <p class="certs">{p.certs}: {p.certList.join(' · ')}</p>
         </div>
         <div>
           <p class="label mono">{t.outsideTitle}</p>
@@ -306,6 +312,12 @@ const FLAGS: Record<string, string> = {
     object-fit: contain;
   }
 
+  .certs {
+    margin: 0.8rem 0 0;
+    font-size: 0.85rem;
+    color: var(--muted);
+  }
+
   .auth {
     margin: 0;
     font-size: 0.95rem;
@@ -363,11 +375,13 @@ const FLAGS: Record<string, string> = {
     border-color: var(--line);
   }
 
+  /* one compact strip of photos; it scrolls sideways on narrow screens */
   .gallery {
     display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    grid-auto-rows: clamp(11rem, 18vw, 15rem);
-    gap: 0.9rem;
+    grid-auto-flow: column;
+    grid-auto-columns: minmax(0, 1fr);
+    height: clamp(10rem, 16vw, 13rem);
+    gap: 0.7rem;
   }
 
   figure {
@@ -376,10 +390,6 @@ const FLAGS: Record<string, string> = {
     overflow: hidden;
     border-radius: 12px;
     background: var(--surface);
-  }
-
-  figure.tall {
-    grid-row: span 2;
   }
 
   img {
@@ -398,8 +408,8 @@ const FLAGS: Record<string, string> = {
     left: 0;
     right: 0;
     bottom: 0;
-    padding: 2rem 0.9rem 0.7rem;
-    font-size: 0.74rem;
+    padding: 1.6rem 0.7rem 0.55rem;
+    font-size: 0.68rem;
     color: var(--text);
     background: linear-gradient(transparent, rgba(11, 14, 19, 0.85));
   }
@@ -412,18 +422,19 @@ const FLAGS: Record<string, string> = {
       margin-inline: auto;
     }
     .gallery {
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      grid-auto-rows: 12rem;
+      grid-auto-columns: 42%;
+      height: 12rem;
+      overflow-x: auto;
+      scroll-snap-type: x mandatory;
+    }
+    figure {
+      scroll-snap-align: start;
     }
   }
 
   @media (max-width: 520px) {
     .gallery {
-      grid-template-columns: minmax(0, 1fr);
-      grid-auto-rows: 15rem;
-    }
-    figure.tall {
-      grid-row: span 2;
+      grid-auto-columns: 70%;
     }
   }
 

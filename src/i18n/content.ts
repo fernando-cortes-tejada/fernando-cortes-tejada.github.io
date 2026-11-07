@@ -99,7 +99,7 @@ export const content = {
       role: 'Credit risk, quantitative modeling & ML in production',
       pitch:
         'I put prices on risk with statistics: probability of default, expected credit loss, home values, mispriced odds. Then I take the models to production and build the systems that run them.',
-      seeking: 'Seeking quantitative finance internships for summer 2027: research, trading and risk',
+      seeking: 'Seeking quantitative finance internships for summer 2027',
       cv: 'Download CV',
       stats: [
         { value: '100+', label: 'citations, Expert Systems with Applications' },
@@ -160,7 +160,7 @@ export const content = {
             { value: '~3M', label: 'credit cards' },
             { value: 'S/ 60B', label: 'loan book' },
           ],
-          links: [{ label: 'Full stress test in the Lab', href: '#lab' }],
+          links: [{ label: 'Full stress test', href: '#lab-ifrs9' }],
           viz: { benign: 'Benign', base: 'Base', adverse: 'Adverse', severe: 'Severe', pdTitle: 'Cumulative PD of a current account', pd12: '12-month PD', ecl: 'ECL coverage' },
         },
         {
@@ -279,7 +279,10 @@ export const content = {
       kicker: 'Lab',
       title: 'Try the math',
       intro: 'Small interactive versions of models I have built. Everything runs in your browser on synthetic numbers.',
+      open: 'Open',
+      close: 'Close',
       arb: {
+        card: 'Enter two books’ odds and see whether staking both sides locks in a profit.',
         title: 'Arbitrage calculator',
         blurb:
           'Enter the decimal odds two books offer on opposite sides of the same bet. If the implied probabilities add up to less than 1, staking in proportion locks in a profit whichever side wins.',
@@ -296,6 +299,7 @@ export const content = {
         note: 'From the engine in nba-surebets.',
       },
       ifrs9: {
+        card: 'Move the credit cycle and watch the migration matrix, PD curve, stage mix and loss distribution respond.',
         title: 'IFRS 9 stress test',
         blurb:
           'A credit-card book migrates each month between delinquency buckets. Move the credit cycle and every row of the migration matrix shifts on the normal scale, so probability mass slides toward worse buckets. Stage 1 loans carry 12-month expected loss, Stage 2 lifetime, Stage 3 is already in default.',
@@ -429,7 +433,7 @@ export const content = {
       role: 'Riesgo de crédito, modelación cuantitativa y ML en producción',
       pitch:
         'Le pongo precio al riesgo con estadística: probabilidad de default, pérdida crediticia esperada, valor de viviendas, cuotas mal valoradas. Luego llevo los modelos a producción y construyo los sistemas que los operan.',
-      seeking: 'Busco prácticas en finanzas cuantitativas para el verano de 2027: research, trading y riesgo',
+      seeking: 'Busco prácticas en finanzas cuantitativas para el verano de 2027',
       cv: 'Descargar CV',
       stats: [
         { value: '100+', label: 'citas, Expert Systems with Applications' },
@@ -490,7 +494,7 @@ export const content = {
             { value: '~3M', label: 'tarjetas de crédito' },
             { value: 'S/ 60 mil M', label: 'cartera de créditos' },
           ],
-          links: [{ label: 'Stress test completo en el Lab', href: '#lab' }],
+          links: [{ label: 'Stress test completo', href: '#lab-ifrs9' }],
           viz: { benign: 'Benigno', base: 'Base', adverse: 'Adverso', severe: 'Severo', pdTitle: 'PD acumulada de una cuenta al día', pd12: 'PD a 12 meses', ecl: 'Cobertura ECL' },
         },
         {
@@ -609,7 +613,10 @@ export const content = {
       kicker: 'Lab',
       title: 'Prueba la matemática',
       intro: 'Versiones interactivas pequeñas de modelos que he construido. Todo corre en tu navegador con números sintéticos.',
+      open: 'Abrir',
+      close: 'Cerrar',
       arb: {
+        card: 'Ingresa las cuotas de dos casas y mira si apostar a ambos lados asegura una ganancia.',
         title: 'Calculadora de arbitraje',
         blurb:
           'Ingresa las cuotas decimales que dos casas ofrecen en lados opuestos de la misma apuesta. Si las probabilidades implícitas suman menos de 1, repartir el monto en proporción asegura una ganancia gane quien gane.',
@@ -626,6 +633,7 @@ export const content = {
         note: 'Del motor de nba-surebets.',
       },
       ifrs9: {
+        card: 'Mueve el ciclo crediticio y mira cómo responden la matriz de migración, la curva de PD, las etapas y la distribución de pérdidas.',
         title: 'Stress test IFRS 9',
         blurb:
           'Una cartera de tarjetas migra cada mes entre buckets de morosidad. Mueve el ciclo crediticio y cada fila de la matriz de migración se desplaza en la escala normal, así la probabilidad se corre hacia buckets peores. Los créditos en Etapa 1 provisionan pérdida esperada a 12 meses, los de Etapa 2 de por vida, y la Etapa 3 ya está en default.',

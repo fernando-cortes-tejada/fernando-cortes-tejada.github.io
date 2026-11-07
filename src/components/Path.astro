@@ -7,7 +7,6 @@ interface Props {
 const { lang } = Astro.props;
 const c = content[lang];
 const t = c.path;
-const teach = c.teaching;
 
 const START = 2012;
 const END = 2029;
@@ -71,14 +70,18 @@ const listed = [...t.items].sort((a, b) => b.from - a.from);
       {
         listed.map((it) => (
           <li class={`li-${it.lane}`}>
-            <p class="li-meta mono">
-              <span>{yearSpan(it)}{it.current ? ` · ${t.inProgress}` : ''}</span>
-              <span class="li-lane">{t.lanes[it.lane]}</span>
-            </p>
-            <h3>{it.role}</h3>
-            <p class="org">{it.org} <span class="place">· {it.place}</span></p>
-            {it.note && <p class="note">{it.note}</p>}
-            {it.goto && <a class="goto" href="#work" data-goto={it.goto}>{t.seeModel} →</a>}
+            <details open={it.current}>
+              <summary>
+                <p class="li-meta mono">
+                  <span>{yearSpan(it)}{it.current ? ` · ${t.inProgress}` : ''}</span>
+                  <span class="li-lane">{t.lanes[it.lane]}</span>
+                </p>
+                <h3>{it.role}</h3>
+                <p class="org">{it.org} <span class="place">· {it.place}</span></p>
+              </summary>
+              {it.note && <p class="note">{it.note}</p>}
+              {it.goto && <a class="goto" href="#work" data-goto={it.goto}>{t.seeModel} →</a>}
+            </details>
           </li>
         ))
       }
@@ -94,30 +97,6 @@ const listed = [...t.items].sort((a, b) => b.from - a.from);
       </div>
     </div>
 
-    <div class="aside-grid">
-      <div class="panel">
-        <p class="kicker">{teach.kicker}</p>
-        <h3>{teach.title}</h3>
-        <p class="muted">{teach.body}</p>
-        <dl class="metrics">
-          {
-            teach.metrics.map((m) => (
-              <div>
-                <dt class="metric-value">{m.value}</dt>
-                <dd class="metric-label">{m.label}</dd>
-              </div>
-            ))
-          }
-        </dl>
-      </div>
-
-      <div class="panel">
-        <p class="kicker">{t.stack}</p>
-        <ul class="chips">{t.stackList.map((s) => <li>{s}</li>)}</ul>
-        <p class="kicker spaced">{t.certs}</p>
-        <ul class="plain">{t.certList.map((s) => <li>{s}</li>)}</ul>
-      </div>
-    </div>
   </div>
 </section>
 
@@ -344,68 +323,6 @@ const listed = [...t.items].sort((a, b) => b.from - a.from);
     display: none;
   }
 
-  .aside-grid {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 1.25rem;
-    margin-top: 3.5rem;
-  }
-
-  .panel {
-    padding: 1.6rem;
-    background: var(--surface);
-    border: 1px solid var(--line);
-    border-radius: 14px;
-  }
-
-  .panel h3 {
-    font-family: var(--font-display);
-    font-weight: 400;
-    font-size: 1.6rem;
-    line-height: 1.1;
-    margin-bottom: 0.7rem;
-  }
-
-  .muted {
-    color: var(--muted);
-    font-size: 0.94rem;
-    margin: 0;
-  }
-
-  .spaced {
-    margin-top: 1.6rem;
-  }
-
-  .plain {
-    margin: 0;
-    padding: 0;
-    list-style: none;
-    color: var(--muted);
-    font-size: 0.94rem;
-  }
-
-  .metrics {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 1rem 1.5rem;
-    margin: 1.2rem 0 0;
-  }
-
-  .metrics div {
-    display: flex;
-    flex-direction: column;
-    gap: 0.15rem;
-  }
-
-  .metrics dd {
-    margin: 0;
-  }
-
-  @media (max-width: 900px) {
-    .aside-grid {
-      grid-template-columns: minmax(0, 1fr);
-    }
-  }
 
   @media (max-width: 700px) {
     .lane,
@@ -429,7 +346,7 @@ const listed = [...t.items].sort((a, b) => b.from - a.from);
 
   .tl-list li {
     position: relative;
-    padding: 0 0 1.6rem 1.3rem;
+    padding: 0 0 1.1rem 1.3rem;
     border-left: 2px solid var(--line-strong);
   }
 
@@ -472,6 +389,25 @@ const listed = [...t.items].sort((a, b) => b.from - a.from);
   .tl-list .org {
     margin: 0 0 0.4rem;
     font-size: 0.92rem;
+  }
+
+  .tl-list summary {
+    list-style: none;
+    cursor: pointer;
+  }
+
+  .tl-list summary::-webkit-details-marker {
+    display: none;
+  }
+
+  /* a small chevron shows the entry can expand */
+  .tl-list summary .org::after {
+    content: ' +';
+    color: var(--accent);
+  }
+
+  .tl-list details[open] summary .org::after {
+    content: ' −';
   }
 
   .tl-list .note {
