@@ -11,7 +11,7 @@ const vizData = Object.fromEntries(t.projects.map((p) => [p.id, p.viz]));
 const ext = (href: string) => (href.startsWith('http') ? { target: '_blank', rel: 'noopener' } : {});
 
 // one list for production work and research, ordered by impact
-const ORDER = ['origination', 'ifrs9', 'surebets', 'fraud', 'docAi', 'valuation', 'thesis', 'tobit'];
+const ORDER = ['origination', 'thesis', 'surebets', 'ifrs9', 'fraud', 'docAi', 'valuation', 'tobit'];
 type Card = {
   key: string;
   kind: 'project' | 'pub';
@@ -295,7 +295,7 @@ const odds = line(Array.from({ length: 40 }, (_, k) => {
       }
     });
 
-    // phones: the cards become a swipeable row, with arrows when it overflows
+    // the cards sit in one row that scrolls sideways; arrows step through it
     const track = root.querySelector<HTMLElement>('[data-track]')!;
     const arrows = root.closest('section')!.querySelector<HTMLElement>('[data-arrows]')!;
     const [prev, next] = arrows.querySelectorAll<HTMLButtonElement>('button');
@@ -306,8 +306,10 @@ const odds = line(Array.from({ length: 40 }, (_, k) => {
     };
     [prev, next].forEach((b) =>
       b.addEventListener('click', () => {
-        const card = track.querySelector<HTMLElement>('.card')!;
-        track.scrollBy({ left: +b.dataset.dir! * (card.offsetWidth + 14), behavior: 'smooth' });
+        // one page at a time: as many whole cards as fit
+        const step = track.querySelector<HTMLElement>('.card')!.offsetWidth + 14;
+        const perPage = Math.max(1, Math.floor((track.clientWidth + 14) / step));
+        track.scrollBy({ left: +b.dataset.dir! * perPage * step, behavior: 'smooth' });
       }),
     );
     track.addEventListener('scroll', sync, { passive: true });
@@ -350,13 +352,22 @@ const odds = line(Array.from({ length: 40 }, (_, k) => {
     cursor: default;
   }
 
+  /* a single row that scrolls sideways; the next card peeks in so it's clear there is more */
   .cards {
     display: grid;
-    grid-template-columns: repeat(4, minmax(0, 1fr));
+    grid-auto-flow: column;
+    grid-auto-columns: calc((100% - 3 * 0.9rem) / 3.4);
     gap: 0.9rem;
     list-style: none;
     margin: 0;
-    padding: 0;
+    padding: 0 0 0.6rem;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: thin;
+  }
+
+  .card {
+    scroll-snap-align: start;
   }
 
   .card {
@@ -634,23 +645,15 @@ const odds = line(Array.from({ length: 40 }, (_, k) => {
     text-decoration: none;
   }
 
-  @media (max-width: 1100px) {
+  @media (max-width: 1000px) {
     .cards {
-      grid-template-columns: repeat(3, minmax(0, 1fr));
+      grid-auto-columns: calc((100% - 0.9rem) / 2.3);
     }
   }
 
   @media (max-width: 760px) {
     .cards {
-      grid-template-columns: none;
-      grid-auto-flow: column;
       grid-auto-columns: 78%;
-      overflow-x: auto;
-      scroll-snap-type: x mandatory;
-      padding-bottom: 0.5rem;
-    }
-    .card {
-      scroll-snap-align: start;
     }
     .arrows {
       margin-bottom: 1.4rem;
