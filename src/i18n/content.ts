@@ -99,7 +99,7 @@ export const content = {
       role: 'Credit risk, quantitative modeling & ML in production',
       pitch:
         'I put prices on risk with statistics: probability of default, expected credit loss, home values, mispriced odds. Then I take the models to production and build the systems that run them.',
-      seeking: 'Seeking quant research and credit risk internships for summer 2027',
+      seeking: 'Seeking quantitative finance internships for summer 2027: research, trading and risk',
       cv: 'Download CV',
       stats: [
         { value: '100+', label: 'citations, Expert Systems with Applications' },
@@ -409,7 +409,7 @@ export const content = {
     contact: {
       kicker: 'Contact',
       title: 'Let’s talk',
-      body: 'I’m looking for roles in quantitative research, credit risk and ML in finance. The quickest way to reach me is email.',
+      body: 'I’m looking for quantitative finance roles: quant research, trading and risk. The quickest way to reach me is email.',
       copy: 'Copy',
       copied: 'Copied',
     },
@@ -429,7 +429,7 @@ export const content = {
       role: 'Riesgo de crédito, modelación cuantitativa y ML en producción',
       pitch:
         'Le pongo precio al riesgo con estadística: probabilidad de default, pérdida crediticia esperada, valor de viviendas, cuotas mal valoradas. Luego llevo los modelos a producción y construyo los sistemas que los operan.',
-      seeking: 'Busco prácticas en investigación cuantitativa y riesgo de crédito para el verano de 2027',
+      seeking: 'Busco prácticas en finanzas cuantitativas para el verano de 2027: research, trading y riesgo',
       cv: 'Descargar CV',
       stats: [
         { value: '100+', label: 'citas, Expert Systems with Applications' },
@@ -739,7 +739,7 @@ export const content = {
     contact: {
       kicker: 'Contacto',
       title: 'Conversemos',
-      body: 'Busco roles en investigación cuantitativa, riesgo de crédito y ML en finanzas. La forma más rápida de contactarme es por correo.',
+      body: 'Busco roles en finanzas cuantitativas: research, trading y riesgo. La forma más rápida de contactarme es por correo.',
       copy: 'Copiar',
       copied: 'Copiado',
     },
