@@ -25,6 +25,9 @@ export interface Publication {
   viz?: string;
   vizLabels?: Record<string, string>;
   kind: string;
+  /** card copy: a headline result and a two-line summary; the full text opens in the dialog */
+  headline: string;
+  short: string;
   title: string;
   authors: string;
   venue: string;
@@ -232,9 +235,14 @@ export const content = {
       title: 'Papers and theses',
       figure: 'Interactive figure',
       explore: 'Explore the model',
+      more: 'Read more',
+      prev: 'Previous',
+      next: 'Next',
       close: 'Close',
       items: [
         {
+          headline: 'Validated on 80,000 users in two countries',
+          short: 'Super-app behavior predicts default better than bureau data alone, most of all for young and low-wealth borrowers.',
           kind: 'Journal article',
           title: 'Super-App Behavioral Patterns in Credit Risk Models: Financial, Statistical and Regulatory Implications',
           authors: authorsPaper,
@@ -251,6 +259,8 @@ export const content = {
         {
           viz: 'thesis',
           vizLabels: { title: 'Credit-card utilization paths', raw: 'Raw paths', clustered: 'Clustered', month: 'm', cluster: 'Cluster', defaultRate: 'default rate', note: 'Synthetic paths with the same structure as the thesis data' },
+          headline: 'Beat logistic regression out of sample',
+          short: 'A Bayesian model that clusters 12-month credit-card utilization paths and predicts default from the cluster. MCMC in JAGS.',
           kind: 'MS thesis · LACSC 2021 talk',
           title: 'Jointly modelling cluster-dependent profiles of fractional and binary variables from a Bayesian point of view',
           authors: authorsBayes,
@@ -265,6 +275,8 @@ export const content = {
         {
           viz: 'tobit',
           vizLabels: { title: 'Distribution implied by the chosen marginal mean', mean: 'Marginal mean E[Y]', skew: 'Skewness', density: 'density on (0,1)', masses: 'mass at 0 and 1', solved: 'latent location solved numerically', params: 'parameters', clamped: 'mean outside the reachable range, clamped to', note: 'Pick E[Y] directly; the model finds the latent location that produces it' },
+          headline: 'Stan code on GitHub',
+          short: 'Three regressions for bounded data with mass at 0 and 1, parameterized by the marginal mean, where beta regression fails.',
           kind: 'Working paper',
           title: 'A new normal-like inflated mean regression for bounded responses',
           authors: authorsBayes,
@@ -566,9 +578,14 @@ export const content = {
       title: 'Artículos y tesis',
       figure: 'Figura interactiva',
       explore: 'Explorar el modelo',
+      more: 'Ver más',
+      prev: 'Anterior',
+      next: 'Siguiente',
       close: 'Cerrar',
       items: [
         {
+          headline: 'Validado con 80,000 usuarios en dos países',
+          short: 'El comportamiento en una super-app predice el default mejor que el buró solo, sobre todo en jóvenes y personas de bajos ingresos.',
           kind: 'Artículo en revista',
           title: 'Super-App Behavioral Patterns in Credit Risk Models: Financial, Statistical and Regulatory Implications',
           authors: authorsPaper,
@@ -585,6 +602,8 @@ export const content = {
         {
           viz: 'thesis',
           vizLabels: { title: 'Trayectorias de uso de tarjeta', raw: 'Sin agrupar', clustered: 'Agrupadas', month: 'm', cluster: 'Clúster', defaultRate: 'tasa de default', note: 'Trayectorias sintéticas con la misma estructura que los datos de la tesis' },
+          headline: 'Superó a la regresión logística fuera de muestra',
+          short: 'Un modelo bayesiano que agrupa trayectorias de uso de tarjeta a 12 meses y predice el default según el grupo. MCMC en JAGS.',
           kind: 'Tesis de maestría · Charla LACSC 2021',
           title: 'Jointly modelling cluster-dependent profiles of fractional and binary variables from a Bayesian point of view',
           authors: authorsBayes,
@@ -599,6 +618,8 @@ export const content = {
         {
           viz: 'tobit',
           vizLabels: { title: 'Distribución implicada por la media marginal elegida', mean: 'Media marginal E[Y]', skew: 'Asimetría', density: 'densidad en (0,1)', masses: 'masa en 0 y 1', solved: 'ubicación latente resuelta numéricamente', params: 'parámetros', clamped: 'media fuera del rango alcanzable, ajustada a', note: 'Eliges E[Y] directamente; el modelo encuentra la ubicación latente que la produce' },
+          headline: 'Código en Stan en GitHub',
+          short: 'Tres regresiones para datos acotados con masa en 0 y 1, parametrizadas por la media marginal, donde la regresión beta falla.',
           kind: 'Documento de trabajo',
           title: 'A new normal-like inflated mean regression for bounded responses',
           authors: authorsBayes,
