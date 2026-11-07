@@ -378,8 +378,10 @@ export const content = {
       auth: 'F-1 student · CPT for internships · eligible for STEM OPT',
       langTitle: 'Languages',
       languages: [
-        { code: 'ES', name: 'Spanish', level: 'Native' },
-        { code: 'EN', name: 'English', level: 'Fluent' },
+        { flag: 'pe', name: 'Spanish', level: 'Native' },
+        { flag: 'us', name: 'English', level: 'Fluent' },
+        { flag: 'fr', name: 'French', level: 'Basic' },
+        { flag: 'de', name: 'German', level: 'Basic' },
       ],
       outsideTitle: 'Outside work',
       interests: [
@@ -699,8 +701,10 @@ export const content = {
       auth: 'Estudiante F-1 · CPT para prácticas · elegible para STEM OPT',
       langTitle: 'Idiomas',
       languages: [
-        { code: 'ES', name: 'Español', level: 'Nativo' },
-        { code: 'EN', name: 'Inglés', level: 'Fluido' },
+        { flag: 'pe', name: 'Español', level: 'Nativo' },
+        { flag: 'us', name: 'Inglés', level: 'Fluido' },
+        { flag: 'fr', name: 'Francés', level: 'Básico' },
+        { flag: 'de', name: 'Alemán', level: 'Básico' },
       ],
       outsideTitle: 'Fuera del trabajo',
       interests: [

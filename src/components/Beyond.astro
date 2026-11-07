@@ -23,6 +23,17 @@ const pins = t.places.map((p) => {
   return { ...p, x, y };
 });
 const DEFAULT = Math.max(0, pins.findIndex((p) => p.now));
+
+// inline SVG flags (emoji flags render as plain letters on Windows)
+const stripes = (h: string[], vertical = false) =>
+  h.map((c, i) => (vertical ? `<rect x="${i * 10}" width="10" height="20" fill="${c}"/>` : `<rect y="${(i * 20) / h.length}" width="30" height="${20 / h.length}" fill="${c}"/>`)).join('');
+const usStripes = Array.from({ length: 7 }, (_, i) => `<rect y="${(i * 40) / 13}" width="30" height="${20 / 13}" fill="#b22234"/>`).join('');
+const FLAGS: Record<string, string> = {
+  pe: stripes(['#d91023', '#fff', '#d91023'], true),
+  fr: stripes(['#0055a4', '#fff', '#ef4135'], true),
+  de: stripes(['#000', '#dd0000', '#ffce00']),
+  us: `<rect width="30" height="20" fill="#fff"/>${usStripes}<rect width="12" height="${(20 * 7) / 13}" fill="#3c3b6e"/>`,
+};
 ---
 
 <section id="beyond" class="section">
@@ -61,7 +72,7 @@ const DEFAULT = Math.max(0, pins.findIndex((p) => p.now));
           <p class="label mono">{t.langTitle}</p>
           <ul class="tiles">
             {t.languages.map((l) => (
-              <li><span class="badge mono">{l.code}</span><span><b>{l.name}</b><small>{l.level}</small></span></li>
+              <li><svg class="flag" viewBox="0 0 30 20" aria-hidden="true" set:html={FLAGS[l.flag]} /><span><b>{l.name}</b><small>{l.level}</small></span></li>
             ))}
           </ul>
         </div>
@@ -258,7 +269,14 @@ const DEFAULT = Math.max(0, pins.findIndex((p) => p.now));
     line-height: 1.35;
   }
 
-  .badge,
+  .flag {
+    flex: none;
+    width: 2.1rem;
+    height: 1.4rem;
+    border-radius: 3px;
+    box-shadow: 0 0 0 1px var(--line-strong);
+  }
+
   .emoji {
     flex: none;
     display: grid;
