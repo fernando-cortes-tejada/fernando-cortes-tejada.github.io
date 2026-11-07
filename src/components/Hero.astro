@@ -32,6 +32,10 @@ const labels = { simulating: t.viz.simulating, converged: t.viz.converged, pathL
         <a class="btn" href={links.scholar} rel="noopener" target="_blank">Scholar</a>
         <a class="btn" href={links.github} rel="me noopener" target="_blank">GitHub</a>
       </div>
+      <a class="mail mono" href={`mailto:${links.email}`}>
+        <svg width="15" height="15" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M3 5h18v14H3zm2 2v.5l7 4.5 7-4.5V7zm14 2.9-7 4.5-7-4.5V17h14z"/></svg>
+        {links.email}
+      </a>
       <dl class="stats">
         {
           t.stats.map((s) => (
@@ -196,6 +200,20 @@ const labels = { simulating: t.viz.simulating, converged: t.viz.converged, pathL
     display: flex;
     flex-wrap: wrap;
     gap: 0.6rem;
+  }
+
+  .mail {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: 1rem;
+    font-size: 0.85rem;
+    color: var(--muted);
+    text-decoration: none;
+  }
+
+  .mail:hover {
+    color: var(--accent);
   }
 
   .pdf {
