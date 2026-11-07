@@ -384,11 +384,11 @@ export const content = {
       outsideTitle: 'Outside work',
       interests: [
         { icon: '🧗', name: 'Rock climbing', detail: 'up to 5.10c' },
-        { icon: '🥾', name: 'Trekking', detail: 'Inca Trail, Huayhuash, Torres del Paine' },
+        { icon: '🥾', name: 'Hiking', detail: 'Inca Trail, Huayhuash, Torres del Paine' },
         { icon: '♟️', name: 'Chess', detail: 'casual' },
         { icon: '🎮', name: 'Dota 2', detail: 'casual' },
       ],
-      body: 'I climb (up to 5.10c, in seven parks across Peru, Colombia and Yosemite) and trek: the Inca Trail, Huayhuash and Santa Cruz in Peru, and Torres del Paine in Patagonia. Off the mountain, I play chess and Dota 2.',
+      body: 'I climb (up to 5.10c, in seven parks across Peru, Colombia and Yosemite) and hike: the Inca Trail, Huayhuash and Santa Cruz in Peru, and Torres del Paine in Patagonia. Off the mountain, I play chess and Dota 2.',
       photos: [
         { src: '/beyond/climbing.webp', alt: 'Fernando lead climbing a granite slab', caption: 'On the wall', tall: true },
         { src: '/beyond/huayhuash-ridge.webp', alt: 'Two hikers sitting on a rocky ridge above a green valley', caption: 'Cordillera Huayhuash, Peru' },
@@ -705,11 +705,11 @@ export const content = {
       outsideTitle: 'Fuera del trabajo',
       interests: [
         { icon: '🧗', name: 'Escalada en roca', detail: 'hasta 5.10c' },
-        { icon: '🥾', name: 'Trekking', detail: 'Camino Inca, Huayhuash, Torres del Paine' },
+        { icon: '🥾', name: 'Senderismo', detail: 'Camino Inca, Huayhuash, Torres del Paine' },
         { icon: '♟️', name: 'Ajedrez', detail: 'casual' },
         { icon: '🎮', name: 'Dota 2', detail: 'casual' },
       ],
-      body: 'Escalo (hasta 5.10c, en siete parques de Perú, Colombia y Yosemite) y hago trekking: el Camino Inca, Huayhuash y Santa Cruz en Perú, y Torres del Paine en la Patagonia. Fuera de la montaña, juego ajedrez y Dota 2.',
+      body: 'Escalo (hasta 5.10c, en siete parques de Perú, Colombia y Yosemite) y hago senderismo: el Camino Inca, Huayhuash y Santa Cruz en Perú, y Torres del Paine en la Patagonia. Fuera de la montaña, juego ajedrez y Dota 2.',
       photos: [
         { src: '/beyond/climbing.webp', alt: 'Fernando escalando de primero una placa de granito', caption: 'En la pared', tall: true },
         { src: '/beyond/huayhuash-ridge.webp', alt: 'Dos excursionistas sentados en una cresta rocosa sobre un valle verde', caption: 'Cordillera Huayhuash, Perú' },
