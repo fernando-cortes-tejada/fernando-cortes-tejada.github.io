@@ -6,40 +6,171 @@ interface Props {
 }
 const { lang } = Astro.props;
 const t = content[lang].work;
+const research = content[lang].research;
 const vizData = Object.fromEntries(t.projects.map((p) => [p.id, p.viz]));
+const ext = (href: string) => (href.startsWith('http') ? { target: '_blank', rel: 'noopener' } : {});
+
+// one list for production work and research, ordered by impact
+const ORDER = ['origination', 'ifrs9', 'surebets', 'fraud', 'docAi', 'valuation', 'thesis', 'tobit'];
+type Card = {
+  key: string;
+  kind: 'project' | 'pub';
+  eyebrow: string;
+  title: string;
+  headline: string;
+  teaser: string;
+  links: { label: string; href: string }[];
+};
+const cards: Card[] = ORDER.map((key) => {
+  const p = t.projects.find((x) => x.id === key);
+  if (p) return { key, kind: 'project', eyebrow: `${p.org} · ${p.years}`, title: p.title, headline: p.headline, teaser: p.teaser, links: p.links ?? [] };
+  const r = research.items.find((x) => x.viz === key)!;
+  return { key, kind: 'pub', eyebrow: r.kind, title: r.title, headline: r.headline, teaser: r.short, links: r.links };
+});
+
+// small static previews drawn at build time; the interactive versions open in the dialog
+const rand = (seed: number) => () => ((seed = (seed * 16807) % 2147483647) / 2147483647);
+const line = (pts: [number, number][]) => 'M' + pts.map(([x, y]) => `${x.toFixed(1)},${y.toFixed(1)}`).join('L');
+const r = rand(11);
+const thesis = Array.from({ length: 14 }, (_, i) => {
+  const hi = i % 2 === 0;
+  let y = hi ? 0.55 + r() * 0.15 : 0.45 - r() * 0.1;
+  return {
+    hi,
+    d: line(Array.from({ length: 12 }, (_, k) => {
+      y = Math.min(0.98, Math.max(0.04, y + (hi ? 0.025 : -0.012) + (r() - 0.5) * 0.08));
+      return [6 + k * 19.3, 94 - y * 88];
+    })),
+  };
+});
+const gauss = (x: number, m: number, s: number) => Math.exp(-((x - m) ** 2) / (2 * s * s));
+const xs = Array.from({ length: 61 }, (_, k) => k / 60);
+const density = line(xs.map((x) => [30 + x * 160, 92 - gauss(x, 0.66, x < 0.66 ? 0.11 : 0.07) * 70]));
+const legit = line(xs.map((x) => [12 + x * 200, 92 - gauss(x, 0.32, 0.11) * 72]));
+const fraud = line(xs.map((x) => [12 + x * 200, 92 - gauss(x, 0.68, 0.11) * 56]));
+const roc = (lift: number) => line(xs.map((x) => [16 + x * 192, 92 - (1 - (1 - x) ** lift) * 76]));
+const pd = (k: number) => line(xs.map((x) => [16 + x * 192, 92 - k * x ** 1.15 * 76]));
+const sb = rand(5);
+let level = 1.03;
+const odds = line(Array.from({ length: 40 }, (_, k) => {
+  level += (sb() - 0.5) * 0.014 + (k === 27 ? -0.03 : 0) + (k === 31 ? 0.03 : 0);
+  return [12 + k * 5.1, 50 - (level - 1) * 900];
+}));
 ---
 
 <section id="work" class="section">
   <div class="wrap">
-    <p class="kicker">{t.kicker}</p>
-    <h2 class="section-title">{t.title}</h2>
-    <p class="lede">{t.intro}</p>
+    <div class="head-row">
+      <div>
+        <p class="kicker">{t.kicker}</p>
+        <h2 class="section-title">{t.title}</h2>
+        <p class="lede">{t.intro}</p>
+      </div>
+      <div class="arrows" data-arrows hidden>
+        <button type="button" data-dir="-1" aria-label={t.prev}>←</button>
+        <button type="button" data-dir="1" aria-label={t.next}>→</button>
+      </div>
+    </div>
 
     <div class="explorer" data-explorer data-viz={JSON.stringify(vizData)} data-lang={lang}>
-      <ul class="cards">
+      <ol class="cards" data-track>
         {
-          t.projects.map((p) => (
-            <li>
-              <button type="button" class="card" data-open={p.id} aria-haspopup="dialog">
-                <span class="org mono">
-                  {p.org} · {p.years}
-                </span>
-                <span class="head mono">{p.headline}</span>
-                <span class="name">{p.title}</span>
-                <span class="teaser">{p.teaser}</span>
-                <span class="go mono">{t.open} →</span>
+          cards.map((c) => (
+            <li class="card">
+              <p class="eyebrow mono">{c.eyebrow}</p>
+              <h3>{c.title}</h3>
+              <button type="button" class="preview" data-open={c.key} tabindex="-1" aria-hidden="true">
+                {c.key === 'origination' && (
+                  <svg viewBox="0 0 224 100">
+                    <path d={roc(2.2)} class="s-blue" />
+                    <path d={roc(3.4)} class="s-amber" />
+                    <line x1="96" x2="96" y1="10" y2="92" class="dash" />
+                    <line x1="16" x2="208" y1="92" y2="92" class="axis" />
+                  </svg>
+                )}
+                {c.key === 'ifrs9' && (
+                  <svg viewBox="0 0 224 100">
+                    <path d={pd(0.55)} class="s-blue" />
+                    <path d={pd(0.95)} class="s-amber" />
+                    <line x1="16" x2="208" y1="92" y2="92" class="axis" />
+                  </svg>
+                )}
+                {c.key === 'surebets' && (
+                  <svg viewBox="0 0 224 100">
+                    <rect x="12" y="50" width="200" height="42" class="zone" />
+                    <line x1="12" x2="212" y1="50" y2="50" class="dash" />
+                    <path d={odds} class="s-blue" />
+                  </svg>
+                )}
+                {c.key === 'fraud' && (
+                  <svg viewBox="0 0 224 100">
+                    <path d={`${legit}L212,92L12,92Z`} class="f-blue" />
+                    <path d={`${fraud}L212,92L12,92Z`} class="f-amber" />
+                    <line x1="112" x2="112" y1="8" y2="92" class="thr" />
+                    <line x1="12" x2="212" y1="92" y2="92" class="axis" />
+                  </svg>
+                )}
+                {c.key === 'docAi' && (
+                  <svg viewBox="0 0 224 100">
+                    <rect x="16" y="22" width="192" height="18" rx="4" class="bar-dim" />
+                    <rect x="16" y="22" width="14.4" height="18" rx="4" class="bar-amber" />
+                    <rect x="16" y="60" width="192" height="18" rx="4" class="bar-amber" />
+                    <rect x="16" y="60" width="48" height="18" rx="4" class="bar-blue" />
+                  </svg>
+                )}
+                {c.key === 'valuation' && (
+                  <svg viewBox="0 0 224 100">
+                    {[54, 68, 61].map((h, i) => (
+                      <rect x={40 + i * 52} y={92 - h} width="34" height={h} rx="4" class={i === 2 ? 'bar-amber' : 'bar-blue'} />
+                    ))}
+                    <line x1="16" x2="208" y1="92" y2="92" class="axis" />
+                  </svg>
+                )}
+                {c.key === 'thesis' && (
+                  <svg viewBox="0 0 224 100" preserveAspectRatio="none">
+                    {thesis.map((l) => <path d={l.d} class={l.hi ? 'l2' : 'l1'} />)}
+                  </svg>
+                )}
+                {c.key === 'tobit' && (
+                  <svg viewBox="0 0 224 100">
+                    <path d={`${density}L190,92L30,92Z`} class="f-amber" />
+                    <path d={density} class="s-amber" />
+                    <line x1="18" x2="18" y1="92" y2="58" class="spike" />
+                    <circle cx="18" cy="58" r="3.5" class="dot" />
+                    <line x1="204" x2="204" y1="92" y2="48" class="spike" />
+                    <circle cx="204" cy="48" r="3.5" class="dot" />
+                    <line x1="10" x2="214" y1="92" y2="92" class="axis" />
+                  </svg>
+                )}
               </button>
+              <p class="headline">{c.headline}</p>
+              <p class="teaser">{c.teaser}</p>
+              <div class="foot">
+                <p class="links">
+                  {c.links
+                    .filter((l) => l.href.startsWith('http') || l.href.endsWith('.pdf'))
+                    .slice(0, 2)
+                    .map((l) => (
+                      <a href={l.href} {...ext(l.href)}>
+                        {/github\.com/.test(l.href) ? 'GitHub' : l.label} ↗
+                      </a>
+                    ))}
+                </p>
+                <button type="button" class="more" data-open={c.key} aria-haspopup="dialog">
+                  {t.open} <span aria-hidden="true">+</span>
+                </button>
+              </div>
             </li>
           ))
         }
-      </ul>
+      </ol>
 
-      <dialog class="modal" aria-labelledby="work-modal-title">
+      <dialog class="modal">
         {
           t.projects.map((p) => (
-            <article data-panel={p.id} hidden>
+            <article data-panel={p.id} data-kind="project" hidden>
               <header>
-                <p class="org mono">
+                <p class="modal-eyebrow mono">
                   {p.org} · {p.years}
                 </p>
                 <h3 id={`title-${p.id}`}>{p.title}</h3>
@@ -61,14 +192,43 @@ const vizData = Object.fromEntries(t.projects.map((p) => [p.id, p.viz]));
                     <li>{m}</li>
                   ))}
                 </ul>
-                {p.links?.map((l) => (
-                  <a class="more" href={l.href} data-close {...(l.href.startsWith('http') ? { target: '_blank', rel: 'noopener' } : {})}>
-                    {l.label} →
-                  </a>
-                ))}
+                <span class="more-links">
+                  {p.links?.map((l) => (
+                    <a class="more-link" href={l.href} {...ext(l.href)}>
+                      {l.label} →
+                    </a>
+                  ))}
+                </span>
               </footer>
             </article>
           ))
+        }
+        {
+          research.items
+            .filter((r) => r.viz)
+            .map((r) => (
+              <article data-panel={r.viz} data-kind="pub" hidden>
+                <header>
+                  <p class="modal-eyebrow mono">{r.kind}</p>
+                  <h3 id={`title-${r.viz}`}>{r.title}</h3>
+                </header>
+                <p class="authors">
+                  {r.authors} · <em>{r.venue}</em>
+                </p>
+                <div class="viz-stage" data-research-viz={r.viz} data-labels={JSON.stringify(r.vizLabels)} />
+                {r.vizLabels?.note && <p class="synthetic mono">{r.vizLabels.note}</p>}
+                <p class="summary">{r.summary}</p>
+                <footer>
+                  <span class="more-links">
+                    {r.links.map((l) => (
+                      <a class="more-link" href={l.href} {...ext(l.href)}>
+                        {l.label} →
+                      </a>
+                    ))}
+                  </span>
+                </footer>
+              </article>
+            ))
         }
         <button type="button" class="close mono" data-close aria-label={t.close}>Esc ✕</button>
       </dialog>
@@ -78,24 +238,35 @@ const vizData = Object.fromEntries(t.projects.map((p) => [p.id, p.viz]));
 
 <script>
   import { RENDERERS } from '../scripts/workViz';
+  import { RESEARCH_VIZ } from '../scripts/researchViz';
 
   document.querySelectorAll<HTMLElement>('[data-explorer]').forEach((root) => {
     const viz = JSON.parse(root.dataset.viz!);
     const lang = root.dataset.lang!;
     const dialog = root.querySelector<HTMLDialogElement>('dialog')!;
     const ids = [...root.querySelectorAll<HTMLElement>('[data-panel]')].map((p) => p.dataset.panel!);
+    const renderedPubs = new Set<string>();
     let cleanup: () => void = () => {};
     let opener: HTMLElement | null = null;
 
     function open(id: string) {
       cleanup();
-      root.querySelectorAll<HTMLElement>('[data-panel]').forEach((p) => (p.hidden = p.dataset.panel !== id));
+      cleanup = () => {};
+      const panel = root.querySelector<HTMLElement>(`[data-panel="${id}"]`)!;
+      root.querySelectorAll<HTMLElement>('[data-panel]').forEach((p) => (p.hidden = p !== panel));
       dialog.setAttribute('aria-labelledby', `title-${id}`);
       if (!dialog.open) dialog.showModal();
       dialog.scrollTop = 0;
-      const stage = root.querySelector<HTMLElement>(`[data-panel="${id}"] [data-stage]`)!;
-      stage.replaceChildren();
-      cleanup = RENDERERS[id](stage, viz[id], lang);
+      if (panel.dataset.kind === 'project') {
+        const stage = panel.querySelector<HTMLElement>('[data-stage]')!;
+        stage.replaceChildren();
+        cleanup = RENDERERS[id](stage, viz[id], lang);
+      } else if (!renderedPubs.has(id)) {
+        // research figures keep their state between openings
+        const stage = panel.querySelector<HTMLElement>('[data-research-viz]')!;
+        RESEARCH_VIZ[id](stage, JSON.parse(stage.dataset.labels!), lang);
+        renderedPubs.add(id);
+      }
     }
 
     dialog.addEventListener('close', () => {
@@ -103,14 +274,15 @@ const vizData = Object.fromEntries(t.projects.map((p) => [p.id, p.viz]));
       cleanup = () => {};
       opener?.focus();
     });
-    // click on the backdrop (outside the dialog box) closes it
+    // a click on the backdrop (outside the dialog box) or on a link inside it closes it
     dialog.addEventListener('click', (e) => {
-      if (e.target === dialog || (e.target as HTMLElement).closest('[data-close]')) dialog.close();
+      const el = e.target as HTMLElement;
+      if (e.target === dialog || el.closest('[data-close]') || el.closest('a')) dialog.close();
     });
-    root.querySelectorAll<HTMLElement>('[data-open]').forEach((card) =>
-      card.addEventListener('click', () => {
-        opener = card;
-        open(card.dataset.open!);
+    root.querySelectorAll<HTMLElement>('[data-open]').forEach((btn) =>
+      btn.addEventListener('click', () => {
+        opener = btn.closest('.card')!.querySelector('.more');
+        open(btn.dataset.open!);
       }),
     );
     // links elsewhere on the page (e.g. the Path timeline) can open a specific project
@@ -122,13 +294,65 @@ const vizData = Object.fromEntries(t.projects.map((p) => [p.id, p.viz]));
         open(link.dataset.goto);
       }
     });
+
+    // phones: the cards become a swipeable row, with arrows when it overflows
+    const track = root.querySelector<HTMLElement>('[data-track]')!;
+    const arrows = root.closest('section')!.querySelector<HTMLElement>('[data-arrows]')!;
+    const [prev, next] = arrows.querySelectorAll<HTMLButtonElement>('button');
+    const sync = () => {
+      arrows.hidden = track.scrollWidth <= track.clientWidth + 2;
+      prev.disabled = track.scrollLeft < 4;
+      next.disabled = track.scrollLeft + track.clientWidth > track.scrollWidth - 4;
+    };
+    [prev, next].forEach((b) =>
+      b.addEventListener('click', () => {
+        const card = track.querySelector<HTMLElement>('.card')!;
+        track.scrollBy({ left: +b.dataset.dir! * (card.offsetWidth + 14), behavior: 'smooth' });
+      }),
+    );
+    track.addEventListener('scroll', sync, { passive: true });
+    new ResizeObserver(sync).observe(track);
   });
 </script>
 
 <style>
+  .head-row {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+
+  .arrows {
+    display: flex;
+    flex: none;
+    gap: 0.5rem;
+    margin-bottom: 2.75rem;
+  }
+
+  .arrows[hidden] {
+    display: none;
+  }
+
+  .arrows button {
+    width: 2.4rem;
+    height: 2.4rem;
+    border-radius: 50%;
+    font: inherit;
+    color: var(--text);
+    background: var(--surface-2);
+    border: 1px solid var(--line-strong);
+    cursor: pointer;
+  }
+
+  .arrows button:disabled {
+    opacity: 0.35;
+    cursor: default;
+  }
+
   .cards {
     display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-columns: repeat(4, minmax(0, 1fr));
     gap: 0.9rem;
     list-style: none;
     margin: 0;
@@ -138,61 +362,206 @@ const vizData = Object.fromEntries(t.projects.map((p) => [p.id, p.viz]));
   .card {
     display: flex;
     flex-direction: column;
-    gap: 0.35rem;
-    width: 100%;
-    height: 100%;
-    text-align: left;
-    font: inherit;
-    color: var(--text);
+    padding: 1.1rem 1.1rem 0.95rem;
     background: var(--surface);
     border: 1px solid var(--line);
-    border-radius: 12px;
-    padding: 1.1rem 1.2rem 1rem;
-    cursor: pointer;
-    transition: border-color 0.15s, background 0.15s, transform 0.15s;
+    border-radius: 14px;
+    transition: border-color 0.15s;
   }
 
   .card:hover {
-    border-color: var(--accent);
-    background: var(--surface-2);
-    transform: translateY(-2px);
+    border-color: var(--line-strong);
   }
 
-  .org {
-    font-size: 0.72rem;
+  .eyebrow {
+    font-size: 0.7rem;
     color: var(--faint);
-    margin: 0;
+    margin: 0 0 0.45rem;
   }
 
-  .head {
-    font-size: 1.45rem;
-    font-weight: 500;
-    letter-spacing: -0.02em;
-    color: var(--accent);
-    margin-top: 0.3rem;
-  }
-
-  .name {
-    font-size: 1rem;
+  .card h3 {
+    font-size: 0.98rem;
     font-weight: 600;
     line-height: 1.3;
+    margin: 0 0 0.8rem;
+    min-height: 2.6em;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .preview {
+    display: block;
+    width: 100%;
+    height: 6.4rem;
+    padding: 0.5rem 0.6rem;
+    margin: 0 0 0.85rem;
+    border-radius: 10px;
+    background: var(--bg);
+    border: 1px solid var(--line);
+    cursor: pointer;
+    transition: border-color 0.15s;
+  }
+
+  .preview:hover {
+    border-color: var(--accent);
+  }
+
+  .preview svg {
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+  }
+
+  .s-blue,
+  .s-amber,
+  .l1,
+  .l2 {
+    fill: none;
+    stroke-width: 2;
+    stroke-linejoin: round;
+  }
+
+  .s-blue {
+    stroke: #3987e5;
+  }
+
+  .s-amber {
+    stroke: var(--accent);
+  }
+
+  .l1,
+  .l2 {
+    stroke-width: 1.4;
+    vector-effect: non-scaling-stroke;
+  }
+
+  .l1 {
+    stroke: rgba(57, 135, 229, 0.55);
+  }
+
+  .l2 {
+    stroke: rgba(242, 165, 65, 0.55);
+  }
+
+  .f-blue {
+    fill: rgba(57, 135, 229, 0.35);
+    stroke: #3987e5;
+    stroke-width: 1.2;
+  }
+
+  .f-amber {
+    fill: rgba(242, 165, 65, 0.22);
+    stroke: var(--accent);
+    stroke-width: 1.2;
+  }
+
+  .bar-blue {
+    fill: #3987e5;
+  }
+
+  .bar-amber {
+    fill: var(--accent);
+  }
+
+  .bar-dim {
+    fill: var(--surface-2);
+  }
+
+  .zone {
+    fill: rgba(127, 207, 154, 0.1);
+  }
+
+  .axis {
+    stroke: var(--line-strong);
+  }
+
+  .dash {
+    stroke: var(--muted);
+    stroke-dasharray: 3 3;
+  }
+
+  .thr {
+    stroke: var(--text);
+    stroke-width: 1.5;
+  }
+
+  .spike {
+    stroke: #3987e5;
+    stroke-width: 3;
+  }
+
+  .dot {
+    fill: #3987e5;
+  }
+
+  .headline {
+    margin: 0 0 0.3rem;
+    font-family: var(--font-mono);
+    font-size: 0.98rem;
+    font-weight: 500;
+    letter-spacing: -0.01em;
+    color: var(--accent);
   }
 
   .teaser {
-    font-size: 0.86rem;
+    margin: 0 0 0.9rem;
+    font-size: 0.84rem;
     line-height: 1.45;
     color: var(--muted);
     flex: 1;
   }
 
-  .go {
-    margin-top: 0.5rem;
-    font-size: 0.75rem;
-    color: var(--faint);
-    transition: color 0.15s;
+  .foot {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+    padding-top: 0.75rem;
+    border-top: 1px solid var(--line);
   }
 
-  .card:hover .go {
+  .links {
+    display: flex;
+    gap: 0.8rem;
+    margin: 0;
+    white-space: nowrap;
+  }
+
+  .links a {
+    font-family: var(--font-mono);
+    font-size: 0.74rem;
+    color: var(--accent);
+    text-decoration: none;
+  }
+
+  .more {
+    flex: none;
+    margin-left: auto;
+    font: inherit;
+    font-size: 0.78rem;
+    font-weight: 500;
+    color: var(--text);
+    background: none;
+    border: 0;
+    padding: 0;
+    cursor: pointer;
+    white-space: nowrap;
+  }
+
+  .more span {
+    display: inline-grid;
+    place-items: center;
+    width: 1.25rem;
+    height: 1.25rem;
+    margin-left: 0.25rem;
+    border-radius: 50%;
+    background: var(--surface-2);
+    border: 1px solid var(--line-strong);
+  }
+
+  .more:hover {
     color: var(--accent);
   }
 
@@ -205,6 +574,16 @@ const vizData = Object.fromEntries(t.projects.map((p) => [p.id, p.viz]));
     margin: 0.5rem 0 0;
     font-size: 0.7rem;
     color: var(--faint);
+  }
+
+  .authors {
+    font-size: 0.85rem;
+    color: var(--faint);
+    margin: -0.4rem 0 1rem;
+  }
+
+  .authors em {
+    color: var(--muted);
   }
 
   .summary {
@@ -242,37 +621,39 @@ const vizData = Object.fromEntries(t.projects.map((p) => [p.id, p.viz]));
     margin-top: 1.1rem;
   }
 
-  .more {
+  .more-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem 1.2rem;
+  }
+
+  .more-link {
     font-size: 0.9rem;
     font-weight: 500;
     color: var(--accent);
     text-decoration: none;
   }
 
-  @media (max-width: 900px) {
+  @media (max-width: 1100px) {
     .cards {
-      grid-template-columns: repeat(2, minmax(0, 1fr));
+      grid-template-columns: repeat(3, minmax(0, 1fr));
     }
   }
 
-  @media (max-width: 560px) {
+  @media (max-width: 760px) {
     .cards {
-      grid-template-columns: minmax(0, 1fr);
+      grid-template-columns: none;
+      grid-auto-flow: column;
+      grid-auto-columns: 78%;
+      overflow-x: auto;
+      scroll-snap-type: x mandatory;
+      padding-bottom: 0.5rem;
     }
     .card {
-      padding: 0.95rem 1rem 0.85rem;
+      scroll-snap-align: start;
     }
-    .head {
-      font-size: 1.25rem;
-    }
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    .card {
-      transition: none;
-    }
-    .card:hover {
-      transform: none;
+    .arrows {
+      margin-bottom: 1.4rem;
     }
   }
 </style>
