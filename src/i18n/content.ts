@@ -358,7 +358,6 @@ export const content = {
     path: {
       kicker: 'Path',
       title: 'From physics to credit risk to building a fintech',
-      intro: 'Click any bar for the details.',
       lanes: { edu: 'Education', work: 'Work', teach: 'Teaching', side: 'Research & projects' },
       now: 'today',
       inProgress: 'in progress',
@@ -404,6 +403,7 @@ export const content = {
       languages: [
         { flag: 'pe', name: 'Spanish', level: 'Native' },
         { flag: 'us', name: 'English', level: 'Fluent' },
+        { flag: 'br', name: 'Portuguese', level: 'Basic' },
         { flag: 'fr', name: 'French', level: 'Basic' },
         { flag: 'de', name: 'German', level: 'Basic' },
       ],
@@ -700,7 +700,6 @@ export const content = {
     path: {
       kicker: 'Trayectoria',
       title: 'De la física al riesgo de crédito y a construir una fintech',
-      intro: 'Haz clic en cualquier barra para ver el detalle.',
       lanes: { edu: 'Educación', work: 'Trabajo', teach: 'Docencia', side: 'Investigación y proyectos' },
       now: 'hoy',
       inProgress: 'en curso',
@@ -746,6 +745,7 @@ export const content = {
       languages: [
         { flag: 'pe', name: 'Español', level: 'Nativo' },
         { flag: 'us', name: 'Inglés', level: 'Fluido' },
+        { flag: 'br', name: 'Portugués', level: 'Básico' },
         { flag: 'fr', name: 'Francés', level: 'Básico' },
         { flag: 'de', name: 'Alemán', level: 'Básico' },
       ],
