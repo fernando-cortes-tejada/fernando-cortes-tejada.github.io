@@ -1,5 +1,7 @@
 ---
 import { content, type Lang } from '../i18n/content';
+import ArbCalc from './ArbCalc.astro';
+import Ifrs9 from './Ifrs9.astro';
 
 interface Props {
   lang: Lang;
@@ -175,7 +177,13 @@ const odds = line(Array.from({ length: 40 }, (_, k) => {
                 </p>
                 <h3 id={`title-${p.id}`}>{p.title}</h3>
               </header>
-              <div class="stage viz-stage" data-stage />
+              {p.id === 'ifrs9' ? (
+                <div class="embed">
+                  <Ifrs9 lang={lang} />
+                </div>
+              ) : (
+                <div class="stage viz-stage" data-stage />
+              )}
               {p.id !== 'docAi' && <p class="synthetic mono">{t.illustrative}</p>}
               <p class="summary">{p.summary}</p>
               <dl class="metrics">
@@ -186,6 +194,7 @@ const odds = line(Array.from({ length: 40 }, (_, k) => {
                   </div>
                 ))}
               </dl>
+              {p.id === 'surebets' && <ArbCalc lang={lang} />}
               <footer>
                 <ul class="chips">
                   {p.methods.map((m) => (
@@ -257,8 +266,8 @@ const odds = line(Array.from({ length: 40 }, (_, k) => {
       dialog.setAttribute('aria-labelledby', `title-${id}`);
       if (!dialog.open) dialog.showModal();
       dialog.scrollTop = 0;
-      if (panel.dataset.kind === 'project') {
-        const stage = panel.querySelector<HTMLElement>('[data-stage]')!;
+      const stage = panel.querySelector<HTMLElement>('[data-stage]');
+      if (panel.dataset.kind === 'project' && stage) {
         stage.replaceChildren();
         cleanup = RENDERERS[id](stage, viz[id], lang);
       } else if (!renderedPubs.has(id)) {
@@ -579,6 +588,18 @@ const odds = line(Array.from({ length: 40 }, (_, k) => {
   .stage {
     position: relative;
     min-height: 15rem;
+  }
+
+  /* the dialog already carries the project title */
+  .embed :global(.ifrs h3) {
+    display: none;
+  }
+
+  .embed :global(.ifrs) {
+    border: 0;
+    padding: 0;
+    margin: 0;
+    background: none;
   }
 
   .synthetic {

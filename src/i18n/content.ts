@@ -95,11 +95,11 @@ export const content = {
       description:
         'Harvard MS/MBA candidate with an MS in Statistics (summa cum laude) and a BS in Physics. Credit risk, quantitative modeling and machine learning in production; founding engineer at a Series A fintech.',
     },
-    nav: { work: 'Work', research: 'Research', lab: 'Lab', path: 'Path', contact: 'Contact', switchLabel: 'ES', switchAria: 'Leer en español' },
+    nav: { work: 'Work & research', research: 'Research', lab: 'Lab', path: 'Path', contact: 'Contact', switchLabel: 'ES', switchAria: 'Leer en español' },
     hero: {
       location: 'Boston, MA',
-      credentials: ['Harvard MS/MBA candidate, 2028', 'MS Statistics, summa cum laude', 'BS Physics'],
-      role: 'Credit risk, quantitative modeling & ML in production',
+      credentials: ['Harvard MS/MBA candidate, 2028', 'MS Statistics, summa cum laude', 'BS Physics, magna cum laude'],
+      role: 'Credit risk, quantitative modeling & ML',
       pitch:
         'I put prices on risk with statistics: probability of default, expected credit loss, home values, mispriced odds. Then I take the models to production and build the systems that run them.',
       seeking: 'Seeking quantitative finance internships for summer 2027',
@@ -165,7 +165,6 @@ export const content = {
             { value: '~3M', label: 'credit cards' },
             { value: 'S/ 60B', label: 'loan book' },
           ],
-          links: [{ label: 'Full stress test', href: '#lab-ifrs9' }],
           viz: { benign: 'Benign', base: 'Base', adverse: 'Adverse', severe: 'Severe', pdTitle: 'Cumulative PD of a current account', pd12: '12-month PD', ecl: 'ECL coverage' },
         },
         {
@@ -442,11 +441,11 @@ export const content = {
       description:
         'Candidato MS/MBA en Harvard, con maestría en Estadística (summa cum laude) y bachiller en Física. Riesgo de crédito, modelación cuantitativa y machine learning en producción; ingeniero fundador de una fintech Serie A.',
     },
-    nav: { work: 'Trabajo', research: 'Investigación', lab: 'Lab', path: 'Trayectoria', contact: 'Contacto', switchLabel: 'EN', switchAria: 'Read in English' },
+    nav: { work: 'Trabajo e investigación', research: 'Investigación', lab: 'Lab', path: 'Trayectoria', contact: 'Contacto', switchLabel: 'EN', switchAria: 'Read in English' },
     hero: {
       location: 'Boston, MA',
-      credentials: ['Candidato MS/MBA en Harvard, 2028', 'Maestría en Estadística, summa cum laude', 'Bachiller en Física'],
-      role: 'Riesgo de crédito, modelación cuantitativa y ML en producción',
+      credentials: ['Candidato MS/MBA en Harvard, 2028', 'Maestría en Estadística, summa cum laude', 'Bachiller en Física, magna cum laude'],
+      role: 'Riesgo de crédito, modelación cuantitativa y ML',
       pitch:
         'Le pongo precio al riesgo con estadística: probabilidad de default, pérdida crediticia esperada, valor de viviendas, cuotas mal valoradas. Luego llevo los modelos a producción y construyo los sistemas que los operan.',
       seeking: 'Busco prácticas en finanzas cuantitativas para el verano de 2027',
@@ -512,7 +511,6 @@ export const content = {
             { value: '~3M', label: 'tarjetas de crédito' },
             { value: 'S/ 60 mil M', label: 'cartera de créditos' },
           ],
-          links: [{ label: 'Stress test completo', href: '#lab-ifrs9' }],
           viz: { benign: 'Benigno', base: 'Base', adverse: 'Adverso', severe: 'Severo', pdTitle: 'PD acumulada de una cuenta al día', pd12: 'PD a 12 meses', ecl: 'Cobertura ECL' },
         },
         {
