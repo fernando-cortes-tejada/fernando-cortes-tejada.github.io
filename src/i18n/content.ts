@@ -125,7 +125,7 @@ export const content = {
     work: {
       kicker: 'Work & research',
       title: 'Models in production, and the research behind them',
-      intro: 'Ordered by impact. Each card shows the real headline result; open one to play with a small version of the model.',
+      intro: 'Each card shows the headline result; open one to play with a small version of the model.',
       illustrative: 'Illustrative model, synthetic data',
       open: 'Explore',
       close: 'Close',
@@ -467,7 +467,7 @@ export const content = {
     work: {
       kicker: 'Trabajo e investigación',
       title: 'Modelos en producción y la investigación detrás',
-      intro: 'Ordenados por impacto. Cada tarjeta muestra el resultado real; abre una para jugar con una versión pequeña del modelo.',
+      intro: 'Cada tarjeta muestra el resultado principal; abre una para jugar con una versión pequeña del modelo.',
       illustrative: 'Modelo ilustrativo, datos sintéticos',
       open: 'Explorar',
       close: 'Cerrar',
