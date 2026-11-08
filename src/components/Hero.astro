@@ -47,6 +47,7 @@ const labels = { simulating: t.viz.simulating, converged: t.viz.converged, pathL
         <canvas class="density" aria-hidden="true"></canvas>
         <p class="legend mono"><span>{t.viz.low}</span><i></i><span>{t.viz.high}</span></p>
         <p class="tip mono" data-tip hidden></p>
+        <span class="status mono" data-status aria-live="polite"></span>
       </div>
       <div class="controls">
         <div class="toggle" role="group">
@@ -55,7 +56,6 @@ const labels = { simulating: t.viz.simulating, converged: t.viz.converged, pathL
           <button type="button" data-mode="photo" aria-pressed="false">{t.viz.photo}</button>
         </div>
         <button type="button" class="link-btn" data-resimulate>{t.viz.resimulate} ↻</button>
-        <span class="status mono" data-status aria-live="polite"></span>
       </div>
       <figcaption>
         <span class="cap-paths">{t.viz.caption}</span>
@@ -100,7 +100,7 @@ const labels = { simulating: t.viz.simulating, converged: t.viz.converged, pathL
     grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
     gap: clamp(2rem, 5vw, 4rem);
     align-items: center;
-    padding-block: clamp(2rem, 5vw, 3.5rem) clamp(4rem, 8vw, 6rem);
+    padding-block: clamp(2rem, 5vw, 3.5rem) clamp(2.75rem, 5.5vw, 4.5rem);
   }
 
   .creds {
@@ -224,7 +224,7 @@ const labels = { simulating: t.viz.simulating, converged: t.viz.converged, pathL
     position: relative;
     aspect-ratio: 5 / 6;
     width: 100%;
-    max-width: 30rem;
+    max-width: 26rem;
     margin-inline: auto;
   }
 
@@ -331,8 +331,8 @@ const labels = { simulating: t.viz.simulating, converged: t.viz.converged, pathL
     flex-wrap: wrap;
     align-items: center;
     gap: 0.75rem 1rem;
-    max-width: 30rem;
-    margin: 1.2rem auto 0;
+    max-width: 26rem;
+    margin: 1rem auto 0;
   }
 
   .toggle {
@@ -374,14 +374,18 @@ const labels = { simulating: t.viz.simulating, converged: t.viz.converged, pathL
   }
 
   .status {
-    font-size: 0.75rem;
+    position: absolute;
+    right: 0;
+    top: 0;
+    margin: 0;
+    font-size: 0.72rem;
     color: var(--faint);
-    margin-left: auto;
+    pointer-events: none;
   }
 
   figcaption {
-    max-width: 30rem;
-    margin: 0.9rem auto 0;
+    max-width: 26rem;
+    margin: 0.7rem auto 0;
     font-size: 0.82rem;
     line-height: 1.5;
     color: var(--faint);
