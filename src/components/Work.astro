@@ -22,12 +22,14 @@ type Card = {
   headline: string;
   teaser: string;
   links: { label: string; href: string }[];
+  out: { label: string; href: string }[];
 };
+const outLinks = (ls: { label: string; href: string }[]) => ls.filter((l) => l.href.startsWith('http') || l.href.endsWith('.pdf')).slice(0, 2);
 const cards: Card[] = ORDER.map((key) => {
   const p = t.projects.find((x) => x.id === key);
-  if (p) return { key, kind: 'project', eyebrow: `${p.org} · ${p.years}`, title: p.title, headline: p.headline, teaser: p.teaser, links: p.links ?? [] };
+  if (p) return { key, kind: 'project', eyebrow: `${p.org} · ${p.years}`, title: p.title, headline: p.headline, teaser: p.teaser, links: p.links ?? [], out: outLinks(p.links ?? []) };
   const r = research.items.find((x) => x.viz === key)!;
-  return { key, kind: 'pub', eyebrow: r.kind, title: r.title, headline: r.headline, teaser: r.short, links: r.links };
+  return { key, kind: 'pub', eyebrow: r.kind, title: r.title, headline: r.headline, teaser: r.short, links: r.links, out: outLinks(r.links) };
 });
 
 // small static previews drawn at build time; the interactive versions open in the dialog
@@ -80,7 +82,7 @@ const odds = line(Array.from({ length: 40 }, (_, k) => {
             <li class="card">
               <p class="eyebrow mono">{c.eyebrow}</p>
               <h3>{c.title}</h3>
-              <button type="button" class="preview" data-open={c.key} tabindex="-1" aria-hidden="true">
+              <div class="preview" aria-hidden="true">
                 {c.key === 'origination' && (
                   <svg viewBox="0 0 224 100">
                     <path d={roc(2.2)} class="s-blue" />
@@ -143,24 +145,23 @@ const odds = line(Array.from({ length: 40 }, (_, k) => {
                     <line x1="10" x2="214" y1="92" y2="92" class="axis" />
                   </svg>
                 )}
-              </button>
+              </div>
               <p class="headline">{c.headline}</p>
               <p class="teaser">{c.teaser}</p>
+              <button type="button" class="more" data-open={c.key} aria-haspopup="dialog">
+                <span class="sr-only">{t.open}: {c.title}</span>
+              </button>
+              {c.out.length > 0 && (
               <div class="foot">
                 <p class="links">
-                  {c.links
-                    .filter((l) => l.href.startsWith('http') || l.href.endsWith('.pdf'))
-                    .slice(0, 2)
-                    .map((l) => (
+                  {c.out.map((l) => (
                       <a href={l.href} {...ext(l.href)}>
                         {/github\.com/.test(l.href) ? 'GitHub' : l.label} ↗
                       </a>
                     ))}
                 </p>
-                <button type="button" class="more" data-open={c.key} aria-haspopup="dialog">
-                  {t.open} <span aria-hidden="true">+</span>
-                </button>
               </div>
+              )}
             </li>
           ))
         }
@@ -379,8 +380,10 @@ const odds = line(Array.from({ length: 40 }, (_, k) => {
   }
 
   .card {
+    position: relative;
     display: flex;
     flex-direction: column;
+    cursor: pointer;
     padding: 1.1rem 1.1rem 0.95rem;
     background: var(--surface);
     border: 1px solid var(--line);
@@ -390,6 +393,15 @@ const odds = line(Array.from({ length: 40 }, (_, k) => {
 
   .card:hover {
     border-color: var(--line-strong);
+  }
+
+  .card:hover .preview {
+    border-color: var(--accent);
+  }
+
+  .card:has(.more:focus-visible) {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
   }
 
   .eyebrow {
@@ -419,12 +431,7 @@ const odds = line(Array.from({ length: 40 }, (_, k) => {
     border-radius: 10px;
     background: var(--bg);
     border: 1px solid var(--line);
-    cursor: pointer;
     transition: border-color 0.15s;
-  }
-
-  .preview:hover {
-    border-color: var(--accent);
   }
 
   .preview svg {
@@ -555,33 +562,29 @@ const odds = line(Array.from({ length: 40 }, (_, k) => {
     text-decoration: none;
   }
 
+  /* the whole card is the open button; the outbound links sit above it */
   .more {
-    flex: none;
-    margin-left: auto;
-    font: inherit;
-    font-size: 0.78rem;
-    font-weight: 500;
-    color: var(--text);
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
     background: none;
     border: 0;
     padding: 0;
     cursor: pointer;
-    white-space: nowrap;
   }
 
-  .more span {
-    display: inline-grid;
-    place-items: center;
-    width: 1.25rem;
-    height: 1.25rem;
-    margin-left: 0.25rem;
-    border-radius: 50%;
-    background: var(--surface-2);
-    border: 1px solid var(--line-strong);
+  .more:focus-visible {
+    outline: none;
   }
 
-  .more:hover {
-    color: var(--accent);
+  .foot {
+    position: relative;
+    z-index: 1;
+    pointer-events: none;
+  }
+
+  .links a {
+    pointer-events: auto;
   }
 
   .stage {
