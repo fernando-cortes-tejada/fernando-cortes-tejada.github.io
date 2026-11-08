@@ -63,6 +63,14 @@ const FLAGS: Record<string, string> = {
           <p class="p-head"><b data-f="name">{pins[DEFAULT].name}</b> <span class="mono" data-f="tag">{pins[DEFAULT].now ? t.basedHere : pins[DEFAULT].years}</span></p>
           <p class="p-note" data-f="note">{pins[DEFAULT].note}</p>
         </div>
+        <div class="outside">
+          <p class="label mono">{t.outsideTitle}</p>
+          <ul class="tiles">
+            {t.interests.map((it) => (
+              <li><span class="emoji" aria-hidden="true">{it.icon}</span><span><b>{it.name}</b><small>{it.detail}</small></span></li>
+            ))}
+          </ul>
+        </div>
       </div>
 
       <div class="facts">
@@ -97,14 +105,6 @@ const FLAGS: Record<string, string> = {
           <p class="label mono">{p.stack}</p>
           <ul class="chips">{p.stackList.map((s) => <li>{s}</li>)}</ul>
           <p class="certs">{p.certs}: {p.certList.join(' · ')}</p>
-        </div>
-        <div>
-          <p class="label mono">{t.outsideTitle}</p>
-          <ul class="tiles">
-            {t.interests.map((it) => (
-              <li><span class="emoji" aria-hidden="true">{it.icon}</span><span><b>{it.name}</b><small>{it.detail}</small></span></li>
-            ))}
-          </ul>
         </div>
       </div>
     </div>
@@ -251,6 +251,11 @@ const FLAGS: Record<string, string> = {
     margin: 0;
     color: var(--muted);
     font-size: 0.94rem;
+  }
+
+  .outside {
+    max-width: 30rem;
+    margin-top: 1.6rem;
   }
 
   .facts {
