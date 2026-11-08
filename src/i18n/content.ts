@@ -5,8 +5,15 @@ export interface Metric {
   label: string;
 }
 
+/** the longer write-up shown in the dialog: a few paragraphs and page previews that open the source document */
+export interface Deep {
+  story: string[];
+  docs: { img: string; caption: string; href: string }[];
+}
+
 export interface Project {
   id: string;
+  deep?: Deep;
   org: string;
   headline: string;
   /** one line for the card; the full story opens in the dialog */
@@ -21,6 +28,7 @@ export interface Project {
 }
 
 export interface Publication {
+  deep?: Deep;
   /** key into RESEARCH_VIZ for an interactive figure */
   viz?: string;
   vizLabels?: Record<string, string>;
@@ -171,6 +179,18 @@ export const content = {
           headline: '+5% approvals',
           summary: 'Adding Rappi app behavior to bureau data separates good and bad applicants better, so the bank approves more people at the same risk. Published in Expert Systems with Applications (100+ citations), validated on 80,000 users in two countries.',
           methods: ['Gradient boosting', 'TreeSHAP', 'Alternative data'],
+          deep: {
+            story: [
+              'At RappiBank we had data a bank never sees: how people use the super-app, from deliveries and discounts to payment errors and rides. The question was whether that behavior says something about credit risk that the bureau score misses.',
+              'We trained gradient-boosting models on bureau data only, app data only, and both combined, on about 80,000 users in two Latin American countries, and compared them on AUC, KS and the expected profit of the lending decision. TreeSHAP showed which app behaviors carried the signal.',
+              'Adding app data beat the bureau-only model in every segment in both countries on KS, by about ten points on average in one of them, and helped most with young and low-wealth applicants, the people banks find hardest to score. In production it let the bank approve about 5% more customers at the same risk.',
+            ],
+            docs: [
+              { img: '/docs/pages/paper-p1.webp', caption: 'The paper · Expert Systems with Applications', href: 'https://arxiv.org/pdf/2005.14658#page=1' },
+              { img: '/docs/pages/paper-p12.webp', caption: 'AUC by model and segment, both countries', href: 'https://arxiv.org/pdf/2005.14658#page=12' },
+              { img: '/docs/pages/paper-p20.webp', caption: 'What drives the score (SHAP)', href: 'https://arxiv.org/pdf/2005.14658#page=20' },
+            ],
+          },
           links: [{ label: 'DOI', href: links.paperDoi }, { label: 'arXiv', href: links.paperArxiv }],
           metrics: [
             { value: '+5%', label: 'approvals for underserved customers' },
@@ -265,6 +285,18 @@ export const content = {
           venue: 'MS Statistics, PUCP (2020), summa cum laude',
           summary:
             'A Bayesian model that follows how 12 months of credit-card utilization evolve (a ratio that often sits exactly at 0 or 1), groups clients with similar paths, and predicts default from the group. Estimated by MCMC in JAGS. It beat logistic regression out of sample.',
+          deep: {
+            story: [
+              'Banks usually predict default with a logistic regression on a snapshot of the client. But the credit-card utilization ratio is observed every month, and its trend and shape carry information. It is also awkward to model: it lives in [0, 1] and often sits exactly at 0 (card unused) or 1 (line maxed out).',
+              'I proposed a joint Bayesian model. Clients belong to latent clusters; within each cluster, monthly utilization follows a beta-inflated mean regression with a random effect per client, and the probability of default depends on the cluster. A new client is scored by weighting each cluster’s default rate by how well their path fits it. Estimated by MCMC in JAGS.',
+              'In simulation it recovered the true parameters, while the usual workaround of squeezing the data into (0, 1) did not, and its out-of-sample AUC was 0.85 against 0.73 for logistic regression. On 12 months of real card data, DIC chose two clusters: one where utilization falls over the year, and one where it climbs toward the limit and defaults more often (58% vs 42%).',
+            ],
+            docs: [
+              { img: '/docs/pages/thesis-slide-1.webp', caption: 'LACSC 2021 talk', href: '/docs/LACSC_2021_slides.pdf#page=1' },
+              { img: '/docs/pages/thesis-slide-25.webp', caption: 'Out-of-sample AUC vs logistic regression', href: '/docs/LACSC_2021_slides.pdf#page=25' },
+              { img: '/docs/pages/thesis-slide-35.webp', caption: 'The two clusters in real card data', href: '/docs/LACSC_2021_slides.pdf#page=35' },
+            ],
+          },
           links: [
             { label: 'Thesis', href: links.thesis },
             { label: 'Slides', href: links.lacsc },
@@ -281,6 +313,17 @@ export const content = {
           venue: 'Working paper',
           summary:
             'Three models (Tobit-m, ITNm, ITSNm) for bounded data with mass at the boundaries and high density near them, where beta regression fails. They model the marginal mean directly. Fitted with Bayesian MCMC and applied to a medical dataset.',
+          deep: {
+            story: [
+              'Beta regression is the default for rates and proportions, but it breaks when data piles up at the boundaries or is dense right next to them. Inflated models fix the point masses, yet they usually describe the mean of the interior part, not the overall mean people actually want to explain.',
+              'We propose three normal-based models, Tobit-m, ITNm and ITSNm (censored, truncated and skew-normal), parameterized directly by the marginal mean E[Y]. That mean has no closed form in the latent location, so it is solved numerically inside the sampler. Estimation is Bayesian, with MCMC in Stan.',
+              'Simulation studies and an application to lung-function data show a better fit than the beta-based alternatives. Working paper with Cristian Bayes and Luis Valdivieso.',
+            ],
+            docs: [
+              { img: '/docs/pages/tobit-p1.webp', caption: 'Working paper · abstract', href: '/docs/Tobit_mean_regression_working_paper.pdf#page=1' },
+              { img: '/docs/pages/tobit-p13.webp', caption: 'From the marginal mean to the latent location', href: '/docs/Tobit_mean_regression_working_paper.pdf#page=13' },
+            ],
+          },
           links: [{ label: 'PDF', href: links.tobit }, { label: 'Stan code', href: links.tobitCode }],
         },
       ] satisfies Publication[],
@@ -512,6 +555,18 @@ export const content = {
           headline: '+5% aprobaciones',
           summary: 'Sumar el comportamiento en la app de Rappi a los datos del buró separa mejor a buenos y malos solicitantes, así el banco aprueba a más personas con el mismo riesgo. Publicado en Expert Systems with Applications (100+ citas), validado con 80,000 usuarios en dos países.',
           methods: ['Gradient boosting', 'TreeSHAP', 'Datos alternativos'],
+          deep: {
+            story: [
+              'En RappiBank teníamos datos que un banco nunca ve: cómo la gente usa la super-app, desde pedidos y descuentos hasta errores de pago y viajes. La pregunta era si ese comportamiento dice algo sobre el riesgo de crédito que el score del buró no captura.',
+              'Entrenamos modelos de gradient boosting solo con buró, solo con datos de la app y con ambos, sobre unos 80,000 usuarios en dos países de Latinoamérica, y los comparamos por AUC, KS y la ganancia esperada de la decisión de crédito. TreeSHAP mostró qué comportamientos de la app aportaban la señal.',
+              'Sumar los datos de la app superó al modelo solo con buró en todos los segmentos de ambos países en KS, por unos diez puntos en promedio en uno de ellos, y ayudó sobre todo con solicitantes jóvenes y de bajo patrimonio, los más difíciles de evaluar para un banco. En producción permitió aprobar cerca de 5% más clientes con el mismo riesgo.',
+            ],
+            docs: [
+              { img: '/docs/pages/paper-p1.webp', caption: 'El paper · Expert Systems with Applications', href: 'https://arxiv.org/pdf/2005.14658#page=1' },
+              { img: '/docs/pages/paper-p12.webp', caption: 'AUC por modelo y segmento, ambos países', href: 'https://arxiv.org/pdf/2005.14658#page=12' },
+              { img: '/docs/pages/paper-p20.webp', caption: 'Qué mueve el score (SHAP)', href: 'https://arxiv.org/pdf/2005.14658#page=20' },
+            ],
+          },
           links: [{ label: 'DOI', href: links.paperDoi }, { label: 'arXiv', href: links.paperArxiv }],
           metrics: [
             { value: '+5%', label: 'aprobaciones a clientes desatendidos' },
@@ -606,6 +661,18 @@ export const content = {
           venue: 'Maestría en Estadística, PUCP (2020), summa cum laude',
           summary:
             'Un modelo bayesiano que sigue cómo evoluciona durante 12 meses el uso de la tarjeta de crédito (un ratio que suele caer exactamente en 0 o 1), agrupa a clientes con trayectorias similares y predice el default según el grupo. Estimado por MCMC en JAGS. Superó a la regresión logística fuera de muestra.',
+          deep: {
+            story: [
+              'Los bancos suelen predecir el default con una regresión logística sobre una foto del cliente. Pero el ratio de utilización de la tarjeta se observa cada mes, y su tendencia y forma tienen información. Además es difícil de modelar: vive en [0, 1] y muchas veces vale exactamente 0 (tarjeta sin uso) o 1 (línea copada).',
+              'Propuse un modelo bayesiano conjunto. Los clientes pertenecen a clusters latentes; dentro de cada cluster la utilización mensual sigue una regresión beta inflada en la media con un efecto aleatorio por cliente, y la probabilidad de default depende del cluster. Un cliente nuevo se evalúa ponderando la tasa de default de cada cluster según qué tan bien encaja su trayectoria. Estimado por MCMC en JAGS.',
+              'En simulación recuperó los parámetros verdaderos, mientras que el truco habitual de comprimir los datos a (0, 1) no lo hizo, y su AUC fuera de muestra fue 0.85 frente a 0.73 de la regresión logística. Con 12 meses de datos reales de tarjetas, el DIC eligió dos clusters: uno donde la utilización baja durante el año y otro donde sube hacia el límite y cae más en default (58% vs 42%).',
+            ],
+            docs: [
+              { img: '/docs/pages/thesis-slide-1.webp', caption: 'Charla en LACSC 2021', href: '/docs/LACSC_2021_slides.pdf#page=1' },
+              { img: '/docs/pages/thesis-slide-25.webp', caption: 'AUC fuera de muestra vs regresión logística', href: '/docs/LACSC_2021_slides.pdf#page=25' },
+              { img: '/docs/pages/thesis-slide-35.webp', caption: 'Los dos clusters en datos reales', href: '/docs/LACSC_2021_slides.pdf#page=35' },
+            ],
+          },
           links: [
             { label: 'Tesis', href: links.thesis },
             { label: 'Diapositivas', href: links.lacsc },
@@ -622,6 +689,17 @@ export const content = {
           venue: 'Documento de trabajo',
           summary:
             'Tres modelos (Tobit-m, ITNm, ITSNm) para datos acotados con masa en los extremos y alta densidad cerca de ellos, donde la regresión beta falla. Modelan directamente la media marginal. Estimados con MCMC bayesiano y aplicados a datos médicos.',
+          deep: {
+            story: [
+              'La regresión beta es la opción por defecto para tasas y proporciones, pero falla cuando los datos se acumulan en los bordes o son muy densos cerca de ellos. Los modelos inflados resuelven las masas puntuales, pero suelen describir la media de la parte interior, no la media total que uno quiere explicar.',
+              'Proponemos tres modelos basados en la normal, Tobit-m, ITNm e ITSNm (censurada, truncada y skew-normal), parametrizados directamente por la media marginal E[Y]. Esa media no tiene forma cerrada en la localización latente, así que se resuelve numéricamente dentro del muestreador. La estimación es bayesiana, con MCMC en Stan.',
+              'Estudios de simulación y una aplicación a datos de función pulmonar muestran mejor ajuste que las alternativas basadas en la beta. Working paper con Cristian Bayes y Luis Valdivieso.',
+            ],
+            docs: [
+              { img: '/docs/pages/tobit-p1.webp', caption: 'Working paper · resumen', href: '/docs/Tobit_mean_regression_working_paper.pdf#page=1' },
+              { img: '/docs/pages/tobit-p13.webp', caption: 'De la media marginal a la localización latente', href: '/docs/Tobit_mean_regression_working_paper.pdf#page=13' },
+            ],
+          },
           links: [{ label: 'PDF', href: links.tobit }, { label: 'Stan code', href: links.tobitCode }],
         },
       ] satisfies Publication[],

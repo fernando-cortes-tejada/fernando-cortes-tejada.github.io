@@ -10,7 +10,8 @@ const { lang } = Astro.props;
 const t = content[lang].work;
 const research = content[lang].research;
 const vizData = Object.fromEntries(t.projects.map((p) => [p.id, p.viz]));
-const ext = (href: string) => (href.startsWith('http') ? { target: '_blank', rel: 'noopener' } : {});
+// documents and outside sites open in a new tab so the page (and an open dialog) stays put
+const ext = (href: string) => (href.startsWith('#') ? {} : { target: '_blank', rel: 'noopener' });
 
 // one list for production work and research, ordered by impact
 const ORDER = ['origination', 'thesis', 'surebets', 'ifrs9', 'fraud', 'docAi', 'valuation', 'tobit'];
@@ -185,7 +186,11 @@ const odds = line(Array.from({ length: 40 }, (_, k) => {
                 <div class="stage viz-stage" data-stage />
               )}
               {p.id !== 'docAi' && <p class="synthetic mono">{t.illustrative}</p>}
-              <p class="summary">{p.summary}</p>
+              {p.deep ? (
+                <div class="story">{p.deep.story.map((x) => <p>{x}</p>)}</div>
+              ) : (
+                <p class="summary">{p.summary}</p>
+              )}
               <dl class="metrics">
                 {p.metrics.map((m) => (
                   <div>
@@ -194,6 +199,18 @@ const odds = line(Array.from({ length: 40 }, (_, k) => {
                   </div>
                 ))}
               </dl>
+              {p.deep && (
+                <ul class="docs">
+                  {p.deep.docs.map((d) => (
+                    <li>
+                      <a href={d.href} target="_blank" rel="noopener">
+                        <img src={d.img} alt={d.caption} loading="lazy" />
+                      </a>
+                      <span class="mono">{d.caption}</span>
+                    </li>
+                  ))}
+                </ul>
+              )}
               {p.id === 'surebets' && <ArbCalc lang={lang} />}
               <footer>
                 <ul class="chips">
@@ -226,7 +243,23 @@ const odds = line(Array.from({ length: 40 }, (_, k) => {
                 </p>
                 <div class="viz-stage" data-research-viz={r.viz} data-labels={JSON.stringify(r.vizLabels)} />
                 {r.vizLabels?.note && <p class="synthetic mono">{r.vizLabels.note}</p>}
-                <p class="summary">{r.summary}</p>
+                {r.deep ? (
+                  <div class="story">{r.deep.story.map((x) => <p>{x}</p>)}</div>
+                ) : (
+                  <p class="summary">{r.summary}</p>
+                )}
+                {r.deep && (
+                  <ul class="docs">
+                    {r.deep.docs.map((d) => (
+                      <li>
+                        <a href={d.href} target="_blank" rel="noopener">
+                          <img src={d.img} alt={d.caption} loading="lazy" />
+                        </a>
+                        <span class="mono">{d.caption}</span>
+                      </li>
+                    ))}
+                  </ul>
+                )}
                 <footer>
                   <span class="more-links">
                     {r.links.map((l) => (
@@ -283,10 +316,10 @@ const odds = line(Array.from({ length: 40 }, (_, k) => {
       cleanup = () => {};
       opener?.focus();
     });
-    // a click on the backdrop (outside the dialog box) or on a link inside it closes it
+    // a click on the backdrop (outside the dialog box) or on an in-page link closes it; documents open in a new tab
     dialog.addEventListener('click', (e) => {
       const el = e.target as HTMLElement;
-      if (e.target === dialog || el.closest('[data-close]') || el.closest('a')) dialog.close();
+      if (e.target === dialog || el.closest('[data-close]') || el.closest('a[href^="#"]')) dialog.close();
     });
     root.querySelectorAll<HTMLElement>('[data-open]').forEach((btn) =>
       btn.addEventListener('click', () => {
@@ -590,6 +623,61 @@ const odds = line(Array.from({ length: 40 }, (_, k) => {
   .stage {
     position: relative;
     min-height: 15rem;
+  }
+
+  .story {
+    max-width: 44rem;
+    margin: 1rem 0 0;
+  }
+
+  .story p {
+    margin: 0 0 0.85rem;
+    font-size: 0.95rem;
+    line-height: 1.6;
+    color: var(--muted);
+  }
+
+  .docs {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(13rem, 1fr));
+    gap: 1rem;
+    list-style: none;
+    padding: 0;
+    margin: 1.25rem 0 0.5rem;
+  }
+
+  .docs li {
+    display: flex;
+    flex-direction: column;
+    gap: 0.45rem;
+  }
+
+  .docs a {
+    display: block;
+    aspect-ratio: 16 / 10;
+    overflow: hidden;
+    border-radius: 8px;
+    border: 1px solid var(--line);
+    background: #f4f2ee;
+    transition: border-color 0.15s;
+  }
+
+  .docs a:hover {
+    border-color: var(--accent);
+  }
+
+  .docs img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: top;
+  }
+
+  .docs span {
+    font-size: 0.7rem;
+    color: var(--faint);
+    line-height: 1.4;
   }
 
   /* the dialog already carries the project title */
