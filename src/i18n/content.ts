@@ -106,12 +106,6 @@ export const content = {
         'I put prices on risk with statistics: probability of default, expected credit loss, home values, mispriced odds. Then I take the models to production and build the systems that run them.',
       seeking: 'Seeking quantitative finance internships for summer 2027',
       cv: 'Download CV',
-      stats: [
-        { value: '100+', label: 'citations, Expert Systems with Applications' },
-        { value: '3M', label: 'credit cards under IFRS 9 models' },
-        { value: '1M', label: 'Bogotá homes priced' },
-        { value: '40h → 3h', label: 'legal review per deal, AI engine' },
-      ],
       viz: {
         paths: 'Paths',
         photo: 'Photo',
@@ -454,12 +448,6 @@ export const content = {
         'Le pongo precio al riesgo con estadística: probabilidad de default, pérdida crediticia esperada, valor de viviendas, cuotas mal valoradas. Luego llevo los modelos a producción y construyo los sistemas que los operan.',
       seeking: 'Busco prácticas en finanzas cuantitativas para el verano de 2027',
       cv: 'Descargar CV',
-      stats: [
-        { value: '100+', label: 'citas, Expert Systems with Applications' },
-        { value: '3M', label: 'tarjetas de crédito bajo modelos IFRS 9' },
-        { value: '1M', label: 'viviendas valoradas en Bogotá' },
-        { value: '40h → 3h', label: 'revisión legal por operación, motor de IA' },
-      ],
       viz: {
         paths: 'Trayectorias',
         photo: 'Foto',

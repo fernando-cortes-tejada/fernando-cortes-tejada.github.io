@@ -36,16 +36,6 @@ const labels = { simulating: t.viz.simulating, converged: t.viz.converged, pathL
         <svg width="15" height="15" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M3 5h18v14H3zm2 2v.5l7 4.5 7-4.5V7zm14 2.9-7 4.5-7-4.5V17h14z"/></svg>
         {links.email}
       </a>
-      <dl class="stats">
-        {
-          t.stats.map((s) => (
-            <div>
-              <dt class="metric-value">{s.value}</dt>
-              <dd class="metric-label">{s.label}</dd>
-            </div>
-          ))
-        }
-      </dl>
     </div>
 
     <figure class="portrait" data-mode="paths" data-labels={JSON.stringify(labels)}>
@@ -221,29 +211,9 @@ const labels = { simulating: t.viz.simulating, converged: t.viz.converged, pathL
     opacity: 0.65;
   }
 
-  .stats {
-    display: grid;
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-    gap: 1.25rem;
-    margin: 3rem 0 0;
-    padding-top: 1.5rem;
-    border-top: 1px solid var(--line);
-  }
 
-  .stats div {
-    display: flex;
-    flex-direction: column;
-    gap: 0.3rem;
-  }
 
-  .stats dd {
-    margin: 0;
-  }
 
-  .stats .metric-value {
-    font-size: 1.5rem;
-    color: var(--accent);
-  }
 
   /* portrait */
   .portrait {
@@ -423,9 +393,6 @@ const labels = { simulating: t.viz.simulating, converged: t.viz.converged, pathL
     }
     .stage {
       max-width: 22rem;
-    }
-    .stats {
-      grid-template-columns: repeat(2, minmax(0, 1fr));
     }
   }
 </style>
