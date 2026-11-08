@@ -43,7 +43,7 @@ const listed = [...t.items].sort((a, b) => b.from - a.from);
                   it.lane === lane.key ? (
                     <button
                       type="button"
-                      class:list={['bar', `bar-${it.lane}`, { current: it.current, on: i === DEFAULT }]}
+                      class:list={['bar', `bar-${it.lane}`, { current: it.current, on: i === DEFAULT, short: it.to - it.from < 1.5 }]}
                       style={`left:${pos(it.from)}%;width:calc(${pos(it.to) - pos(it.from)}% - 3px)`}
                       data-i={i}
                       aria-pressed={i === DEFAULT ? 'true' : 'false'}
@@ -89,11 +89,14 @@ const listed = [...t.items].sort((a, b) => b.from - a.from);
 
     <div class="detail" data-detail aria-live="polite">
       <p class="d-years mono" data-f="years">{yearSpan(sel)}{sel.current ? ` · ${t.inProgress}` : ''}</p>
-      <div>
-        <h3 data-f="role">{sel.role}</h3>
-        <p class="org"><span data-f="org">{sel.org}</span> <span class="place" data-f="place">· {sel.place}</span></p>
-        <p class="note" data-f="note">{sel.note}</p>
-        <a class="goto" href="#work" data-goto={sel.goto} data-f="goto" hidden={!sel.goto}>{t.seeModel} →</a>
+      <div class="d-body">
+        <span class="d-logo" data-f="logo" hidden={!sel.logo}><img src={sel.logo ? `/logos/${sel.logo}` : ''} alt="" width="40" height="40" /></span>
+        <div>
+          <h3 data-f="role">{sel.role}</h3>
+          <p class="org"><span data-f="org">{sel.org}</span> <span class="place" data-f="place">· {sel.place}</span></p>
+          <p class="note" data-f="note">{sel.note}</p>
+          <a class="goto" href="#work" data-goto={sel.goto} data-f="goto" hidden={!sel.goto}>{t.seeModel} →</a>
+        </div>
       </div>
     </div>
 
@@ -121,6 +124,9 @@ const listed = [...t.items].sort((a, b) => b.from - a.from);
       f('org').textContent = it.org;
       f('place').textContent = `· ${it.place}`;
       f('note').textContent = it.note ?? '';
+      const logo = f('logo');
+      logo.hidden = !it.logo;
+      if (it.logo) logo.querySelector('img')!.src = `/logos/${it.logo}`;
       const go = f('goto') as HTMLAnchorElement;
       go.hidden = !it.goto;
       if (it.goto) go.dataset.goto = it.goto;
@@ -230,6 +236,12 @@ const listed = [...t.items].sort((a, b) => b.from - a.from);
     opacity: 0.8;
   }
 
+  /* one-year bars (thesis, paper) are narrow: tighter padding so the short label fits */
+  .bar.short {
+    padding: 0 0.35rem;
+    font-size: 0.72rem;
+  }
+
   .bar span {
     overflow: hidden;
     text-overflow: ellipsis;
@@ -252,10 +264,6 @@ const listed = [...t.items].sort((a, b) => b.from - a.from);
   .bar-side { background: #9085e9; }
 
   /* still in progress: hatched */
-  .bar.current {
-    background-image: repeating-linear-gradient(135deg, transparent 0 6px, rgba(11, 14, 19, 0.28) 6px 9px);
-  }
-
   .axis {
     height: 1.8rem;
     border-top: 1px solid var(--line-strong);
@@ -280,6 +288,33 @@ const listed = [...t.items].sort((a, b) => b.from - a.from);
     border-left: 2px solid var(--accent);
     border-radius: 0 12px 12px 0;
     min-height: 9.5rem;
+  }
+
+  .d-body {
+    display: flex;
+    gap: 1rem;
+    align-items: flex-start;
+  }
+
+  .d-logo {
+    flex: none;
+    display: grid;
+    place-items: center;
+    width: 2.8rem;
+    height: 2.8rem;
+    padding: 0.35rem;
+    border-radius: 9px;
+    background: #f4f1ea;
+  }
+
+  .d-logo[hidden] {
+    display: none;
+  }
+
+  .d-logo img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
   }
 
   .d-years {
