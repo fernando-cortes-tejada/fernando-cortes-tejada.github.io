@@ -434,9 +434,10 @@ const odds = line(Array.from({ length: 40 }, (_, k) => {
     border-color: var(--accent);
   }
 
+  /* drawn inside the card: the scrolling row clips anything outside it */
   .card:has(.more:focus-visible) {
-    outline: 2px solid var(--accent);
-    outline-offset: 2px;
+    border-color: var(--accent);
+    box-shadow: inset 0 0 0 1px var(--accent);
   }
 
   .eyebrow {
