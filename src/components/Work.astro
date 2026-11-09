@@ -1,6 +1,7 @@
 ---
 import { content, type Lang } from '../i18n/content';
 import ArbCalc from './ArbCalc.astro';
+import ThesisModel from './ThesisModel.astro';
 import Ifrs9 from './Ifrs9.astro';
 
 interface Props {
@@ -248,6 +249,7 @@ const odds = line(Array.from({ length: 40 }, (_, k) => {
                 ) : (
                   <p class="summary">{r.summary}</p>
                 )}
+                {r.viz === 'thesis' && <ThesisModel lang={lang} />}
                 {r.deep && (
                   <ul class="docs">
                     {r.deep.docs.map((d) => (

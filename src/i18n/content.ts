@@ -292,7 +292,7 @@ export const content = {
               'In simulation it recovered the true parameters, while the usual workaround of squeezing the data into (0, 1) did not, and its out-of-sample AUC was 0.85 against 0.73 for logistic regression. On 12 months of real card data, DIC chose two clusters: one where utilization falls over the year, and one where it climbs toward the limit and defaults more often (58% vs 42%).',
             ],
             docs: [
-              { img: '/docs/pages/thesis-slide-1.webp', caption: 'LACSC 2021 talk', href: '/docs/LACSC_2021_slides.pdf#page=1' },
+              { img: '/docs/pages/thesis-slide-9.webp', caption: 'The model, LACSC 2021 talk', href: '/docs/LACSC_2021_slides.pdf#page=9' },
               { img: '/docs/pages/thesis-slide-25.webp', caption: 'Out-of-sample AUC vs logistic regression', href: '/docs/LACSC_2021_slides.pdf#page=25' },
               { img: '/docs/pages/thesis-slide-35.webp', caption: 'The two clusters in real card data', href: '/docs/LACSC_2021_slides.pdf#page=35' },
             ],
@@ -668,7 +668,7 @@ export const content = {
               'En simulación recuperó los parámetros verdaderos, mientras que el truco habitual de comprimir los datos a (0, 1) no lo hizo, y su AUC fuera de muestra fue 0.85 frente a 0.73 de la regresión logística. Con 12 meses de datos reales de tarjetas, el DIC eligió dos clusters: uno donde la utilización baja durante el año y otro donde sube hacia el límite y cae más en default (58% vs 42%).',
             ],
             docs: [
-              { img: '/docs/pages/thesis-slide-1.webp', caption: 'Charla en LACSC 2021', href: '/docs/LACSC_2021_slides.pdf#page=1' },
+              { img: '/docs/pages/thesis-slide-9.webp', caption: 'El modelo, charla en LACSC 2021', href: '/docs/LACSC_2021_slides.pdf#page=9' },
               { img: '/docs/pages/thesis-slide-25.webp', caption: 'AUC fuera de muestra vs regresión logística', href: '/docs/LACSC_2021_slides.pdf#page=25' },
               { img: '/docs/pages/thesis-slide-35.webp', caption: 'Los dos clusters en datos reales', href: '/docs/LACSC_2021_slides.pdf#page=35' },
             ],

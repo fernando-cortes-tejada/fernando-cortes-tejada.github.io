@@ -1,0 +1,110 @@
+---
+// The thesis model written out in MathML (rendered natively by the browser, no math library).
+interface Props {
+  lang: 'en' | 'es';
+}
+const { lang } = Astro.props;
+const L = {
+  en: { title: 'The model', d: 'default, by cluster', y: 'monthly utilization in [0, 1]', w: 'latent cluster', g: 'mean path + client effect', s: 'scoring a new client' },
+  es: { title: 'El modelo', d: 'default, por cluster', y: 'utilización mensual en [0, 1]', w: 'cluster latente', g: 'trayectoria media + efecto del cliente', s: 'evaluar a un cliente nuevo' },
+}[lang];
+---
+
+<figure class="model">
+  <figcaption class="mono">{L.title}</figcaption>
+  <div class="rows">
+    <math display="block">
+      <msub><mi>D</mi><mi>i</mi></msub><mo>∣</mo><msub><mi>W</mi><mi>i</mi></msub><mo>=</mo><mi>k</mi>
+      <mo>∼</mo><mi>Bern</mi><mo stretchy="false">(</mo><msubsup><mi>π</mi><mi>i</mi><mi>k</mi></msubsup><mo stretchy="false">)</mo>
+    </math>
+    <span class="mono">{L.d}</span>
+
+    <math display="block">
+      <msub><mi>Y</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><mo>∣</mo><msub><mi>W</mi><mi>i</mi></msub><mo>=</mo><mi>k</mi>
+      <mo>∼</mo><mi>BIm</mi><mo stretchy="false">(</mo>
+      <msubsup><mi>α</mi><mrow><mn>0</mn><mi>i</mi><mi>j</mi></mrow><mi>k</mi></msubsup><mo>,</mo>
+      <msubsup><mi>α</mi><mrow><mn>1</mn><mi>i</mi><mi>j</mi></mrow><mi>k</mi></msubsup><mo>,</mo>
+      <msubsup><mi>γ</mi><mrow><mi>i</mi><mi>j</mi></mrow><mi>k</mi></msubsup><mo>,</mo>
+      <msup><mi>φ</mi><mi>k</mi></msup><mo stretchy="false">)</mo>
+    </math>
+    <span class="mono">{L.y}</span>
+
+    <math display="block">
+      <msub><mi>W</mi><mi>i</mi></msub><mo>∼</mo><mi>Cat</mi><mo stretchy="false">(</mo>
+      <msub><mi>p</mi><mn>1</mn></msub><mo>,</mo><mo>…</mo><mo>,</mo><msub><mi>p</mi><mi>K</mi></msub><mo stretchy="false">)</mo>
+    </math>
+    <span class="mono">{L.w}</span>
+
+    <math display="block">
+      <mi>logit</mi><mspace width="0.2em" /><msubsup><mi>γ</mi><mrow><mi>i</mi><mi>j</mi></mrow><mi>k</mi></msubsup>
+      <mo>=</mo><msubsup><mi>x</mi><mrow><mi>i</mi><mi>j</mi></mrow><mo>⊤</mo></msubsup><msubsup><mi>β</mi><mi>γ</mi><mi>k</mi></msubsup>
+      <mo>+</mo><msub><mi>b</mi><mi>i</mi></msub><mo>,</mo><mspace width="0.8em" />
+      <msub><mi>b</mi><mi>i</mi></msub><mo>∼</mo><mi>𝒩</mi><mo stretchy="false">(</mo><mn>0</mn><mo>,</mo><msubsup><mi>σ</mi><mi>b</mi><mn>2</mn></msubsup><mo stretchy="false">)</mo>
+    </math>
+    <span class="mono">{L.g}</span>
+
+    <math display="block">
+      <mi>P</mi><mo stretchy="false">(</mo><msub><mi>D</mi><mtext>new</mtext></msub><mo>=</mo><mn>1</mn><mo>∣</mo><msub><mi>𝐲</mi><mtext>new</mtext></msub><mo stretchy="false">)</mo>
+      <mo>=</mo>
+      <munderover><mo>∑</mo><mrow><mi>k</mi><mo>=</mo><mn>1</mn></mrow><mi>K</mi></munderover>
+      <msup><mi>π</mi><mi>k</mi></msup><mspace width="0.15em" />
+      <mi>P</mi><mo stretchy="false">(</mo><msub><mi>W</mi><mtext>new</mtext></msub><mo>=</mo><mi>k</mi><mo>∣</mo><msub><mi>𝐲</mi><mtext>new</mtext></msub><mo stretchy="false">)</mo>
+    </math>
+    <span class="mono">{L.s}</span>
+  </div>
+</figure>
+
+<style>
+  .model {
+    margin: 1.25rem 0 0.25rem;
+    padding: 1rem 1.25rem 1.1rem;
+    background: var(--bg);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+  }
+
+  figcaption {
+    font-size: 0.7rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--faint);
+    margin-bottom: 0.6rem;
+  }
+
+  .rows {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    align-items: center;
+    gap: 0.55rem 1.75rem;
+  }
+
+  math {
+    margin: 0;
+    text-align: left;
+    justify-self: start;
+    font-size: 1.12rem;
+    color: var(--text);
+  }
+
+  .rows span {
+    font-size: 0.72rem;
+    color: var(--faint);
+  }
+
+  @media (max-width: 640px) {
+    .model {
+      padding-inline: 0.9rem;
+    }
+    .rows {
+      grid-template-columns: minmax(0, 1fr);
+      gap: 0.15rem;
+      overflow-x: auto;
+    }
+    .rows span {
+      margin-bottom: 0.6rem;
+    }
+    math {
+      font-size: 0.84rem;
+    }
+  }
+</style>
