@@ -101,18 +101,18 @@ const authorsBayes = 'F. Cortés-Tejada, C. L. Bayes, L. Valdivieso';
 export const content = {
   en: {
     meta: {
-      title: 'Fernando Cortés Tejada | Credit Risk, Quant & ML',
+      title: 'Fernando Cortés Tejada | Quant Research & Trading | Machine Learning',
       description:
-        'Harvard MS/MBA candidate with an MS in Statistics (summa cum laude) and a BS in Physics. Credit risk, quantitative modeling and machine learning in production; founding engineer at a Series A fintech.',
+        'Harvard MS/MBA candidate with an MS in Statistics (summa cum laude) and a BS in Physics. Quantitative research, trading and machine learning; founding engineer at a Series A fintech.',
     },
     nav: { work: 'Work & research', research: 'Research', lab: 'Lab', path: 'Path', contact: 'Contact', switchLabel: 'ES', switchAria: 'Leer en español' },
     hero: {
       location: 'Boston, MA',
       credentials: ['Harvard MS/MBA candidate, 2028', 'MS Statistics, summa cum laude', 'BS Physics, magna cum laude'],
-      role: 'Credit risk, quantitative modeling & ML',
+      role: 'Quant Research & Trading | Machine Learning',
       pitch:
         'I put prices on risk with statistics: probability of default, expected credit loss, home values, mispriced odds. Then I take the models to production and build the systems that run them.',
-      seeking: 'Seeking quantitative finance internships for summer 2027',
+      seeking: 'Seeking Summer 2027 internships in quantitative research and trading',
       cv: 'Download CV',
       viz: {
         paths: 'Paths',
@@ -406,11 +406,11 @@ export const content = {
       seeModel: 'See the model',
       items: [
         { lane: 'edu', from: 2012, to: 2016.99, label: 'BS Physics', org: 'PUCP', place: 'Lima', role: 'BS in Physics, magna cum laude', note: 'Quantum Optics Research Group; Jorge André Swieca School on Nonlinear and Quantum Optics (Brazil, 2016); PAIN-PUCP research grant. Founder and first president of the Physics Student Association.', logo: 'pucp.png' },
-        { lane: 'work', from: 2017, to: 2020, label: 'Interbank', org: 'Interbank', place: 'Lima', role: 'Data Scientist, credit risk', note: 'IFRS 9 expected credit loss for ~3M cards and a S/ 60B loan book; Monte Carlo loss simulation; origination models.', goto: 'ifrs9', logo: 'interbank.svg' },
+        { lane: 'work', from: 2017, to: 2020, label: 'Interbank', org: 'Interbank', place: 'Lima', role: 'Data Scientist', note: 'IFRS 9 expected credit loss for ~3M cards and a S/ 60B loan book; Monte Carlo loss simulation; origination models.', goto: 'ifrs9', logo: 'interbank.svg' },
         { lane: 'edu', from: 2018, to: 2019.99, label: 'MS Stats', org: 'PUCP', place: 'Lima', role: 'MS in Statistics, summa cum laude', note: 'Full-tuition scholarship. Bayesian thesis on credit-card utilization, presented at LACSC 2021.', logo: 'pucp.png' },
         { lane: 'work', from: 2020, to: 2022, label: 'RappiBank', org: 'RappiBank', place: 'Lima', role: 'Machine Learning Engineer, founding team', note: 'Digital bank of Rappi and Interbank. The bank’s first origination model (published) and real-time fraud detection.', goto: 'origination', logo: 'rappi.png' },
-        { lane: 'work', from: 2022, to: 2026.4, label: 'Duppla', org: 'Duppla', place: 'Bogotá', role: 'Founding Engineer, first employee', note: 'LatAm Series A fintech. Built the home valuation ensemble over ~1M Bogotá homes, the core Python platform on GCP and AWS, and an AI document engine that cut legal review from 40 to 3 hours per deal. Subject of an HBS case study.', goto: 'docAi', logo: 'duppla.png' },
-        { lane: 'teach', from: 2022, to: 2024, label: 'Professor', org: 'PUCP', place: 'Lima', role: 'Adjunct Professor (part-time), Computational Statistics', note: 'Designed the course in R and Python for 200+ students; sections averaged 15.45/20 vs a 13.41 course average, and a student Net Promoter Score of 98, highest in the faculty.', logo: 'pucp.png' },
+        { lane: 'work', from: 2022, to: 2026.4, label: 'Duppla', org: 'Duppla', place: 'Bogotá', role: 'Founding Engineer, first employee', note: 'Series A fintech. Built the home valuation ensemble over ~1M Bogotá homes, the core Python platform on GCP and AWS, and an AI document engine that cut legal review from 40 to 3 hours per deal. Subject of an HBS case study.', goto: 'docAi', logo: 'duppla.png' },
+        { lane: 'teach', from: 2022, to: 2024.99, label: 'Professor', org: 'PUCP', place: 'Lima', role: 'Adjunct Professor (part-time)', note: 'Designed the Computational Statistics course in R and Python for 200+ students; sections averaged 15.45/20 vs a 13.41 course average, and a student Net Promoter Score of 98, highest in the faculty.', logo: 'pucp.png' },
         { lane: 'side', from: 2020, to: 2021, label: 'Thesis', org: 'PUCP', place: 'Lima', role: 'MS thesis: Bayesian clusters of credit-card utilization', note: 'Defended in 2020, summa cum laude; presented at the Latin American Conference on Statistical Computing 2021. It beat logistic regression out of sample.', goto: 'thesis', logo: 'pucp.png' },
         { lane: 'side', from: 2021, to: 2022, label: 'Paper', org: 'Expert Systems with Applications', place: 'Elsevier', role: 'Super-App Behavioral Patterns in Credit Risk Models', note: 'Published 2021 from the RappiBank origination work; 100+ citations, validated on 80,000 users in two countries.', goto: 'origination' },
         { lane: 'side', from: 2023, to: 2024.5, label: 'Surebets', org: 'Side project', place: 'Lima', role: 'Real-time sports-betting arbitrage', note: 'Scraped NBA odds across sportsbooks and executed arbitrages automatically in under 30 seconds; run with real money.', goto: 'surebets' },
@@ -477,18 +477,18 @@ export const content = {
 
   es: {
     meta: {
-      title: 'Fernando Cortés Tejada | Riesgo de crédito, quant y ML',
+      title: 'Fernando Cortés Tejada | Investigación cuantitativa y trading | Machine Learning',
       description:
-        'Candidato MS/MBA en Harvard, con maestría en Estadística (summa cum laude) y bachiller en Física. Riesgo de crédito, modelación cuantitativa y machine learning en producción; ingeniero fundador de una fintech Serie A.',
+        'Candidato MS/MBA en Harvard, con maestría en Estadística (summa cum laude) y bachiller en Física. Investigación cuantitativa, trading y machine learning; ingeniero fundador de una fintech Serie A.',
     },
     nav: { work: 'Trabajo e investigación', research: 'Investigación', lab: 'Lab', path: 'Trayectoria', contact: 'Contacto', switchLabel: 'EN', switchAria: 'Read in English' },
     hero: {
       location: 'Boston, MA',
       credentials: ['Candidato MS/MBA en Harvard, 2028', 'Maestría en Estadística, summa cum laude', 'Bachiller en Física, magna cum laude'],
-      role: 'Riesgo de crédito, modelación cuantitativa y ML',
+      role: 'Investigación cuantitativa y trading | Machine Learning',
       pitch:
         'Le pongo precio al riesgo con estadística: probabilidad de default, pérdida crediticia esperada, valor de viviendas, cuotas mal valoradas. Luego llevo los modelos a producción y construyo los sistemas que los operan.',
-      seeking: 'Busco prácticas en finanzas cuantitativas para el verano de 2027',
+      seeking: 'Busco prácticas de verano 2027 en investigación cuantitativa y trading',
       cv: 'Descargar CV',
       viz: {
         paths: 'Trayectorias',
@@ -782,11 +782,11 @@ export const content = {
       seeModel: 'Ver el modelo',
       items: [
         { lane: 'edu', from: 2012, to: 2016.99, label: 'Física', org: 'PUCP', place: 'Lima', role: 'Bachiller en Física, magna cum laude', note: 'Grupo de Investigación en Óptica Cuántica; Escuela Jorge André Swieca de Óptica No Lineal y Cuántica (Brasil, 2016); beca de investigación PAIN-PUCP. Fundador y primer presidente de la Asociación de Estudiantes de Física.', logo: 'pucp.png' },
-        { lane: 'work', from: 2017, to: 2020, label: 'Interbank', org: 'Interbank', place: 'Lima', role: 'Data Scientist, riesgo de crédito', note: 'Pérdida crediticia esperada IFRS 9 para ~3M tarjetas y una cartera de S/ 60 mil M; simulación Monte Carlo de pérdidas; modelos de originación.', goto: 'ifrs9', logo: 'interbank.svg' },
+        { lane: 'work', from: 2017, to: 2020, label: 'Interbank', org: 'Interbank', place: 'Lima', role: 'Data Scientist', note: 'Pérdida crediticia esperada IFRS 9 para ~3M tarjetas y una cartera de S/ 60 mil M; simulación Monte Carlo de pérdidas; modelos de originación.', goto: 'ifrs9', logo: 'interbank.svg' },
         { lane: 'edu', from: 2018, to: 2019.99, label: 'Maestría', org: 'PUCP', place: 'Lima', role: 'Maestría en Estadística, summa cum laude', note: 'Beca completa. Tesis bayesiana sobre uso de tarjetas de crédito, presentada en LACSC 2021.', logo: 'pucp.png' },
         { lane: 'work', from: 2020, to: 2022, label: 'RappiBank', org: 'RappiBank', place: 'Lima', role: 'Machine Learning Engineer, equipo fundador', note: 'Banco digital de Rappi e Interbank. Primer modelo de originación del banco (publicado) y detección de fraude en tiempo real.', goto: 'origination', logo: 'rappi.png' },
-        { lane: 'work', from: 2022, to: 2026.4, label: 'Duppla', org: 'Duppla', place: 'Bogotá', role: 'Founding Engineer, primer empleado', note: 'Fintech latinoamericana en Serie A. Construí el ensamble de valoración sobre ~1M viviendas en Bogotá, la plataforma central en Python sobre GCP y AWS, y un motor de documentos con IA que redujo la revisión legal de 40 a 3 horas por operación. Caso de estudio de HBS.', goto: 'docAi', logo: 'duppla.png' },
-        { lane: 'teach', from: 2022, to: 2024, label: 'Profesor', org: 'PUCP', place: 'Lima', role: 'Profesor adjunto (tiempo parcial), Estadística Computacional', note: 'Diseñé el curso en R y Python para más de 200 estudiantes; mis horarios promediaron 15.45/20 frente a un promedio del curso de 13.41, y un Net Promoter Score estudiantil de 98, el más alto de la facultad.', logo: 'pucp.png' },
+        { lane: 'work', from: 2022, to: 2026.4, label: 'Duppla', org: 'Duppla', place: 'Bogotá', role: 'Founding Engineer, primer empleado', note: 'Fintech en Serie A. Construí el ensamble de valoración sobre ~1M viviendas en Bogotá, la plataforma central en Python sobre GCP y AWS, y un motor de documentos con IA que redujo la revisión legal de 40 a 3 horas por operación. Caso de estudio de HBS.', goto: 'docAi', logo: 'duppla.png' },
+        { lane: 'teach', from: 2022, to: 2024.99, label: 'Profesor', org: 'PUCP', place: 'Lima', role: 'Profesor adjunto (tiempo parcial)', note: 'Diseñé el curso de Estadística Computacional en R y Python para más de 200 estudiantes; mis horarios promediaron 15.45/20 frente a un promedio del curso de 13.41, y un Net Promoter Score estudiantil de 98, el más alto de la facultad.', logo: 'pucp.png' },
         { lane: 'side', from: 2020, to: 2021, label: 'Tesis', org: 'PUCP', place: 'Lima', role: 'Tesis de maestría: grupos bayesianos de uso de tarjetas', note: 'Sustentada en 2020, summa cum laude; presentada en la Conferencia Latinoamericana de Computación Estadística 2021. Superó a la regresión logística fuera de muestra.', goto: 'thesis', logo: 'pucp.png' },
         { lane: 'side', from: 2021, to: 2022, label: 'Paper', org: 'Expert Systems with Applications', place: 'Elsevier', role: 'Super-App Behavioral Patterns in Credit Risk Models', note: 'Publicado en 2021 a partir del modelo de originación de RappiBank; 100+ citas, validado con 80,000 usuarios en dos países.', goto: 'origination' },
         { lane: 'side', from: 2023, to: 2024.5, label: 'Surebets', org: 'Proyecto personal', place: 'Lima', role: 'Arbitraje de apuestas deportivas en tiempo real', note: 'Extraía cuotas de la NBA de varias casas y ejecutaba los arbitrajes automáticamente en menos de 30 segundos; operado con dinero real.', goto: 'surebets' },
